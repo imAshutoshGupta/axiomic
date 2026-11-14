@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-// Same values as axiomic-brand-assets/favicon/site.webmanifest. The PNGs live in public/.
+// Same values as public/brand/favicon/site.webmanifest. The PNGs live in public/.
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "axiomic",

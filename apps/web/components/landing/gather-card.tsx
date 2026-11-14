@@ -97,8 +97,8 @@ export function GatherCard({ className = "" }: { className?: string }) {
           );
         })}
         <span className={`${styles.fade} ${styles.hub}`}>
-          <img className="only-light" src="/brand/axiomic-icon-light.svg" alt="" width={34} height={34} />
-          <img className="only-dark" src="/brand/axiomic-icon-dark.svg" alt="" width={34} height={34} />
+          <img className="only-light" src="/brand/icon/svg/axiomic-icon-light.svg" alt="" width={34} height={34} />
+          <img className="only-dark" src="/brand/icon/svg/axiomic-icon-dark.svg" alt="" width={34} height={34} />
           <span>Kept in axiomic · everyone on v43</span>
         </span>
       </div>

@@ -30,8 +30,8 @@ Icon and name are separate files so you can place them yourself:
 
 ```html
 <a href="/" class="brand">
-  <img src="/brand/axiomic-icon-light.svg" alt="" width="30" height="30">
-  <img src="/brand/axiomic-wordmark-ink.svg" alt="axiomic" height="22">
+  <img src="/brand/icon/svg/axiomic-icon-light.svg" alt="" width="30" height="30">
+  <img src="/brand/wordmark/svg/axiomic-wordmark-ink.svg" alt="axiomic" height="22">
 </a>
 ```
 

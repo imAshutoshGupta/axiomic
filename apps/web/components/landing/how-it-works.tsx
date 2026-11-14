@@ -79,8 +79,8 @@ function StepIcon({ icon }: { icon: "write" | "hub" | "ai" }) {
   if (icon === "hub") {
     return (
       <>
-        <img className="only-light" src="/brand/axiomic-icon-light.svg" alt="" width={64} height={64} />
-        <img className="only-dark" src="/brand/axiomic-icon-dark.svg" alt="" width={64} height={64} />
+        <img className="only-light" src="/brand/icon/svg/axiomic-icon-light.svg" alt="" width={64} height={64} />
+        <img className="only-dark" src="/brand/icon/svg/axiomic-icon-dark.svg" alt="" width={64} height={64} />
       </>
     );
   }
