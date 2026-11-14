@@ -1,0 +1,80 @@
+.callout {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  text-align: left;
+}
+
+.note {
+  border-style: dashed;
+  border-color: var(--dash);
+}
+
+.warning,
+.draft {
+  border-color: var(--warn);
+  background: var(--warn-soft);
+}
+
+/* The legal draft banner must be impossible to miss: thicker edge, larger title. */
+.draft {
+  border-width: 2px;
+  padding: 18px 20px;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--muted);
+}
+
+.warning .icon,
+.draft .icon {
+  background: transparent;
+  color: var(--warn);
+}
+
+.body {
+  min-width: 0;
+  padding-top: 6px;
+}
+
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.draft .title {
+  font-size: 16.5px;
+  font-weight: 700;
+}
+
+.text {
+  margin-top: 4px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.text p {
+  margin: 0;
+}
+
+.text p + p {
+  margin-top: 6px;
+}
+
+.text code {
+  font-size: 0.9em;
+}

@@ -1,0 +1,59 @@
+/* Values from the mockup: header CTA (44px), hero CTA (52px), "See how it works" link */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.md {
+  height: 44px;
+  padding: 0 18px;
+  font-size: var(--text-ui);
+}
+
+.lg {
+  height: 52px;
+  padding: 0 26px;
+  font-size: 16px;
+}
+
+.primary,
+.primary:hover {
+  color: var(--accent-fg);
+}
+
+.primary {
+  background: var(--accent);
+}
+
+.primary:hover {
+  background: var(--accent-hover);
+}
+
+.secondary {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.secondary:hover {
+  border-color: var(--dash);
+  color: var(--accent-text);
+}
+
+.text {
+  height: auto;
+  min-height: 44px;
+  padding: 0;
+  border-radius: 0;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.text:hover {
+  color: var(--accent-text);
+}

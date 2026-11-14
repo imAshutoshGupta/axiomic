@@ -1,0 +1,237 @@
+/* Header: values from the mockup's <header> (22px from the top, 44px controls, 6px gaps) */
+.header {
+  position: relative;
+  z-index: 30;
+  padding-top: 22px;
+}
+
+.headerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 4px 0;
+  flex: 0 0 auto;
+}
+
+.brand img {
+  display: block;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.desktopNav {
+  display: flex;
+}
+
+.navLink {
+  padding: 12px 14px;
+  font-size: var(--text-ui);
+  color: var(--muted);
+}
+
+.navLink[aria-current="page"] {
+  color: var(--text);
+}
+
+.iconButton {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.iconButton:hover {
+  border-color: var(--dash);
+}
+
+.iconButton > span {
+  display: grid;
+  place-items: center;
+}
+
+.mobileNav {
+  display: none;
+}
+
+.menuPanel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: var(--gutter);
+  right: var(--gutter);
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+
+.menuPanel[hidden] {
+  display: none;
+}
+
+.menuLink {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.menuLink:hover {
+  background: var(--surface-2);
+}
+
+.menuLink[aria-current="page"] {
+  color: var(--accent-text);
+}
+
+@media (max-width: 760px) {
+  .desktopNav {
+    display: none;
+  }
+  .mobileNav {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .wordmarkHideSmall {
+    display: none !important;
+  }
+  .actions .headerCta {
+    padding: 0 12px;
+    font-size: var(--text-small);
+  }
+}
+
+/* Footer */
+.footer {
+  margin-top: var(--section-gap);
+  border-top: 1px solid var(--border);
+  padding: 48px 0 36px;
+  font-size: 14.5px;
+}
+
+.footerInner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.footerBrand {
+  max-width: 320px;
+}
+
+.footerBrand p {
+  margin: 14px 0 0;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.footerNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px 64px;
+}
+
+.footerHeading {
+  margin: 0;
+  font-size: var(--text-label);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.footerNav ul {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footerNav li a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  color: var(--muted);
+}
+
+.footerNav li a:hover {
+  color: var(--accent-text);
+}
+
+.footerBottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-top: 40px;
+  font-size: var(--text-small);
+  color: var(--muted-2);
+}
+
+.footerBottom p {
+  margin: 0;
+}
+
+/* Skip link: hidden until it receives keyboard focus */
+.skipLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-weight: 600;
+  transform: translateY(-200%);
+}
+
+.skipLink:focus,
+.skipLink:hover {
+  color: var(--accent-fg);
+  transform: none;
+}
+
+.main:focus {
+  outline: none;
+}
+
+/* Touch widths: grow the tap targets with padding only. Desktop is unchanged. */
+@media (max-width: 760px), (pointer: coarse) {
+  .brand {
+    padding: 7px 0;
+    margin: -3px 0;
+  }
+  .footerNav li a {
+    min-height: 44px;
+  }
+}

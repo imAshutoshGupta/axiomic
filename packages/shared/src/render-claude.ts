@@ -84,9 +84,11 @@ function renderModule(mod: MergedModule, version: number): string {
 
 /** One rule: a ### title, then its text. */
 function renderRule(rule: MergedRule): string[] {
-  const title = rule.title.replace(/\s+/g, " ").trim(); // always one line
+  // Every rule must leave the file in the same state it found it: no code block and no HTML comment still open.
+  // Otherwise one sloppy rule ("```" or "<!--" never closed) would swallow every rule rendered after it.
+  const title = closeOpenBlocks(rule.title.replace(/\s+/g, " ").trim()); // always one line
   const heading = `### ${rule.mandatory ? "MANDATORY: " : ""}${title}`;
-  const body = pushDownHeadings(rule.body).trim();
+  const body = closeOpenBlocks(pushDownHeadings(rule.body).trim());
   return body ? ["", heading, "", body] : ["", heading];
 }
 
@@ -132,4 +134,112 @@ export function pushDownHeadings(text: string): string {
       return line;
     })
     .join("\n");
+}
+
+/** The ``` or ~~~ line that opens a code block, and the line that closes it. Same rules as pushDownHeadings above. */
+const FENCE_OPEN = /^ {0,3}(`{3,}|~{3,})/;
+const FENCE_CLOSE = /^ {0,3}(`{3,}|~{3,})\s*$/;
+
+/** What a piece of Markdown leaves open at its end. */
+export interface OpenBlocks {
+  /** A code block that was never closed: its opening marker (e.g. "```" or "~~~~") and its 1-based line. */
+  fence?: { marker: string; line: number };
+  /** An HTML comment that was never closed: where its "<!--" starts (index into the line-ending-normalised text) and its line. */
+  comment?: { index: number; line: number };
+}
+
+/**
+ * Walks the text line by line the way a Markdown reader would and reports what is still open at the end.
+ * Three states, and only one can be active:
+ * - inside a code block: only the matching closing line ends it (a "<!--" in code is just text);
+ * - inside an HTML comment: only "-->" ends it (a "```" line in a comment is just text);
+ * - otherwise: a fence line opens a code block, and "<!--" opens a comment.
+ * A "<!--" inside an inline code span (`<!--`) is plain text, so it neither opens a comment nor gets escaped.
+ * "<!-->" and "<!--->" close themselves at once (that's how HTML defines them), which is why "-->" is searched
+ * from two characters into the opener. Only indexOf is used, so hostile text can't make it slow.
+ */
+export function findOpenBlocks(text: string): OpenBlocks {
+  const lines = text.replace(/\r\n?/g, "\n").split("\n");
+  let fence: OpenBlocks["fence"];
+  let comment: OpenBlocks["comment"];
+  let offset = 0; // where the current line starts in the normalised text
+
+  lines.forEach((line, i) => {
+    if (fence) {
+      const close = FENCE_CLOSE.exec(line);
+      if (close && close[1]![0] === fence.marker[0] && close[1]!.length >= fence.marker.length) fence = undefined;
+    } else {
+      const open = comment ? null : FENCE_OPEN.exec(line);
+      if (open) {
+        fence = { marker: open[1]!, line: i + 1 };
+      } else {
+        // Backtick runs on this line, and for each the next run of exactly the same length (its closing partner).
+        // Built right to left in one pass so the whole line stays linear.
+        const runs = [...line.matchAll(/`+/g)].map((m) => ({ start: m.index, length: m[0].length }));
+        const partner: (number | undefined)[] = new Array(runs.length);
+        const lastSeen = new Map<number, number>();
+        for (let r = runs.length - 1; r >= 0; r--) {
+          partner[r] = lastSeen.get(runs[r]!.length);
+          lastSeen.set(runs[r]!.length, r);
+        }
+
+        let pos = 0;
+        let r = 0; // first backtick run at or after pos
+        let nextOpen = -2; // cached position of the next "<!--" (-2: not looked up yet)
+        for (;;) {
+          if (comment) {
+            const end = line.indexOf("-->", pos);
+            if (end === -1) break;
+            comment = undefined;
+            pos = end + 3;
+            continue;
+          }
+          while (r < runs.length && runs[r]!.start < pos) r++;
+          if (nextOpen !== -1 && nextOpen < pos) nextOpen = line.indexOf("<!--", pos);
+          if (nextOpen === -1 && r >= runs.length) break;
+          if (nextOpen !== -1 && (r >= runs.length || nextOpen < runs[r]!.start)) {
+            const end = line.indexOf("-->", nextOpen + 2);
+            if (end === -1) {
+              comment = { index: offset + nextOpen, line: i + 1 };
+              break;
+            }
+            pos = end + 3;
+          } else {
+            // A backtick run: if a run of the same length follows on this line it's an inline code span, and a "<!--"
+            // inside is plain text. With no partner ("`<!-- hide" with the backtick never closed) it isn't code at all,
+            // so the comment is real: that is how an unbalanced backtick could otherwise be used to dodge the check.
+            const close = partner[r];
+            pos = close !== undefined ? runs[close]!.start + runs[close]!.length : runs[r]!.start + runs[r]!.length;
+          }
+        }
+      }
+    }
+    offset += line.length + 1;
+  });
+
+  return { ...(fence ? { fence } : {}), ...(comment ? { comment } : {}) };
+}
+
+/**
+ * Makes sure a piece of text leaves nothing open, by changing as little as possible:
+ * - A code block still open at the end gets a closing line: the same character, and the same length as the opener
+ *   (a closing line must be at least as long as the opening one).
+ * - An unclosed "<!--" is ESCAPED to "&lt;!--", so it shows as plain text. We chose this over appending " -->" because
+ *   closing the comment would keep the text after the opener invisible to a reader (Markdown viewers hide comments), so a
+ *   rule could still smuggle hidden words; escaping hides nothing, and no later text can pair with it to form a comment.
+ *   No "-->" exists after an unclosed opener (that is what "unclosed" means), so every "<!--" from there on is unclosed
+ *   too and is escaped in one go, which also keeps this linear.
+ * axiomic's own "<!-- Managed by axiomic -->" marker is always written before any rule, and each rule leaves
+ * no comment open, so a rule can never close, reopen or hide axiomic's marker.
+ */
+export function closeOpenBlocks(text: string): string {
+  let result = text;
+  const open = findOpenBlocks(result);
+  if (open.comment) {
+    const normalised = result.replace(/\r\n?/g, "\n");
+    result = normalised.slice(0, open.comment.index) + normalised.slice(open.comment.index).replaceAll("<!--", "&lt;!--");
+  }
+  // Escaping a comment can turn a "```" line that used to sit inside it into a real code block, so look again.
+  const after = open.comment ? findOpenBlocks(result) : open;
+  return after.fence ? `${result}\n${after.fence.marker}` : result;
 }

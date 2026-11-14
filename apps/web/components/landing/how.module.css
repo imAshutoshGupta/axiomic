@@ -1,0 +1,211 @@
+/* "How it works" from the mockup: centred title, one panel with three steps and a Git note. */
+.how {
+  padding: 120px 0 40px;
+  text-align: center;
+}
+
+.panel {
+  /* The mockup's panel is 980px of content plus 24px padding and a 1px border each side. */
+  max-width: 1030px;
+  margin: 40px auto 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  padding: 30px 24px 22px;
+}
+
+.flow {
+  position: relative;
+}
+
+.track {
+  position: absolute;
+  left: 16%;
+  right: 16%;
+  top: 46px;
+  height: 2px;
+  background-image: linear-gradient(90deg, var(--dash) 50%, transparent 50%);
+  background-size: 8px 2px;
+}
+
+/* The version label that travels along the dashed line: one trip per three step highlights. */
+.packet {
+  position: absolute;
+  top: -11px;
+  left: 0;
+  margin-left: -22px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: normal;
+  white-space: nowrap;
+  animation: travel 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tile {
+  display: grid;
+  place-items: center;
+  /* 92px of tile plus the 1px border, as in the mockup (content-box there). */
+  width: 94px;
+  height: 94px;
+  border-radius: 26px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  transition:
+    transform 0.45s var(--ease-magnet),
+    box-shadow 0.45s ease,
+    border-color 0.45s ease;
+}
+
+.tile img {
+  display: block;
+}
+
+.hubTile {
+  background: var(--soft);
+  color: var(--soft-fg);
+}
+
+.active {
+  border-color: var(--accent-text);
+  transform: translateY(-4px);
+  box-shadow: 0 18px 30px -18px rgba(14, 122, 99, 0.7);
+}
+
+.num {
+  margin-top: 14px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--accent-text);
+}
+
+.stepTitle {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.stepBody {
+  margin: 4px 0 0;
+  max-width: 200px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.git {
+  margin: 26px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--dash);
+  color: var(--muted);
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.git strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.gitIcon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+
+.planned {
+  max-width: 1030px;
+  margin: 14px auto 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted-2);
+}
+
+.planned a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 1070px) {
+  .planned {
+    padding: 0 16px;
+  }
+}
+
+@keyframes travel {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+[data-motion="paused"] .packet {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .packet {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .how {
+    padding-top: 88px;
+  }
+  .steps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  .track {
+    display: none;
+  }
+  .panel {
+    padding: 26px 16px 16px;
+  }
+}

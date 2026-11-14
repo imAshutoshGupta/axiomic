@@ -1,0 +1,39 @@
+.mark {
+  font-style: italic;
+  font-weight: 400;
+  background: linear-gradient(transparent 58%, var(--mark) 58%, var(--mark) 92%, transparent 92%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.padded {
+  padding: 0 0.06em;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: var(--text-label);
+  font-weight: 700;
+  line-height: 19.4px; /* the mockup's label sits in a 16px line box */
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.sectionTitle {
+  margin: 14px 0 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: var(--text-h2);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.lead {
+  margin: 20px 0 0;
+  max-width: 620px;
+  font-size: var(--text-lead);
+  line-height: 1.6;
+  color: var(--muted);
+}

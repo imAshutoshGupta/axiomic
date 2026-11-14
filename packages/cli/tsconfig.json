@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // TypeScript 6+ no longer loads every @types package by default, so we name Node's types here.
+    "types": ["node"]
+  },
+  "include": ["src"]
+}

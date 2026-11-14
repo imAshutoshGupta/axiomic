@@ -1,0 +1,175 @@
+/* Long-form text: security, CLI docs, privacy, terms. */
+.prose {
+  max-width: 720px;
+  font-size: var(--text-body);
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose.spaced > h2:first-child {
+  margin-top: 64px;
+}
+
+.prose h2 {
+  margin: 64px 0 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: clamp(28px, 3vw, 34px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  scroll-margin-top: 24px;
+}
+
+.prose h3 {
+  margin: 36px 0 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text);
+  scroll-margin-top: 24px;
+}
+
+.prose p,
+.prose ul,
+.prose ol {
+  margin: 14px 0 0;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 22px;
+}
+
+.prose li + li {
+  margin-top: 6px;
+}
+
+.prose li::marker {
+  color: var(--muted-2);
+}
+
+.prose strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.prose a {
+  color: var(--text);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--accent-text);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.prose a:hover {
+  color: var(--accent-text);
+}
+
+.prose :not(pre) > code {
+  padding: 1px 5px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  font-size: 0.86em;
+  color: var(--code);
+  overflow-wrap: anywhere;
+}
+
+.prose figure,
+.prose [role="note"] {
+  margin-top: 20px;
+}
+
+/* Tables scroll sideways on small screens instead of breaking the page width. */
+.tableWrap {
+  margin-top: 20px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.tableWrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+
+.tableWrap th,
+.tableWrap td {
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+}
+
+.tableWrap tr:last-child td {
+  border-bottom: 0;
+}
+
+.tableWrap th {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  background: var(--surface-2);
+}
+
+.tableWrap td:first-child {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Placeholder text in legal drafts, e.g. [legal entity — to be confirmed] */
+.placeholder {
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  white-space: normal;
+}
+
+/* Stacked rows instead of a three-column table on narrow screens: control and status on one line, description below. */
+@media (max-width: 640px) {
+  .tableWrap table,
+  .tableWrap tbody {
+    display: block;
+  }
+  .tableWrap thead {
+    display: none;
+  }
+  .tableWrap tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 12px;
+    align-items: center;
+    padding: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tableWrap tr:last-child {
+    border-bottom: 0;
+  }
+  .tableWrap td {
+    padding: 0;
+    border: 0;
+  }
+  .tableWrap td:nth-child(2) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    color: var(--muted);
+  }
+  .tableWrap td:nth-child(3) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}

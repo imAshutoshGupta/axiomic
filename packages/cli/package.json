@@ -1,0 +1,28 @@
+{
+  "name": "axiomic",
+  "version": "1.0.0-dev.0",
+  "private": true,
+  "description": "Private, team-controlled AI rule files. Writes your team's rules as gitignored files for Claude Code.",
+  "type": "module",
+  "bin": {
+    "axiomic": "dist/axiomic.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc -p ."
+  },
+  "devDependencies": {
+    "@axiomic/shared": "*",
+    "@types/node": "^24.0.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
+}

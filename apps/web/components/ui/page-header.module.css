@@ -1,0 +1,42 @@
+.header {
+  padding: 84px 0 56px;
+  max-width: 820px;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: var(--text-label);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+
+.title {
+  margin: 16px 0 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: var(--text-title);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  font-variation-settings: "opsz" 60;
+  text-wrap: balance;
+}
+
+.lead {
+  margin: 24px 0 0;
+  max-width: 640px;
+  font-size: var(--text-lead);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.extra {
+  margin-top: 28px;
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding-top: 48px;
+  }
+}

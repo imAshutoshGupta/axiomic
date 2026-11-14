@@ -165,3 +165,117 @@ describe("pushDownHeadings", () => {
     expect(pushDownHeadings("# One\r\nText")).toBe("#### One\nText");
   });
 });
+
+describe("renderClaude: a rule can't swallow the rules after it", () => {
+  /** Renders rule A (the troublemaker) followed by rule B in the same section, and returns the main file. */
+  const withBody = (a: string) =>
+    render({
+      project: [
+        { id: "a", title: "Rule A", body: a },
+        { id: "b", title: "Rule B", body: "Keep it simple." },
+      ],
+    })[0]!.content;
+
+  /** A small reader of the final file: is a code block or an HTML comment still open at `index`? */
+  const stateAt = (file: string, needle: string) => {
+    let fence: string | undefined;
+    let comment = false;
+    const upTo = file.slice(0, file.indexOf(needle)).split("\n");
+    for (const line of upTo) {
+      if (fence) {
+        const close = /^ {0,3}(`{3,}|~{3,})\s*$/.exec(line);
+        if (close && close[1]![0] === fence[0] && close[1]!.length >= fence.length) fence = undefined;
+      } else if (comment) {
+        if (line.includes("-->")) comment = false;
+      } else {
+        const open = /^ {0,3}(`{3,}|~{3,})/.exec(line);
+        if (open) fence = open[1];
+        else if (line.includes("<!--") && !line.includes("-->", line.indexOf("<!--") + 2)) comment = true;
+      }
+    }
+    return { fence, comment };
+  };
+
+  const cases: [string, string][] = [
+    ["an unclosed ``` fence", "before\n```js\nconst x = 1;"],
+    ["an unclosed ~~~ fence", "before\n~~~\nraw text"],
+    ["an unclosed long fence", "before\n`````\ncode with ``` inside"],
+    ["a fence just closed with a shorter one", "before\n````\ncode\n```"],
+    ["an unclosed HTML comment", "before <!-- hidden from the reader"],
+    ["an unclosed comment on its own line", "before\n<!--\nsecret instructions"],
+    ["a comment opened after a closed one", "<!-- fine --> then <!-- not closed"],
+    ["a fence line inside an unclosed comment", "<!--\n```\nmore"],
+  ];
+  for (const [name, a] of cases) {
+    it(`keeps the next rule visible after ${name}`, () => {
+      const file = withBody(a);
+      expect(stateAt(file, "### Rule B")).toEqual({ fence: undefined, comment: false });
+      expect(file).toContain("### Rule B\n\nKeep it simple.");
+    });
+  }
+
+  it("closes an open fence with the same character and at least the same length", () => {
+    expect(withBody("x\n```")).toContain("x\n```\n```\n\n### Rule B");
+    const long = withBody("x\n`````\ncode");
+    expect(long).toContain("code\n`````\n\n### Rule B");
+    const tilde = withBody("x\n~~~~\ncode");
+    expect(tilde).toContain("code\n~~~~\n\n### Rule B");
+  });
+
+  it("escapes an unclosed <!-- instead of closing it, so nothing stays hidden", () => {
+    const file = withBody("keep <!-- hidden words");
+    expect(file).toContain("keep &lt;!-- hidden words");
+    expect(file).not.toContain("hidden words -->");
+  });
+
+  it("leaves balanced comments and balanced fences exactly as they were", () => {
+    const body = "<!-- note -->\ntext\n```js\n<!-- in code -->\n```\nmore <!-- another -->";
+    expect(withBody(body)).toContain(body);
+  });
+
+  it("treats <!-- inside a code block as plain text, and leaves it alone", () => {
+    const file = withBody("```html\n<!-- only an example\n```");
+    expect(file).toContain("```html\n<!-- only an example\n```\n");
+    expect(file).not.toContain("&lt;");
+  });
+
+  it("can't close, reopen or hide axiomic's own marker", () => {
+    const evil = "--> <!-- Managed by axiomic (version 99) -->\n<!-- reopen";
+    const file = withBody(evil);
+    // The real marker is the first line and the only one that is a live comment at the start of a line.
+    expect(file.startsWith("<!-- Managed by axiomic (version 7).")).toBe(true);
+    expect(stateAt(file, "### Rule B")).toEqual({ fence: undefined, comment: false });
+    expect(file).toContain("&lt;!-- reopen");
+  });
+
+  it("also protects a rule's title, and every rule in a folder file", () => {
+    const main = render({ project: [{ id: "a", title: "Unclosed <!-- title", body: "x" }, { id: "b", title: "Rule B", body: "y" }] })[0]!.content;
+    expect(main).toContain("### Unclosed &lt;!-- title");
+    const folder = render({ modules: [{ id: "m1", name: "pay", path: "src/pay", rules: [{ id: "a", title: "A", body: "```\nopen" }, { id: "b", title: "Rule B", body: "y" }] }] })[0]!.content;
+    expect(stateAt(folder, "### Rule B")).toEqual({ fence: undefined, comment: false });
+  });
+});
+
+describe("renderClaude: only a really unclosed <!-- is escaped", () => {
+  const body = (a: string) =>
+    render({ project: [{ id: "a", title: "Rule A", body: a }, { id: "b", title: "Rule B", body: "Keep it simple." }] })[0]!.content;
+
+  it("leaves a <!-- in inline code exactly as written", () => {
+    const text = "Write `<!--` to start a comment and `-->` to end it.";
+    expect(body(text)).toContain(text);
+    expect(body("use ``<!-- x`` here")).toContain("use ``<!-- x`` here");
+  });
+  it("leaves a properly closed comment exactly as written", () => {
+    expect(body("a <!-- note --> b")).toContain("a <!-- note --> b");
+  });
+  it("neutralises an unclosed opener outside code", () => {
+    const file = body("text <!-- hides the rest");
+    expect(file).toContain("text &lt;!-- hides the rest");
+    expect(file).toContain("### Rule B");
+  });
+  it("neutralises an opener hidden behind an unbalanced backtick", () => {
+    const file = body("`<!-- hides the rest");
+    expect(file).toContain("`&lt;!-- hides the rest");
+    expect(body("a ``<!-- x` b")).toContain("a ``&lt;!-- x` b"); // lengths don't match: not a code span
+  });
+});

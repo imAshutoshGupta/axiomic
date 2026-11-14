@@ -1,0 +1,278 @@
+/*
+ * axiomic design tokens and base styles.
+ *
+ * Sources:
+ * - Brand colours: axiomic-brand-assets/brand/colors.css (+ tokens.json)
+ * - Theme values, type and spacing: the hero mockup "axiomic hero · final (Magnetic)",
+ *   classes .t-light / .t-dark in Hero-P1.dc.html
+ *
+ * Theme: follows the system setting. A saved choice from the theme button sets
+ * <html data-theme="light|dark">, which wins over the system setting.
+ * The dark values appear twice (explicit choice + system default) because plain CSS
+ * can't share one block between a selector and a media query.
+ */
+
+:root {
+  /* Brand colours (fixed, never themed) */
+  --brand-night-top: #22263a;
+  --brand-night-bottom: #07080f;
+  --brand-mint: #7cf0d2;
+  --brand-deep-green: #0e7a63;
+  --brand-ink: #0f1222;
+  --brand-white: #ffffff;
+  --brand-border: #e1e4ea;
+
+  /* Fonts (loaded by next/font in app/fonts.ts) */
+  --font-sans: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-serif: var(--font-source-serif), "Source Serif 4", Georgia, serif;
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
+
+  /* Type scale (px values from the mockup) */
+  --text-display: clamp(46px, 6vw, 88px); /* landing h1 */
+  --text-title: clamp(40px, 5vw, 64px); /* h1 on inner pages */
+  --text-h2: clamp(34px, 4.2vw, 56px); /* section titles */
+  --text-h3: 24px;
+  --text-lead: 18px;
+  --text-body: 16px;
+  --text-ui: 14.5px; /* nav, buttons */
+  --text-small: 13.5px;
+  --text-code: 13.5px;
+  --text-label: 12px; /* uppercase eyebrows */
+
+  /* Shape and layout */
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --container: 1220px;
+  --gutter: 24px;
+  --section-gap: 120px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-magnet: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Light theme (default) */
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #fbfbf8;
+  --surface: #ffffff;
+  --surface-2: #f4f4ef;
+  --text: #101218;
+  --muted: #4a4d57;
+  --muted-2: #5c5f69;
+  --code: #2e313b;
+  --border: rgba(16, 18, 24, 0.1);
+  --dash: rgba(16, 18, 24, 0.14);
+  --accent: #0e7a63;
+  --accent-hover: #0b6653;
+  --accent-fg: #ffffff;
+  --accent-text: #0e7a63;
+  --mark: rgba(124, 240, 210, 0.7);
+  --soft: #e3f7ef;
+  --soft-fg: #0b5d4b;
+  --term: #101218;
+  --term-fg: #d9dce8;
+  --term-muted: #8c93ad;
+  --inv: #101218;
+  --inv-fg: #ffffff;
+  --warn: #9b2c1f;
+  --warn-soft: #fbeeeb;
+  --card-shadow: 0 30px 70px -40px rgba(16, 18, 24, 0.4);
+  --glow: rgba(124, 240, 210, 0.22);
+}
+
+/* Dark theme: chosen with the theme button */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b0c12;
+  --surface: #12141f;
+  --surface-2: #0f1119;
+  --text: #ededf2;
+  --muted: #a3a9be;
+  --muted-2: #8c93ad;
+  --code: #d9dce8;
+  --border: rgba(255, 255, 255, 0.09);
+  --dash: rgba(255, 255, 255, 0.14);
+  --accent: #7cf0d2;
+  --accent-hover: #a3f6e1;
+  --accent-fg: #0b0c12;
+  --accent-text: #7cf0d2;
+  --mark: rgba(124, 240, 210, 0.32);
+  --soft: rgba(124, 240, 210, 0.12);
+  --soft-fg: #7cf0d2;
+  --term: #07080f;
+  --term-fg: #d9dce8;
+  --term-muted: #8c93ad;
+  --inv: #ededf2;
+  --inv-fg: #0b0c12;
+  --warn: #ff9c86;
+  --warn-soft: rgba(255, 156, 134, 0.1);
+  --card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 40px 100px -40px rgba(0, 0, 0, 0.9);
+  --glow: rgba(124, 240, 210, 0.12);
+}
+
+/* Dark theme: system setting, unless light was chosen */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0b0c12;
+    --surface: #12141f;
+    --surface-2: #0f1119;
+    --text: #ededf2;
+    --muted: #a3a9be;
+    --muted-2: #8c93ad;
+    --code: #d9dce8;
+    --border: rgba(255, 255, 255, 0.09);
+    --dash: rgba(255, 255, 255, 0.14);
+    --accent: #7cf0d2;
+    --accent-hover: #a3f6e1;
+    --accent-fg: #0b0c12;
+    --accent-text: #7cf0d2;
+    --mark: rgba(124, 240, 210, 0.32);
+    --soft: rgba(124, 240, 210, 0.12);
+    --soft-fg: #7cf0d2;
+    --term: #07080f;
+    --term-fg: #d9dce8;
+    --term-muted: #8c93ad;
+    --inv: #ededf2;
+    --inv-fg: #0b0c12;
+    --warn: #ff9c86;
+    --warn-soft: rgba(255, 156, 134, 0.1);
+    --card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 40px 100px -40px rgba(0, 0, 0, 0.9);
+    --glow: rgba(124, 240, 210, 0.12);
+  }
+}
+
+/* Show an element in one theme only (logos, theme button icons) */
+:root[data-theme="dark"] .only-light,
+:root[data-theme="light"] .only-dark {
+  display: none !important;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .only-light {
+    display: none !important;
+  }
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .only-dark {
+    display: none !important;
+  }
+}
+
+/* Base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent-text);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--mark);
+  color: var(--text);
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--font-mono);
+  /* JetBrains Mono joins characters like <!-- and -> into arrows; show them as typed. */
+  font-variant-ligatures: none;
+}
+
+/* Hidden on screen, still read by screen readers */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Entry animations from the mockup (.v9-rise / .v9-in) */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise 0.7s var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Page width: 1220px of content plus 24px gutters, as in the mockup */
+.container {
+  width: 100%;
+  max-width: calc(var(--container) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}

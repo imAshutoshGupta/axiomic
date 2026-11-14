@@ -1,0 +1,93 @@
+.block {
+  margin: 0;
+  min-width: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.file {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--code);
+}
+
+.terminal {
+  background: var(--term);
+  border: 1px solid var(--border);
+  color: var(--term-fg);
+}
+
+.title {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted-2);
+}
+
+.terminal .title {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  color: var(--term-muted);
+}
+
+.pre {
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+  font-size: var(--text-code);
+  line-height: 1.65;
+  tab-size: 2;
+}
+
+.pre:focus-visible {
+  outline-offset: -2px;
+}
+
+.wrap {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.line {
+  display: inline;
+}
+
+.prompt,
+.comment {
+  color: var(--term-muted);
+}
+
+.file .comment {
+  color: var(--muted-2);
+}
+
+.command {
+  color: #ffffff;
+}
+
+.output {
+  color: var(--term-fg);
+}
+
+.note {
+  padding: 10px 16px 12px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted-2);
+}
+
+.terminal .note {
+  border-top-color: rgba(255, 255, 255, 0.08);
+  color: var(--term-muted);
+}
+
+.note a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.note code {
+  font-size: 0.92em;
+}

@@ -1,0 +1,36 @@
+.section {
+  padding-top: var(--section-gap);
+  scroll-margin-top: -56px;
+}
+
+.head {
+  max-width: 760px;
+}
+
+.body {
+  margin-top: 40px;
+}
+
+/* Text on the left, a file or terminal on the right. One column on narrow screens. */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: 40px 72px;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding-top: 88px;
+    scroll-margin-top: -40px;
+  }
+  .body {
+    margin-top: 28px;
+  }
+}
