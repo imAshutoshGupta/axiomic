@@ -1,0 +1,378 @@
+/* Docs layout: sticky sidebar + content. Tokens only. */
+.layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 56px;
+  padding-bottom: 96px;
+}
+
+.side {
+  position: sticky;
+  top: 96px;
+  align-self: start;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: 40px 0 0;
+  font-size: 14px;
+}
+
+.side h2 {
+  margin: 22px 0 8px;
+  font-size: var(--text-label);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.side h2:first-child {
+  margin-top: 0;
+}
+
+.side ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-left: 1px solid var(--border);
+}
+
+.side a {
+  display: block;
+  padding: 5px 0 5px 14px;
+  margin-left: -1px;
+  border-left: 2px solid transparent;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.side a:hover {
+  color: var(--text);
+  border-left-color: var(--accent-text);
+}
+
+.side code {
+  font-size: 12.5px;
+}
+
+.main {
+  min-width: 0;
+}
+
+.h2 {
+  margin: 72px 0 8px;
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  scroll-margin-top: 96px;
+}
+
+.sub {
+  margin: 0 0 24px;
+  max-width: 640px;
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.sub code,
+.cmdText code {
+  font-size: 0.9em;
+  color: var(--code);
+}
+
+/* Quick start steps */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.step {
+  counter-increment: step;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.stepHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.stepHead::before {
+  content: counter(step);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.stepHead h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.stepText {
+  margin: 10px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* Small terminal snippet */
+.snip {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--term);
+  color: var(--term-fg);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.snip i {
+  font-style: normal;
+  color: var(--term-muted);
+}
+
+/* Command cards */
+.cmd {
+  margin: 0 0 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+  scroll-margin-top: 96px;
+}
+
+.cmdHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.cmdName {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.cmdBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 20px;
+  padding: 18px;
+}
+
+.cmdText {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.ticks {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.ticks li {
+  display: flex;
+  gap: 8px;
+}
+
+.ticks li::before {
+  content: "✓";
+  flex: none;
+  font-weight: 800;
+  color: var(--accent-text);
+}
+
+.flags {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.flags li {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.flags code {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--soft);
+  color: var(--soft-fg);
+  font-size: 12px;
+}
+
+.label {
+  margin: 0 0 6px;
+  font-size: var(--text-label);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+/* Coming commands grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mini {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--dash);
+  scroll-margin-top: 96px;
+}
+
+.mini h3 {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.mini p {
+  margin: 6px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* Exit codes and folders */
+.codes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.codeCard {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.codeNum {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.ok { background: var(--soft); color: var(--soft-fg); }
+.fail { background: var(--warn-soft); color: var(--warn); }
+.usage { background: var(--surface-2); color: var(--text); }
+
+.folder {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.folder h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.folder p {
+  margin: 4px 0 10px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.path {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--muted-2);
+}
+
+.path code {
+  overflow-wrap: anywhere;
+  color: var(--code);
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .side {
+    position: static;
+    max-height: none;
+    padding: 0;
+  }
+  .side ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border: 0;
+  }
+  .side a {
+    padding: 5px 10px;
+    margin: 0;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+  }
+  .cmdBody,
+  .steps,
+  .codes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -6,8 +6,11 @@
   padding: 0 9px;
   border-radius: 999px;
   border: 1px solid transparent;
+  font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 600;
+  letter-spacing: normal;
+  vertical-align: middle;
   white-space: nowrap;
 }
 
@@ -21,18 +24,21 @@
 
 /* Exists today */
 .built,
+.local,
 .available {
   background: var(--soft);
   color: var(--soft-fg);
 }
 
 /* Being written now */
-.in-progress {
+.in-progress,
+.soon {
   border-color: var(--accent-text);
   color: var(--accent-text);
 }
 
-.in-progress::before {
+.in-progress::before,
+.soon::before {
   background: transparent;
   box-shadow: inset 0 0 0 1.5px currentColor;
 }

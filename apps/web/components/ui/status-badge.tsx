@@ -1,11 +1,13 @@
 import styles from "./status-badge.module.css";
 
 /** Every status a feature or command can have on this site. */
-export type Status = "built" | "in-progress" | "planned" | "available" | "coming";
+export type Status = "built" | "local" | "in-progress" | "soon" | "planned" | "available" | "coming";
 
 const LABELS: Record<Status, string> = {
   built: "Built",
-  "in-progress": "In progress",
+  local: "Available (local)",
+  "in-progress": "In development",
+  soon: "Coming soon",
   planned: "Planned",
   available: "In this build",
   coming: "Coming: needs the server",

@@ -68,8 +68,8 @@ export function HowItWorks() {
         </p>
       </div>
       <p className={styles.planned}>
-        This is how axiomic works once the pilot is live. The server side is not built yet: see the{" "}
-        <Link href="/#status">status section</Link>.
+        The laptop side is built today; the server is in development. See the{" "}
+        <Link href="/roadmap">roadmap</Link>.
       </p>
     </section>
   );

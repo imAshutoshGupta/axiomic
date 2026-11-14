@@ -2,9 +2,10 @@
 export type NavLink = { href: string; label: string };
 
 export const MAIN_NAV: NavLink[] = [
-  { href: "/#how", label: "How it works" },
-  { href: "/security", label: "Security" },
+  { href: "/product", label: "Product" },
+  { href: "/features", label: "Features" },
   { href: "/docs/cli", label: "Docs" },
+  { href: "/security", label: "Security" },
 ];
 
 /**
@@ -17,14 +18,18 @@ export const FOOTER_NAV: { title: string; links: NavLink[] }[] = [
   {
     title: "Product",
     links: [
+      { href: "/product", label: "Overview" },
+      { href: "/features", label: "Features" },
+      { href: "/roadmap", label: "Roadmap" },
       { href: "/#how", label: "How it works" },
-      { href: "/#layers", label: "Rule layers" },
-      { href: "/#status", label: "Status" },
     ],
   },
   {
     title: "Docs",
-    links: [{ href: "/docs/cli", label: "CLI" }],
+    links: [
+      { href: "/docs/cli", label: "CLI" },
+      { href: "/faq", label: "FAQ" },
+    ],
   },
   {
     title: "Trust",

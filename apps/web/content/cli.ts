@@ -20,6 +20,8 @@ export type CliCommand = {
   /** Optional bullet list shown under the summary. */
   details?: string[];
   flags?: CliFlag[];
+  /** Example commands (no output shown, so nothing is invented). Lines starting with "#" are comments. */
+  example?: string[];
 };
 
 export const CLI_COMMANDS: CliCommand[] = [
@@ -27,13 +29,15 @@ export const CLI_COMMANDS: CliCommand[] = [
   { usage: "--help", aliases: ["-h", "help", "(no command)"], status: "available", summary: "List the commands and flags." },
   {
     usage: "status",
+    example: ["axiomic status", "# for scripts and CI", "axiomic status --json"],
     status: "available",
     summary:
-      "A local health check, no network. Shows the login, the hook, and for the current repo: its axiomic.json, the .gitignore and .dockerignore blocks, the offline cache and each rule file (ok, edited locally, missing, or not written by axiomic). Asks Git whether any rule file is tracked, or would not be ignored. Exits 1 if Git tracks or would not ignore a rule file, if the project is a Git repo but Git cannot confirm the rule files are ignored, or if any section reports an error; otherwise 0.",
+      "A local health check, no network. Shows the login, the hook and, for this repo, the ignore blocks, the offline cache and each rule file (ok, edited, missing or not axiomic's). Exits 1 if Git tracks a rule file, would not ignore one or cannot confirm, or if any check fails.",
     flags: [{ flag: "--json", summary: "Print the full report as JSON instead of text. The exit code is the same." }],
   },
   {
     usage: "remove",
+    example: ["# preview first", "axiomic remove --dry-run", "axiomic remove"],
     status: "available",
     summary:
       "Undo what axiomic did in this repo, and only that.",
@@ -56,19 +60,22 @@ export const CLI_COMMANDS: CliCommand[] = [
   },
   {
     usage: "hook install",
+    example: ["axiomic hook install --dry-run", "axiomic hook install"],
     status: "available",
     summary:
-      "Add the SessionStart hook to your user-level Claude Code settings (~/.claude/settings.json). One install covers every project. It only accepts a global install location (npm, pnpm or yarn global, nvm, fnm, Volta, asdf, Homebrew and similar) and refuses anything else: running from source, a temporary runner such as npx, dlx or bunx, a project-local node_modules, or any other folder, because the hook runs in every session and must not run code a single project controls. The hook form needs a recent Claude Code; on an older one it does nothing and sessions still start normally.",
+      "Add the session-start hook to your Claude Code user settings (~/.claude/settings.json). One install covers every project. For safety it only installs from a global location (npm, pnpm or yarn global, nvm, Homebrew and similar), never from npx or a project's node_modules, because the hook runs in every session. On an older Claude Code it does nothing and sessions start normally.",
     flags: [{ flag: "--dry-run", summary: "Show what would change and write nothing." }],
   },
   {
     usage: "hook uninstall",
+    example: ["axiomic hook uninstall"],
     status: "available",
     summary: "Remove the hook again. Other hooks in your settings are left alone.",
     flags: [{ flag: "--dry-run", summary: "Show what would change and write nothing." }],
   },
   {
     usage: "hook status",
+    example: ["axiomic hook status"],
     status: "available",
     summary:
       "Show whether the hook is installed and still works: the node and axiomic paths it runs, and a PROBLEM line if it is installed more than once, if either path no longer exists, or a note if it points at a different axiomic than the one you are running. Fix any of these with hook install.",

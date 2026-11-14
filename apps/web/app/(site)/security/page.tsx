@@ -17,42 +17,42 @@ const CONTROLS: { control: string; detail: string; status: Status }[] = [
   {
     control: "Layer merge",
     detail: "Combines company, team, project, module and personal rules. Locked rules cannot be replaced; a clash that gets through is dropped and reported.",
-    status: "built",
+    status: "local",
   },
   {
     control: "Path guards",
     detail: "Module names and folder paths go through strict allow-lists: no absolute paths, no “..”, nothing under .git/.",
-    status: "built",
+    status: "local",
   },
   {
     control: "Publish safety check (logic)",
     detail: "Looks for secret patterns, oversized text, invisible characters, text that imitates axiomic's own labels and known prompt-injection phrases. The logic exists; it is not yet wired to a server.",
-    status: "built",
+    status: "local",
   },
   {
     control: "Safe rendering",
     detail: "The Claude Code file renderer refuses unsafe module names and folder paths, and keeps each rule inside its own section.",
-    status: "built",
+    status: "local",
   },
   {
     control: "Safe file writer",
     detail: "Writes only axiomic's own rule files, refuses symlinks and paths outside the repo, and detects local edits so they are not overwritten.",
-    status: "built",
+    status: "local",
   },
   {
     control: "Git and Docker ignore",
     detail: "Owns a block in .gitignore and .dockerignore, and checks that Git really ignores the files and tracks none of them.",
-    status: "built",
+    status: "local",
   },
   {
     control: "Offline cache and remove",
     detail: "The last rules are stored locally for offline use, and axiomic remove undoes what axiomic wrote. Hook install and uninstall also work locally.",
-    status: "built",
+    status: "local",
   },
   {
     control: "Hook that fails open (local part)",
     detail: "The installed hook runs the installed CLI with a short timeout, always exits 0 and prints nothing, so your AI session always starts.",
-    status: "built",
+    status: "local",
   },
   {
     control: "Hook fetches rules from the server",
@@ -127,8 +127,8 @@ export default function SecurityPage() {
           </p>
         </Callout>
 
-        <h2 id="controls">Controls: built and planned</h2>
-        <p>“Built” means the code exists in this build and is tested. “Planned” means it is decided but not written.</p>
+        <h2 id="controls">Controls and their status</h2>
+        <p>“Available (local)” means the code exists, is tested and runs on the laptop today. “Planned” means it is decided but not written yet.</p>
       </Prose>
       <div className={styles.controls}>
         <TableWrap label="Security controls">
