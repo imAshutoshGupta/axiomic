@@ -20,7 +20,7 @@ Everything is vector-outlined: the lettering is real shapes, not live text, so t
 | macOS app / Dock | `app/macos/axiomic.icns` (source: `axiomic-macos-1024.png`) |
 | Windows app / taskbar | `app/windows/axiomic.ico` (16 to 256px inside) |
 | Link previews (Slack, X, LinkedIn) | `social/axiomic-og-1200x630.png` |
-| Colours for CSS | `brand/colors.css`, `brand/tokens.json` |
+| Colours for CSS | `tokens/colors.css`, `tokens/tokens.json` |
 
 Prefer the SVGs on the website. Use the PNGs where SVG isn't accepted (emails, some CMSs, app stores).
 
