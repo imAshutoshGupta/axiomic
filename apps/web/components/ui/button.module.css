@@ -7,6 +7,7 @@
   border-radius: var(--radius-sm);
   font-weight: 600;
   white-space: nowrap;
+  cursor: pointer; /* links already have it; real <button>s (sign-in) need it */
 }
 
 .md {
@@ -27,6 +28,7 @@
 }
 
 .primary {
+  border: 0; /* removes the browser's default border on real <button>s */
   background: var(--accent);
 }
 

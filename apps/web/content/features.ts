@@ -196,8 +196,8 @@ export const FEATURE_CATEGORIES: FeatureCategory[] = [
       {
         id: "sign-in",
         name: "Sign-in with GitHub or Google",
-        benefit: "No new passwords. Two-factor sign-in is required for people who can publish.",
-        status: "planned",
+        benefit: "No new passwords. Two-factor sign-in for admins is planned.",
+        status: "local",
       },
       {
         id: "roles",

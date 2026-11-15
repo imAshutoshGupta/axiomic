@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import Script from "next/script";
 import { inter, jetbrainsMono, sourceSerif } from "./fonts";
 import { siteUrl } from "../lib/site-url";
 import "./globals.css";
@@ -36,10 +37,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${inter.variable} ${sourceSerif.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
-      <body>{children}</body>
+      <body>
+        {/* beforeInteractive: Next puts it in the first HTML and runs it before the page starts.
+            A plain <script> works too, but React 19 warns about it in development. */}
+        <Script id="theme" strategy="beforeInteractive">
+          {themeScript}
+        </Script>
+        {children}
+      </body>
     </html>
   );
 }

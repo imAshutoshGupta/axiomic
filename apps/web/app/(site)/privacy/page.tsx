@@ -37,7 +37,8 @@ export default function PrivacyPage() {
 
         <h2 id="this-site">This website today</h2>
         <p>
-          This site has no sign-in, no forms, no cookies, no analytics and no third-party scripts. If you switch between light and dark, that choice is saved in your browser&apos;s <code>localStorage</code> and is never sent anywhere. Fonts are served
+          This site has no analytics and no third-party scripts. If you sign in, Supabase (our sign-in and database
+          provider) sets session cookies that keep you signed in; nothing else uses cookies. If you switch between light and dark, that choice is saved in your browser&apos;s <code>localStorage</code> and is never sent anywhere. Fonts are served
           from this site. The hosting provider keeps standard server logs (such as IP address and time of request).
         </p>
 

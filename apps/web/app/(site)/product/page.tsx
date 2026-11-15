@@ -71,7 +71,7 @@ export default function ProductPage() {
         <h2 id="pieces">Three parts, one shared brain</h2>
         <ul>
           <li>
-            <strong>The website</strong> is where leads write, review and approve rules. <StatusBadge status="planned" />
+            <strong>The website</strong> is where leads write, review and approve rules. <StatusBadge status="in-progress" />
           </li>
           <li>
             <strong>The server</strong> stores every version and decides who gets which rules. <StatusBadge status="in-progress" />

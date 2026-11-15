@@ -1,0 +1,12 @@
+/* Space before the footer, matching the other inner pages. */
+.page {
+  padding-bottom: 96px;
+}
+
+/* The two sign-in buttons: side by side when there's room, stacked on narrow phones. */
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}

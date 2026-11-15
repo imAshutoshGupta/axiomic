@@ -62,7 +62,7 @@ const CONTROLS: { control: string; detail: string; status: Status }[] = [
   {
     control: "Customer isolation",
     detail: "Row-level security on every table, so one company can never read another's rules.",
-    status: "planned",
+    status: "local",
   },
   {
     control: "Encryption of rule text",
@@ -74,7 +74,12 @@ const CONTROLS: { control: string; detail: string; status: Status }[] = [
     detail: "Stored hashed, revocable, sent only in the Authorization header and never in a URL. Kept in the CLI's config folder, never in the project.",
     status: "planned",
   },
-  { control: "Two-factor sign-in for admins", detail: "Required for people who can publish rules.", status: "planned" },
+  {
+    control: "Sign-in",
+    detail: "GitHub or Google only, no passwords. 15-minute sessions; every page checks the session's signature on the server.",
+    status: "local",
+  },
+  { control: "Two-factor sign-in for admins", detail: "Required for admin tools in company spaces.", status: "planned" },
   { control: "Publish alerts", detail: "An email on every publish, so a silent change is noticed.", status: "planned" },
   { control: "Rollback", detail: "Return to an earlier version in one step.", status: "planned" },
   { control: "Data region", detail: "Database hosted in Mumbai, India (ap-south-1).", status: "planned" },

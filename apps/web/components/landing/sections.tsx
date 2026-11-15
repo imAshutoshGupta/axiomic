@@ -244,8 +244,8 @@ export function SecuritySection() {
 /* ------------------------------------------------------------------ */
 const STAGES = [
   { title: "Built", cls: "", items: ["Layer merge & locks", "Safety check", "Laptop CLI & hook", "Claude Code"] },
-  { title: "Building", cls: v.stageNow, items: ["Server & storage", "Sync to laptops"] },
-  { title: "Next", cls: v.stageNext, items: ["Sign-in & roles", "Website editor & approvals", "Cursor", "1.0 on npm, free"] },
+  { title: "Building", cls: v.stageNow, items: ["Server & storage", "Sign-in", "Sync to laptops"] },
+  { title: "Next", cls: v.stageNext, items: ["Roles", "Website editor & approvals", "Cursor", "1.0 on npm, free"] },
 ];
 
 /** Where the product stands, at a glance. */
