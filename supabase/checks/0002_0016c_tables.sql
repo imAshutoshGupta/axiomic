@@ -44,7 +44,7 @@ select 1, 'sign-up builds card, personal space, hidden team, admin membership',
 
 -- A fake company "Acme".
 insert into public.spaces (id, kind, name, slug) values
-  ('10000000-0000-0000-0000-000000000001', 'work', 'Acme', 'acme');
+  ('10000000-0000-0000-0000-000000000001', 'work', 'Acme', 'acme-chk');
 insert into public.memberships (space_id, user_id, role) values
   ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000a', 'admin'),
   ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-00000000000b', 'editor');
