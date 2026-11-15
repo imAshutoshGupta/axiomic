@@ -24,7 +24,7 @@ const TOKEN = "axm_SECRET-do-not-print";
 const cacheEntry: CacheEntry = {
   schemaVersion: 1,
   apiUrl: DEFAULT_API_URL,
-  org: "acme",
+  space: "acme",
   project: "web-app",
   version: 3,
   etag: null,
@@ -38,7 +38,7 @@ const cacheEntry: CacheEntry = {
 /** A linked project with cached rules, as it will look after a future `axiomic pull`. */
 async function linkedProject(): Promise<Sandbox> {
   const box = await makeSandbox();
-  await writeProjectConfig(box.project, { schemaVersion: 1, org: "acme", project: "web-app" });
+  await writeProjectConfig(box.project, { schemaVersion: 1, space: "acme", project: "web-app" });
   await fs.writeFile(path.join(box.project, ".gitignore"), "node_modules\n");
   await writeCache(box.dirs.cache, await projectKey(box.project), cacheEntry);
   return box;
@@ -83,9 +83,9 @@ describe("session-start hook entry", () => {
     await sessionStart(box, box.home);
     expect(await listAll(box.home)).toEqual([]);
 
-    await writeProjectConfig(box.project, { schemaVersion: 1, org: "acme", project: "other" });
+    await writeProjectConfig(box.project, { schemaVersion: 1, space: "acme", project: "other" });
     await sessionStart(box);
-    await writeProjectConfig(box.project, { schemaVersion: 1, org: "acme", project: "web-app" });
+    await writeProjectConfig(box.project, { schemaVersion: 1, space: "acme", project: "web-app" });
     await sessionStart(box, box.project, { ...box.env, AXIOMIC_API_URL: "https://other.example.com" });
     expect(await exists(path.join(box.project, ".claude"))).toBe(false);
   });
@@ -216,12 +216,12 @@ describe("command line", () => {
     expect((await cli(box, [])).out).toBe(help.out);
   });
 
-  it.each(["login", "logout", "pull", "push", "whoami", "init", "diff", "import"])("%s says it is not available and fails", async (command) => {
+  it.each(["push", "diff", "import"])("%s says it is not available yet and fails", async (command) => {
     const box = await makeSandbox();
     const result = await cli(box, [command, "--quiet"]);
     expect(result.code).toBe(1);
     expect(result.out).toBe("");
-    expect(result.err).toContain("not available in this build");
+    expect(result.err).toContain("not available in this build yet");
     expect(await listAll(box.base)).toEqual([]);
   });
 
@@ -271,7 +271,7 @@ describe("axiomic status", () => {
     expect(report.credentials).toBe("ok");
     expect(report.hook).toMatchObject({ count: 0 });
     expect(report.project).toMatchObject({
-      config: { org: "acme", project: "web-app" },
+      config: { space: "acme", project: "web-app" },
       files: [
         { path: PAY, state: "modified" },
         { path: MAIN, state: "ok" },

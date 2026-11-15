@@ -23,7 +23,7 @@ export interface CacheEntry {
   schemaVersion: 1;
   /** Which server and project this came from. Checked before use, so a cache can't be applied to the wrong project. */
   apiUrl: string;
-  org: string;
+  space: string;
   project: string;
   /** The rules version number from the server. */
   version: number;
@@ -52,7 +52,7 @@ export function parseCacheEntry(text: string): CacheEntry | undefined {
   const r = data as Record<string, unknown>;
 
   if (r.schemaVersion !== 1) return undefined;
-  if (typeof r.apiUrl !== "string" || !isValidSlug(r.org) || !isValidSlug(r.project)) return undefined;
+  if (typeof r.apiUrl !== "string" || !isValidSlug(r.space) || !isValidSlug(r.project)) return undefined;
   if (typeof r.version !== "number" || !Number.isSafeInteger(r.version) || r.version < 0) return undefined;
   if (r.etag !== null && (typeof r.etag !== "string" || r.etag.length > 512)) return undefined;
   if (typeof r.fetchedAt !== "string" || Number.isNaN(Date.parse(r.fetchedAt))) return undefined;
@@ -72,7 +72,7 @@ export function parseCacheEntry(text: string): CacheEntry | undefined {
     files.push({ path: f.path, content: f.content }); // copy only the known fields
   }
 
-  return { schemaVersion: 1, apiUrl, org: r.org, project: r.project, version: r.version, etag: r.etag, fetchedAt: r.fetchedAt, files };
+  return { schemaVersion: 1, apiUrl, space: r.space, project: r.project, version: r.version, etag: r.etag, fetchedAt: r.fetchedAt, files };
 }
 
 /** Reads the cache for a project. Any problem (missing, damaged, symlink, too big) → undefined. Never throws. */

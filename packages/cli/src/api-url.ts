@@ -1,11 +1,11 @@
 /**
  * Where the axiomic server lives.
  *
- * PLACEHOLDER: there is no domain yet, and the server isn't deployed. Replace this with the real
- * Vercel URL once it exists. Never use axiomic.dev unless the owner confirms they own that domain.
+ * CONFIRMED (2026-11-15, DECISIONS #63): the owner created the Vercel project "axiomic", so this
+ * address is ours. No custom domain yet; when one is bought, change it here in the next release
+ * (the *.vercel.app address keeps working for older CLIs). Never use axiomic.dev unless the owner
+ * confirms they own that domain.
  * This is the ONE place the default server address is written (see "URL handling" in docs/PLAN.md).
- *
- * Nothing in this build talks to the network; this value is only resolved and shown.
  */
 export const DEFAULT_API_URL = "https://axiomic.vercel.app";
 

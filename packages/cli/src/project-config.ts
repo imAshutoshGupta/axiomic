@@ -1,32 +1,31 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { isValidSlug } from "@axiomic/shared";
 import { isNotFound, readFileNoFollow, writeFileAtomic } from "./fs-safe";
 
 /**
  * axiomic.json: a small file in the project root, committed to Git, that links the repo to an axiomic project.
  * It holds slugs only (no secrets), so a teammate's `axiomic init` needs no questions.
  *
- * PROVISIONAL: the main session (database work) may add a stable project id. When it does,
- * bump schemaVersion and accept both versions while old files are around.
+ * Slugs, not ids: they are readable in Git and can never change (database trigger), so they never go stale.
+ * (DECISIONS #56.)
  *
  * Example:
- *   { "schemaVersion": 1, "org": "acme", "project": "web-app" }
+ *   { "schemaVersion": 1, "space": "acme", "project": "web-app" }
  */
 export interface ProjectConfig {
   schemaVersion: 1;
-  /** The company (work space) slug. */
-  org: string;
-  /** The project slug inside that company. */
+  /** The space slug (a company's work space, or your personal space). Never changes (the database forbids it). */
+  space: string;
+  /** The project slug inside that space. */
   project: string;
 }
 
 export const PROJECT_CONFIG_FILE = "axiomic.json";
 const MAX_BYTES = 16 * 1024;
 
-/** A slug: lowercase letters, digits and single dashes, e.g. "web-app". Max 64 characters. */
-export function isValidSlug(value: unknown): value is string {
-  return typeof value === "string" && value.length <= 64 && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(value);
-}
+/** A slug, e.g. "web-app". The ONE definition lives in @axiomic/shared and matches the database check. */
+export { isValidSlug };
 
 /**
  * Checks axiomic.json's content strictly: exactly the known fields, valid slugs, known schemaVersion.
@@ -45,16 +44,16 @@ export function parseProjectConfig(text: string): ProjectConfig {
   }
   const record = data as Record<string, unknown>;
 
-  const unknown = Object.keys(record).filter((key) => !["schemaVersion", "org", "project"].includes(key));
+  const unknown = Object.keys(record).filter((key) => !["schemaVersion", "space", "project"].includes(key));
   if (unknown.length > 0) throw new Error(`${PROJECT_CONFIG_FILE} has unknown fields: ${unknown.map((k) => JSON.stringify(k)).join(", ")}`);
 
   if (record.schemaVersion !== 1) {
     throw new Error(`${PROJECT_CONFIG_FILE} has schemaVersion ${JSON.stringify(record.schemaVersion)}; this axiomic understands 1. Try updating axiomic.`);
   }
-  if (!isValidSlug(record.org)) throw new Error(`${PROJECT_CONFIG_FILE}: "org" must be a slug like "acme"`);
+  if (!isValidSlug(record.space)) throw new Error(`${PROJECT_CONFIG_FILE}: "space" must be a slug like "acme"`);
   if (!isValidSlug(record.project)) throw new Error(`${PROJECT_CONFIG_FILE}: "project" must be a slug like "web-app"`);
 
-  return { schemaVersion: 1, org: record.org, project: record.project };
+  return { schemaVersion: 1, space: record.space, project: record.project };
 }
 
 /** Reads <projectRoot>/axiomic.json. Returns undefined if it doesn't exist; throws if it's invalid or a symlink. */

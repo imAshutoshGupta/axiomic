@@ -17,11 +17,12 @@ export const metadata: Metadata = {
 const slug = (usage: string) => `cmd-${usage.replace(/[^a-z]+/g, "-").replace(/^-|-$/g, "")}`;
 
 const AVAILABLE = CLI_COMMANDS.filter((c) => c.status === "available" && !c.usage.startsWith("-"));
+const BUILDING = CLI_COMMANDS.filter((c) => c.status === "in-progress");
 const COMING = CLI_COMMANDS.filter((c) => c.status === "coming");
 
 const QUICK_START = [
   { title: "Install", code: ["# with 1.0 (not yet)", "npm install -g axiomic"], text: "Once per laptop." },
-  { title: "Sign in and link the repo", code: ["axiomic login", "axiomic init"], text: "Links the repo and installs the session hook." },
+  { title: "Sign in and link the repo", code: ["axiomic login", "axiomic init acme/web-app"], text: "Approve the login in your browser, then link the repo (at its top folder). This also installs the session hook." },
   { title: "Open Claude Code", code: ["claude"], text: "The hook writes your rules. Nothing to run, nothing to commit." },
   { title: "Check anytime", code: ["axiomic status"], text: "Confirms the hook works and Git ignores every rule file." },
 ];
@@ -113,7 +114,12 @@ export default function CliDocsPage() {
                 <a href={`#${slug(c.usage)}`}><code>{c.usage}</code></a>
               </li>
             ))}
-            <li><a href="#coming">Coming with the server</a></li>
+            {BUILDING.map((c) => (
+              <li key={c.usage}>
+                <a href={`#${slug(c.usage)}`}><code>{c.usage}</code></a>
+              </li>
+            ))}
+            <li><a href="#coming">Coming next</a></li>
           </ul>
           <h2>Reference</h2>
           <ul>
@@ -137,7 +143,9 @@ export default function CliDocsPage() {
 
           <h2 id="quick-start" className={styles.h2}>Quick start</h2>
           <p className={styles.sub}>
-            Four steps once 1.0 ships. Today the hook, <code>status</code> and <code>remove</code> already work locally.
+            Four steps once 1.0 ships. Today the hook, <code>status</code> and <code>remove</code> work on their own;{" "}
+            <code>login</code>, <code>init</code> and <code>pull</code> are built and tested against a local axiomic server, and
+            wait for the hosted one to go live.
           </p>
           <ol className={styles.steps}>
             {QUICK_START.map((s) => (
@@ -163,7 +171,15 @@ export default function CliDocsPage() {
             <Command key={cmd.usage} cmd={cmd} />
           ))}
 
-          <h2 id="coming" className={styles.h2}>Coming with the server</h2>
+          <h2 id="server-commands" className={styles.h2}>Built, waiting for the hosted server</h2>
+          <p className={styles.sub}>
+            These work against a local axiomic server and are tested. They become usable for everyone once the hosted server is live.
+          </p>
+          {BUILDING.map((cmd) => (
+            <Command key={cmd.usage} cmd={cmd} />
+          ))}
+
+          <h2 id="coming" className={styles.h2}>Coming next</h2>
           <p className={styles.sub}>{NOT_AVAILABLE_NOTE}</p>
           <ul className={styles.grid}>
             {COMING.map((c) => (

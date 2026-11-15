@@ -60,3 +60,46 @@ export async function listAll(dir: string): Promise<string[]> {
   const entries = await fs.readdir(dir, { recursive: true, withFileTypes: true });
   return entries.filter((e) => !e.isDirectory()).map((e) => path.relative(dir, path.join(e.parentPath, e.name))).sort();
 }
+
+/** One request the fake server received. */
+export interface SeenRequest {
+  method: string;
+  url: string;
+  headers: Record<string, string>;
+  body: unknown;
+  redirect: RequestRedirect | undefined;
+}
+
+export type FakeRoute = (req: SeenRequest) => { status: number; body?: unknown } | Promise<{ status: number; body?: unknown }>;
+
+/**
+ * A fake axiomic server for tests: a fetch function that answers from `routes`
+ * ("POST /api/v1/device/start" → handler) and records every request. Unknown routes → 404.
+ * `down: true` makes every call fail like a network error.
+ */
+export function fakeServer(routes: Record<string, FakeRoute>, options: { down?: boolean } = {}) {
+  const seen: SeenRequest[] = [];
+  const fetch = (async (input: string | URL | Request, init: RequestInit = {}) => {
+    const url = String(input);
+    const headers = Object.fromEntries(Object.entries((init.headers ?? {}) as Record<string, string>).map(([k, v]) => [k.toLowerCase(), v]));
+    const req: SeenRequest = {
+      method: init.method ?? "GET",
+      url,
+      headers,
+      body: typeof init.body === "string" ? JSON.parse(init.body) : undefined,
+      redirect: init.redirect,
+    };
+    seen.push(req);
+    if (options.down) throw new TypeError("fetch failed");
+    const route = routes[`${req.method} ${new URL(url).pathname}`];
+    const answer = route ? await route(req) : { status: 404, body: { error: "not found" } };
+    return new Response(answer.body === undefined ? null : JSON.stringify(answer.body), {
+      status: answer.status,
+      headers: { "content-type": "application/json" },
+    });
+  }) as typeof globalThis.fetch;
+  return { fetch, seen };
+}
+
+/** A well-formed fake token (axm_ + 43 URL-safe characters). */
+export const fakeToken = (c: string) => `axm_${c.repeat(43).slice(0, 43)}`;

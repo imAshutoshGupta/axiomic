@@ -31,7 +31,10 @@ export default async function SignInPage({ searchParams }: Props) {
       <div className={`container ${styles.page}`}>
         <PageHeader eyebrow="Sign in" title="You're already signed in" />
         <form method="post" action="/auth/sign-out" className={styles.buttons}>
-          <a href="/account/tokens" className={`${buttonStyles.button} ${buttonStyles.primary} ${buttonStyles.lg}`}>
+          <a href="/device" className={`${buttonStyles.button} ${buttonStyles.primary} ${buttonStyles.lg}`}>
+            Approve a CLI login
+          </a>
+          <a href="/account/tokens" className={`${buttonStyles.button} ${buttonStyles.secondary} ${buttonStyles.lg}`}>
             CLI tokens
           </a>
           <button

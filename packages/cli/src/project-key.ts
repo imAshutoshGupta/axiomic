@@ -5,7 +5,7 @@ import { sha256 } from "./fs-safe";
 /**
  * A short, safe folder name for one project inside axiomic's cache and state folders.
  *
- * Decision: we hash the project's REAL path on disk (symlinks resolved), not its org/project slugs.
+ * Decision: we hash the project's REAL path on disk (symlinks resolved), not its space/project slugs.
  * - Two clones of the same project are two different folders with possibly different local edits,
  *   so they must not share a manifest. Slugs would mix them up.
  * - A hash is always a plain [0-9a-f] name: no "/", "..", or odd characters can reach the file system,

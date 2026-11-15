@@ -25,6 +25,7 @@ try {
     scriptPath: fileURLToPath(import.meta.url),
     stdout: (text) => void process.stdout.write(text),
     stderr: (text) => void process.stderr.write(text),
+    fetch: globalThis.fetch,
   });
   if (isHookEntry) process.exit(0);
   process.exitCode = code;

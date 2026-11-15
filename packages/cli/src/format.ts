@@ -1,6 +1,7 @@
 import type { HookStatus } from "./claude-hook";
 import type { RemoveReport } from "./remove";
 import type { StatusReport } from "./status";
+import type { WriteReport } from "./writer";
 
 /**
  * Turns the reports from `status`, `remove` and `hook status` into plain text for the terminal.
@@ -34,7 +35,7 @@ export function formatHookStatus(status: HookStatus): string {
 
 export function formatStatus(report: StatusReport): string {
   const lines: string[] = [];
-  lines.push(`Server:      ${errorText(report.apiUrl) ? `PROBLEM: ${errorText(report.apiUrl)}` : String(report.apiUrl)} (not contacted in this build)`);
+  lines.push(`Server:      ${errorText(report.apiUrl) ? `PROBLEM: ${errorText(report.apiUrl)}` : String(report.apiUrl)} (status works offline: it does not contact the server)`);
   lines.push(
     `Login:       ${report.credentials === "none" ? "none saved" : report.credentials === "ok" ? "saved" : `PROBLEM: ${errorText(report.credentials)}`}`,
   );
@@ -53,7 +54,7 @@ export function formatStatus(report: StatusReport): string {
   const configError = errorText(project.config);
   lines.push("", `Project:     ${project.root}`);
   lines.push(
-    `  axiomic.json: ${configError ? `PROBLEM: ${configError}` : `${(project.config as { org: string }).org}/${(project.config as { project: string }).project}`}`,
+    `  axiomic.json: ${configError ? `PROBLEM: ${configError}` : `${(project.config as { space: string }).space}/${(project.config as { project: string }).project}`}`,
   );
   lines.push(`  .gitignore block:    ${project.gitignore}`);
   lines.push(`  .dockerignore block: ${project.dockerignore}`);
@@ -112,5 +113,33 @@ export function formatRemoveReport(report: RemoveReport, dryRun: boolean): strin
   if (report.hook !== undefined) lines.push(report.hook === "removed" ? `${did} the Claude Code hook` : "Claude Code hook: was not installed");
   if (report.credentialsRemoved !== undefined) lines.push(report.credentialsRemoved ? `${did} the saved login` : "Saved login: none");
   lines.push("axiomic.json was left in place (it's shared with your team through Git).");
+  return lines.join("\n") + "\n";
+}
+
+/** The merge's reason codes (packages/shared merge.ts) in plain words. */
+const BLOCKED_REASONS: Record<string, string> = {
+  locked: "a locked company or team rule has the same title",
+  "personal-adds-only": "personal rules can only add, not replace a work rule",
+};
+
+/** What a pull changed on disk, plus the rules the merge dropped. Empty lists are left out. */
+export function formatPullReport(
+  report: WriteReport,
+  answer: { project: { name: string; space: string; slug: string }; version: number; blocked: { title: string; layer: string; reason: string }[] },
+): string {
+  const changed = report.written.length + report.deleted.length;
+  const lines = [
+    `Rules for ${answer.project.space}/${answer.project.slug} (${answer.project.name}), version ${answer.version}: ` +
+      (changed === 0 ? "already up to date." : `${changed} file${changed === 1 ? "" : "s"} changed.`),
+    ...list("Written:", report.written),
+    ...list("Removed (no longer in your rules):", report.deleted),
+    ...list("Edited on this computer, so kept as they are (axiomic push, to send edits back, is coming):", report.keptModified),
+    ...list("Not written by axiomic, so left alone:", report.keptUnmanaged),
+    ...list("Not finished (run axiomic pull again):", report.deferred),
+    ...list(
+      "Left out by the combine step:",
+      answer.blocked.map((b) => `${b.title} (${b.layer} rule): ${BLOCKED_REASONS[b.reason] ?? b.reason}`),
+    ),
+  ];
   return lines.join("\n") + "\n";
 }

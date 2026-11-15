@@ -1,0 +1,49 @@
+.page {
+  padding-bottom: 96px;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 24px 0 16px;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+/* Big, spaced letters: easy to compare with the terminal on a phone. */
+.input {
+  min-width: 200px;
+  padding: 10px 12px;
+  font: inherit;
+  font-family: var(--font-mono, monospace);
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: inherit;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 16px;
+  margin: 24px 0;
+}
+
+.facts dt {
+  opacity: 0.7;
+}
+
+.facts dd {
+  margin: 0;
+  word-break: break-word;
+}

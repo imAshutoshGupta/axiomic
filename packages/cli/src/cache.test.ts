@@ -8,7 +8,7 @@ import { POSIX, listAll, makeSandbox, modeOf } from "./test-helpers";
 const entry: CacheEntry = {
   schemaVersion: 1,
   apiUrl: "https://axiomic.vercel.app",
-  org: "acme",
+  space: "acme",
   project: "web-app",
   version: 7,
   etag: '"abc"',
@@ -51,7 +51,7 @@ describe("offline cache", () => {
     ["a path outside the allow-list", JSON.stringify({ ...entry, files: [{ path: "../../.ssh/authorized_keys", content: "x" }] })],
     ["CLAUDE.md", JSON.stringify({ ...entry, files: [{ path: "CLAUDE.md", content: "x" }] })],
     ["an http server", JSON.stringify({ ...entry, apiUrl: "http://evil.example.com" })],
-    ["a bad slug", JSON.stringify({ ...entry, org: "../x" })],
+    ["a bad slug", JSON.stringify({ ...entry, space: "../x" })],
     ["a negative version", JSON.stringify({ ...entry, version: -1 })],
   ])("treats %s as no cache, without throwing", async (_name, text) => {
     const box = await makeSandbox();

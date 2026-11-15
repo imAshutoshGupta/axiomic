@@ -15,7 +15,7 @@ export type PullResult =
   | { ok: false; status: 404 | 409; error: string };
 
 export interface PullBody {
-  project: { id: string; name: string; slug: string };
+  project: { id: string; name: string; slug: string; space: string };
   /** The three counters this answer was built from (D3). The CLI compares them to know if it's up to date. */
   versions: { space: number; team: number; personal: number };
   files: RenderedFile[];
@@ -35,10 +35,20 @@ type RuleRow = {
   key_version: number;
 };
 
-export async function readPull(tx: Tx, ring: Keyring, projectId: string, cliVersion: string | null): Promise<PullResult> {
-  // 1. The project. Not visible (or doesn't exist) → 404, same answer for both so ids can't be probed.
+/** Which project: the two slugs from axiomic.json (DECISIONS #56). Checked with isValidSlug by the route. */
+export interface ProjectRef {
+  space: string;
+  project: string;
+}
+
+export async function readPull(tx: Tx, ring: Keyring, ref: ProjectRef, cliVersion: string | null): Promise<PullResult> {
+  // 1. The project, found by its space's slug + its own slug (both unique together, both unchangeable).
+  //    RLS hides spaces and projects you can't read. Not visible or doesn't exist → the same 404,
+  //    so nobody can probe which slugs exist.
   const [project] = await tx<{ id: string; space_id: string; team_id: string; name: string; slug: string; archived_at: Date | null }[]>`
-    select id, space_id, team_id, name, slug, archived_at from public.projects where id = ${projectId}`;
+    select p.id, p.space_id, p.team_id, p.name, p.slug, p.archived_at
+    from public.projects p join public.spaces s on s.id = p.space_id
+    where s.slug = ${ref.space} and p.slug = ${ref.project}`;
   if (!project) return { ok: false, status: 404, error: "project not found" };
   if (project.archived_at) return { ok: false, status: 409, error: "this project is archived" };
 
@@ -112,7 +122,7 @@ export async function readPull(tx: Tx, ring: Keyring, projectId: string, cliVers
   return {
     ok: true,
     body: {
-      project: { id: project.id, name: project.name, slug: project.slug },
+      project: { id: project.id, name: project.name, slug: project.slug, space: ref.space },
       versions,
       files,
       blocked: result.blocked.map((b) => ({ title: b.title, layer: b.source, reason: b.reason })),

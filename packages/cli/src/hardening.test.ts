@@ -31,7 +31,7 @@ const SCRIPT = "/opt/lib/node_modules/axiomic/dist/axiomic.js";
 const cacheEntry = (files: { path: string; content: string }[]): CacheEntry => ({
   schemaVersion: 1,
   apiUrl: DEFAULT_API_URL,
-  org: "acme",
+  space: "acme",
   project: "web-app",
   version: 3,
   etag: null,
@@ -45,7 +45,7 @@ const TWO = [
 
 async function linkedProject(files = TWO): Promise<Sandbox> {
   const box = await makeSandbox();
-  await writeProjectConfig(box.project, { schemaVersion: 1, org: "acme", project: "web-app" });
+  await writeProjectConfig(box.project, { schemaVersion: 1, space: "acme", project: "web-app" });
   await writeCache(box.dirs.cache, await projectKey(box.project), cacheEntry(files));
   return box;
 }

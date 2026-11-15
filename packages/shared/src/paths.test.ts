@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isSafeFolderPath, isSafeModuleName } from "./paths";
+import { isSafeFolderPath, isSafeModuleName, isValidSlug } from "./paths";
 
 describe("isSafeModuleName", () => {
   it.each(["payments", "user-auth", "v2", "a", "x".repeat(64)])("allows %s", (name) => {
@@ -51,5 +51,25 @@ describe("isSafeFolderPath", () => {
     ["too long", "a/".repeat(128) + "a"],
   ])("blocks %s", (_label, path) => {
     expect(isSafeFolderPath(path)).toBe(false);
+  });
+});
+
+describe("isValidSlug (same as the database check)", () => {
+  it.each(["acme", "web-app", "a1", "x".repeat(31), "p-0123456789abcdef"])("allows %s", (slug) => {
+    expect(isValidSlug(slug)).toBe(true);
+  });
+
+  it.each([
+    ["one character", "a"],
+    ["too long", "x".repeat(32)],
+    ["a leading dash", "-acme"],
+    ["capital letters", "Acme"],
+    ["climbing out", "../x"],
+    ["a dot", "a.b"],
+    ["a space", "a b"],
+    ["a line break", "acme\n"],
+    ["not a string", 5],
+  ])("blocks %s", (_label, slug) => {
+    expect(isValidSlug(slug)).toBe(false);
   });
 });

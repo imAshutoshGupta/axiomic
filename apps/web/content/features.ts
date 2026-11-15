@@ -176,7 +176,7 @@ export const FEATURE_CATEGORIES: FeatureCategory[] = [
       {
         id: "server-sync",
         name: "Sync from the server",
-        benefit: "The hook fetches the latest combined rules, only downloading when something changed, and falls back to the offline copy.",
+        benefit: "The hook fetches the latest combined rules at every session start and falls back to the offline copy. Built and tested against a local server; waiting for the hosted one.",
         status: "in-progress",
       },
     ],
@@ -220,8 +220,8 @@ export const FEATURE_CATEGORIES: FeatureCategory[] = [
       {
         id: "revoke",
         name: "Offboarding",
-        benefit: "Removing a person stops their updates, and the CLI deletes the managed files on its next run.",
-        status: "planned",
+        benefit: "Removing a person stops their updates, and the CLI deletes the managed files on its next run. The CLI side is built; removing people on the website comes with roles.",
+        status: "in-progress",
       },
       {
         id: "alerts",

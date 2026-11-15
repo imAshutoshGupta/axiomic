@@ -56,8 +56,9 @@ describe("the built bundle", () => {
     expect(imported.length).toBeGreaterThan(0);
     expect(imported.filter((name) => !name.startsWith("node:"))).toEqual([]);
     expect(code).not.toMatch(/\brequire\(|\bimport\(/);
-    // Nothing in this build may talk to the network.
-    expect(code).not.toMatch(/\bfetch\(|node:https?|node:net|node:tls|node:dgram|XMLHttpRequest|WebSocket/);
+    // The network is reached ONLY through api-client.ts's injected fetch (opts.fetch), never raw sockets.
+    expect(code).not.toMatch(/node:https?|node:net|node:tls|node:dgram|XMLHttpRequest|WebSocket/);
+    expect([...code.matchAll(/[\w.]*fetch\(/g)].map((m) => m[0])).toEqual(["opts.fetch("]);
   });
 
   it("has no runtime dependencies and can't be published by accident", async () => {
@@ -68,10 +69,16 @@ describe("the built bundle", () => {
     expect(pkg.private).toBe(true);
   });
 
-  it("server commands fail honestly", async () => {
-    const result = await axiomic(["pull"]);
+  it("commands not built yet fail honestly", async () => {
+    const result = await axiomic(["push"]);
     expect(result.code).toBe(1);
-    expect(result.stderr).toContain("not available in this build");
+    expect(result.stderr).toContain("not available in this build yet");
+  });
+
+  it("server commands without a login say so, and touch nothing", async () => {
+    const result = await axiomic(["whoami"]);
+    expect(result.code).toBe(1);
+    expect(result.stderr).toContain("not logged in");
   });
 
   it("installs a hook that points at this node and this file, and that hook command really runs", async () => {
@@ -97,7 +104,7 @@ describe("the built bundle", () => {
   // A named pipe (FIFO) where the cache file should be makes reading it block forever: the worst case for a hook.
   it.skipIf(process.platform === "win32")("the session hook gives up after its time limit, prints nothing and still exits 0", async () => {
     const hung = await makeSandbox();
-    await writeProjectConfig(hung.project, { schemaVersion: 1, org: "acme", project: "web-app" });
+    await writeProjectConfig(hung.project, { schemaVersion: 1, space: "acme", project: "web-app" });
     const file = cacheFilePath(hung.dirs.cache, await projectKey(hung.project));
     await fs.mkdir(path.dirname(file), { recursive: true });
     await run("mkfifo", [file]);

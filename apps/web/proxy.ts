@@ -12,6 +12,11 @@ import { supabasePublishableKey, supabaseUrl } from "./lib/supabase/env";
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
+  // No Supabase configured (e.g. a deployment before production is set up): there is no pass to
+  // refresh, so step aside. Public pages keep working; pages that need sign-in still fail on their
+  // own, loudly, through lib/supabase/env.ts. This grants nothing: it only skips a refresh (#63).
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) return response;
+
   const supabase = createServerClient(supabaseUrl(), supabasePublishableKey(), {
     cookies: {
       getAll() {

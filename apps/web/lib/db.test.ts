@@ -8,7 +8,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { GET as pull } from "../app/api/v1/pull/route";
 import { closeDb, pgCode, withServer, withUser, type BrowserClaims, type DbClaims } from "./db";
 import { canaryOk } from "./rule-keys";
-import { claimsFromBearer } from "./tokens";
+import { authenticateBearer } from "./tokens";
+
+const claimsFromBearer = async (h: string | null) => (await authenticateBearer(h))?.claims ?? null;
 
 const live = !!process.env.AXIOMIC_DATABASE_URL?.includes(".mufkzfmwifxzeizssjdy:");
 
@@ -32,11 +34,16 @@ async function issue(owner: string, kind: "cli" | "agent", project: string | nul
   return row!.r.token;
 }
 
-function get(project: string, token?: string): Promise<Response> {
+/** Pull by slugs: "acme/web-app". */
+function get(ref: string, token?: string): Promise<Response> {
+  const [space, project] = ref.split("/");
   const headers: Record<string, string> = { "x-axiomic-cli-version": "0.0.0-test" };
   if (token) headers.authorization = `Bearer ${token}`;
-  return pull(new Request(`http://localhost/api/v1/pull?project=${project}`, { headers }));
+  const query = project === undefined ? `space=${space}` : `space=${space}&project=${project}`;
+  return pull(new Request(`http://localhost/api/v1/pull?${query}`, { headers }));
 }
+
+const WEB = "acme/web-app";
 
 type Body = { files: { path: string; content: string }[]; versions: Record<string, number>; blocked: unknown[] };
 
@@ -114,12 +121,13 @@ describe.skipIf(!live)("database (live, axiomic-dev)", () => {
   });
 
   describe("GET /api/v1/pull", () => {
-    it("401 without a token, 400 with a bad project id", async () => {
-      expect((await get(WEB_APP)).status).toBe(401);
-      expect((await get("nope", raviCli)).status).toBe(400);
+    it("401 without a token, 400 with bad slugs", async () => {
+      expect((await get(WEB)).status).toBe(401);
+      expect((await get("acme/Bad..Slug", raviCli)).status).toBe(400);
+      expect((await get("acme", raviCli)).status).toBe(400); // no project
     });
     it("a reader gets the combined rules for web-app", async () => {
-      const res = await get(WEB_APP, raviCli);
+      const res = await get(WEB, raviCli);
       expect(res.status).toBe(200);
       expect(res.headers.get("cache-control")).toBe("no-store");
       const body = (await res.json()) as Body;
@@ -135,31 +143,32 @@ describe.skipIf(!live)("database (live, axiomic-dev)", () => {
       expect(mod).toContain("paise");
     });
     it("the author gets their own personal rule; an admin never gets others'", async () => {
-      const bala = (await (await get(WEB_APP, balaCli)).json()) as Body;
+      const bala = (await (await get(WEB, balaCli)).json()) as Body;
       expect(bala.files[0]!.content).toContain("I like short answers");
       const asha = await issue(ASHA, "cli", null);
-      const ashaBody = (await (await get(WEB_APP, asha)).json()) as Body;
+      const ashaBody = (await (await get(WEB, asha)).json()) as Body;
       expect(ashaBody.files[0]!.content).not.toContain("I like short answers");
     });
     it("an outsider gets 404 (same as a project that doesn't exist)", async () => {
       const xena = await issue(XENA, "cli", null);
-      expect((await get(WEB_APP, xena)).status).toBe(404);
-      expect((await get(randomUUID(), xena)).status).toBe(404);
+      expect((await get(WEB, xena)).status).toBe(404);
+      expect((await get("acme/no-such-project", xena)).status).toBe(404);
+      expect((await get("globex/web-app", raviCli)).status).toBe(404); // right slug, wrong space
     });
     it("an agent key reads only its project, with no personal rules", async () => {
-      const res = await get(WEB_APP, balaAgent);
+      const res = await get(WEB, balaAgent);
       expect(res.status).toBe(200);
       expect(((await res.json()) as Body).files[0]!.content).not.toContain("I like short answers");
-      expect((await get(API, balaAgent)).status).toBe(404);
+      expect((await get("acme/api", balaAgent)).status).toBe(404);
     });
     it("records the pull for a CLI token, not for an agent key (S5)", async () => {
       const read = () =>
         withUser(browser(BALA), (tx) => tx<{ last_pull_at: Date; cli_version: string }[]>`
           select last_pull_at, cli_version from public.client_status where project_id = ${WEB_APP} and user_id = ${BALA}`);
-      await get(WEB_APP, balaCli);
+      await get(WEB, balaCli);
       const [before] = await read();
       expect(before!.cli_version).toBe("0.0.0-test");
-      await get(WEB_APP, balaAgent);
+      await get(WEB, balaAgent);
       const [after] = await read();
       expect(after!.last_pull_at.getTime()).toBe(before!.last_pull_at.getTime());
     });
@@ -167,7 +176,7 @@ describe.skipIf(!live)("database (live, axiomic-dev)", () => {
       const t = await issue(RAVI, "cli", null);
       const id = issued.at(-1)!.id;
       await withUser(browser(RAVI), (tx) => tx`select api.revoke_token(${id})`);
-      expect((await get(WEB_APP, t)).status).toBe(401);
+      expect((await get(WEB, t)).status).toBe(401);
     });
   });
 });

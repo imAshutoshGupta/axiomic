@@ -56,8 +56,8 @@ const CONTROLS: { control: string; detail: string; status: Status }[] = [
   },
   {
     control: "Hook fetches rules from the server",
-    detail: "At session start, fetch the latest rules from the server, cache first, and fall back to the last copy if it is down.",
-    status: "planned",
+    detail: "At session start, fetch the latest rules from the server (waiting at most 1.2 seconds), and fall back to the last copy if it is slow or down.",
+    status: "local",
   },
   {
     control: "Customer isolation",
@@ -81,7 +81,17 @@ const CONTROLS: { control: string; detail: string; status: Status }[] = [
   },
   {
     control: "Tokens",
-    detail: "Stored hashed, revocable, sent only in the Authorization header and never in a URL. Unused CLI tokens stop working after 90 days. Planned: the CLI keeps its token in its config folder, never in the project.",
+    detail: "Stored hashed, revocable, sent only in the Authorization header and never in a URL, and only to the server that issued them. Unused CLI tokens stop working after 90 days. The CLI keeps its token in its config folder, readable only by you, never in the project; logging in again revokes the old one.",
+    status: "local",
+  },
+  {
+    control: "CLI login by code",
+    detail: "axiomic login shows a short code that you type on the website after signing in. The page shows which device asked; there is no ready-made approve link, so a link someone sends you can't log their terminal in as you. Codes expire after 10 minutes, work once, and tries are rate limited.",
+    status: "local",
+  },
+  {
+    control: "Rate limits on the CLI's API",
+    detail: "Each token is limited to 120 requests a minute; starting a login is limited per network address (addresses are kept 24 hours at most).",
     status: "local",
   },
   {
@@ -189,8 +199,10 @@ export default function SecurityPage() {
             <code>axiomic remove</code> deletes the files axiomic wrote, its ignore-file blocks and the local cache. It keeps files you edited unless you add <code>--force</code>, and never deletes files axiomic did not write; the blocks stay while such files remain.
           </li>
           <li>
-            Planned: when a person is removed, their token stops working and the CLI deletes the managed files on its
-            next run. Copies they already made cannot be recalled.
+            When a login is revoked, or a person no longer has access to a project, the CLI deletes the rule files it
+            wrote there the next time it runs (at session start or on <code>axiomic pull</code>). Files they edited are kept
+            and reported. A laptop that stays offline keeps its last files until then, and copies already made cannot be
+            recalled. Removing a person on the website is planned.
           </li>
         </ul>
 

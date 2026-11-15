@@ -94,8 +94,9 @@ const FAQS: { id: string; q: string; a: ReactNode }[] = [
     q: "What happens when someone leaves the team?",
     a: (
       <p>
-        Planned: their access stops and the CLI deletes the managed files on its next run. Copies they already made
-        cannot be recalled, which is true of any tool.
+        Their access stops, and the CLI deletes the rule files it wrote the next time it runs (built; removing a person
+        on the website is planned). A laptop that stays offline keeps its last files until then, and copies they
+        already made cannot be recalled, which is true of any tool.
       </p>
     ),
   },

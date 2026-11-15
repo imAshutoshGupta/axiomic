@@ -31,3 +31,13 @@ export function isSafeFolderPath(path: string): boolean {
       !part.endsWith("."), // Windows silently drops trailing dots, so "x." could turn into "x"
   );
 }
+
+/**
+ * A space or project slug, e.g. "acme" or "web-app": exactly the database's own check
+ * (spaces.slug / projects.slug: `^[a-z0-9][a-z0-9-]{1,30}$`), so the CLI, the server and the
+ * database can never disagree about what is valid. 2–31 characters. Slugs go in axiomic.json
+ * and in /api/v1 query strings, so nothing outside this set may get through.
+ */
+export function isValidSlug(value: unknown): value is string {
+  return typeof value === "string" && /^[a-z0-9][a-z0-9-]{1,30}$/.test(value);
+}

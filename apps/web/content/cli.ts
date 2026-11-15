@@ -1,7 +1,9 @@
 /**
  * The CLI facts shown on /docs/cli. This is the ONE place to correct when the CLI changes.
  * Source of truth: `axiomic --help` of the built CLI (packages/cli/src/cli.ts) and the modules it calls.
- * "available": works in the current build, with no server. "coming": needs the server, which is not built yet.
+ * "available": works in the current build, with no server.
+ * "in-progress": built and tested against a local axiomic server; the hosted server isn't live yet (DECISIONS #61).
+ * "coming": not built yet.
  * Exact flags are still subject to change before 1.0.
  */
 export type CliFlag = {
@@ -15,7 +17,7 @@ export type CliCommand = {
   usage: string;
   /** Other spellings that do the same thing, without the leading "axiomic". */
   aliases?: string[];
-  status: "available" | "coming";
+  status: "available" | "in-progress" | "coming";
   summary: string;
   /** Optional bullet list shown under the summary. */
   details?: string[];
@@ -80,17 +82,59 @@ export const CLI_COMMANDS: CliCommand[] = [
     summary:
       "Show whether the hook is installed and still works: the node and axiomic paths it runs, and a PROBLEM line if it is installed more than once, if either path no longer exists, or a note if it points at a different axiomic than the one you are running. Fix any of these with hook install.",
   },
-  { usage: "login", status: "coming", summary: "Sign in through the browser and store a token in the config folder." },
-  { usage: "logout", status: "coming", summary: "Delete the stored token." },
+  {
+    usage: "login",
+    example: ["axiomic login", "# on a computer without a browser", "axiomic login --no-browser"],
+    status: "in-progress",
+    summary:
+      "Sign in through the browser. The terminal shows a short code; you open the axiomic website, sign in, type the code and approve. The terminal then gets its own token, saved in the config folder (readable only by you), never in the project.",
+    details: [
+      "You always type the code yourself, and the page shows which device asked, so a link someone sends you cannot log in their terminal as you.",
+      "Logging in again revokes the token it replaces.",
+      "The token is sent only to the server it came from, in the Authorization header.",
+    ],
+    flags: [
+      { flag: "--api-url <url>", summary: "Log in to another axiomic server (https only, http only for localhost)." },
+      { flag: "--no-browser", summary: "Don't open the browser; just print the address." },
+    ],
+  },
   {
     usage: "init",
-    status: "coming",
-    summary: "Link this repo to a project (writes axiomic.json: org and project names only, no secrets) and install the hook.",
+    example: ["# list the projects you can link", "axiomic init", "# link this repo (run at the top of the repo)", "axiomic init acme/web-app"],
+    status: "in-progress",
+    summary:
+      "Link this repo to a project: writes axiomic.json (the space and project names only, no secrets), writes your rules and installs the session hook. Commit axiomic.json: in a repo that already has it, a teammate's axiomic init needs no project name.",
+    details: [
+      "Checks that you can read the project before writing anything, so a wrong name changes nothing.",
+      "Without a project name, it lists the projects you can link and changes nothing.",
+    ],
   },
   {
     usage: "pull",
-    status: "coming",
-    summary: "Fetch your combined rules, write and gitignore them, cache them for offline use, and report the version.",
+    example: ["axiomic pull", "axiomic pull --quiet"],
+    status: "in-progress",
+    summary:
+      "Fetch your combined rules, write them as gitignored files and keep a private offline copy. The session hook does the same at every Claude Code start, falling back to the offline copy if the server is slow or unreachable.",
+    details: [
+      "Rule files you edited are kept and reported, not overwritten.",
+      "If your login was revoked or you lost access to the project, the rule files axiomic wrote are deleted from this computer.",
+    ],
+    flags: [
+      { flag: "--quiet", summary: "Print only problems." },
+      { flag: "--force", summary: "Also overwrite rule files that were edited locally." },
+    ],
+  },
+  {
+    usage: "whoami",
+    example: ["axiomic whoami"],
+    status: "in-progress",
+    summary: "Show who you are logged in as, the server, and the token in use (its first characters only).",
+  },
+  {
+    usage: "logout",
+    example: ["axiomic logout"],
+    status: "in-progress",
+    summary: "Revoke this computer's token on the server and delete it. If the server can't be reached, the token is still deleted and you are told to revoke it on the website.",
   },
   {
     usage: "push",
@@ -98,7 +142,6 @@ export const CLI_COMMANDS: CliCommand[] = [
     summary: "Send local edits as a suggested change, or as a direct edit if you own that layer.",
   },
   { usage: "diff", status: "coming", summary: "Show the difference between the local files and the server." },
-  { usage: "whoami", status: "coming", summary: "Show the account, the project and the server URL in use." },
   {
     usage: "import",
     status: "coming",
@@ -106,16 +149,16 @@ export const CLI_COMMANDS: CliCommand[] = [
   },
 ];
 
-/** What the CLI does when a server command is typed in this build. */
+/** What the CLI does when a command that isn't built yet is typed. */
 export const NOT_AVAILABLE_NOTE =
-  "In this build the commands login, logout, pull, push, whoami, init, diff and import print “not available in this build” and exit with code 1. There are no stand-in versions.";
+  "In this build the commands push, diff and import print “not available in this build yet” and exit with code 1. There are no stand-in versions.";
 
 export const EXIT_CODES: { code: number; meaning: string }[] = [
   { code: 0, meaning: "It worked, or you asked for help or the version." },
   {
     code: 1,
     meaning:
-      "The command failed or is not available in this build. For status: Git tracks or would not ignore a rule file, or a section reported an error.",
+      "The command failed or is not available in this build. For status: Git tracks or would not ignore a rule file, or a section reported an error. For init without a project: nothing was linked yet.",
   },
   { code: 2, meaning: "The command line was wrong: an unknown command, an unknown flag or a stray word." },
 ];
@@ -124,7 +167,7 @@ export const EXIT_CODES: { code: number; meaning: string }[] = [
 export const CLI_FOLDERS: { name: string; holds: string; unix: string; windows: string }[] = [
   {
     name: "Config",
-    holds: "The saved login (credentials.json). Planned: login is not built yet.",
+    holds: "The saved login (credentials.json), readable only by you.",
     unix: "$XDG_CONFIG_HOME/axiomic, or ~/.config/axiomic",
     windows: "%APPDATA%\\axiomic",
   },
