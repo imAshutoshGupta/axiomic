@@ -5,7 +5,8 @@ import { readPull } from "../../../../lib/pull";
 import { keyring } from "../../../../lib/rule-keys";
 
 /**
- * GET /api/v1/pull?space=<slug>&project=<slug>   (the two slugs from axiomic.json, #56)
+ * GET /api/v1/pull?space=<slug>&project=<slug>[&dry=1]   (the two slugs from axiomic.json, #56)
+ * dry=1: only looking (axiomic diff): the same answer, but not recorded as a pull you received.
  * Header: Authorization: Bearer axm_…   (never in the URL)
  * Optional header: X-Axiomic-CLI-Version: 1.0.0
  *
@@ -23,7 +24,7 @@ export async function GET(request: Request): Promise<Response> {
   try {
     const auth = await requireToken(request);
     if (auth instanceof Response) return auth;
-    const result = await withUser(auth.claims, (tx) => readPull(tx, keyring(), { space, project }, cliVersionOf(request)), { snapshot: true });
+    const result = await withUser(auth.claims, (tx) => readPull(tx, keyring(), { space, project }, cliVersionOf(request), params.get("dry") !== "1"), { snapshot: true });
     if (!result.ok) return fail(result.status, result.error);
     return ok(result.body);
   } catch (e) {

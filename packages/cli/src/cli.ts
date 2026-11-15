@@ -4,9 +4,9 @@ import type { FetchFn } from "./api-client";
 import { normalizeApiUrl, resolveApiUrl } from "./api-url";
 import { claudeSettingsPath, claudeHookStatus, installClaudeHook, resolveHookTarget, uninstallClaudeHook, type HookTarget } from "./claude-hook";
 import { resolveDirs } from "./dirs";
-import { formatHookStatus, formatPullReport, formatRemoveReport, formatStatus } from "./format";
+import { formatDiffReport, formatHookStatus, formatPullReport, formatPushReport, formatRemoveReport, formatStatus } from "./format";
 import { openUrl } from "./open-url";
-import { AccessGoneError, initCommand, parseProjectRef, pullCommand, type ProjectDeps } from "./project-commands";
+import { AccessGoneError, diffCommand, initCommand, parseProjectRef, pullCommand, pushCommand, type ProjectDeps } from "./project-commands";
 import { runRemove } from "./remove";
 import { runSessionStart } from "./session-start";
 import { collectStatus, statusHasProblems } from "./status";
@@ -42,7 +42,7 @@ export interface CliContext {
 }
 
 /** Commands that exist in the plan but are NOT in this build yet: no fake versions. */
-export const NOT_AVAILABLE = ["push", "diff", "import"] as const;
+export const NOT_AVAILABLE = ["import"] as const;
 
 /**
  * The session hook must never hold up Claude Code. If the work isn't done by then, we stop waiting
@@ -72,6 +72,9 @@ Getting started:
   pull                      Fetch your combined rules and write them (as gitignored files)
       --quiet               Print only problems
       --force               Also overwrite rule files that were edited locally
+  push                      Show which of your edits to the rule files would be sent
+      --yes                 Send them: saved if you own that layer, otherwise a suggestion
+  diff                      Show how your rule files differ from the server (exit 1 if they do)
   whoami                    Show who you are logged in as, and on which server
   logout                    Revoke this computer's login token and delete it
 
@@ -124,6 +127,8 @@ export async function runCli(ctx: CliContext): Promise<number> {
     if (command === "whoami") return await whoamiCommand(ctx, rest);
     if (command === "init") return await initCmd(ctx, rest);
     if (command === "pull") return await pullCmd(ctx, rest);
+    if (command === "push") return await pushCmd(ctx, rest);
+    if (command === "diff") return await diffCmd(ctx, rest);
     if (command === "status") return await statusCommand(ctx, rest);
     if (command === "remove") return await removeCommand(ctx, rest);
     if (command === "hook") return await hookCommand(ctx, rest);
@@ -384,4 +389,19 @@ async function initCmd(ctx: CliContext, args: string[]): Promise<number> {
     ctx.stdout(`Note: the Claude Code hook was not installed (${(error as Error).message}). Install axiomic globally, then run "axiomic hook install".\n`);
   }
   return 0;
+}
+
+async function pushCmd(ctx: CliContext, args: string[]): Promise<number> {
+  const { values } = flags(args, { yes: { type: "boolean" } });
+  const outcome = await pushCommand(projectDeps(ctx), { send: values.yes ?? false });
+  ctx.stdout(formatPushReport(outcome, values.yes ?? false));
+  // Exit 1 when something sent was not accepted, so scripts notice.
+  return outcome.results?.some((r) => r.status === "conflict" || r.status === "refused") ? 1 : 0;
+}
+
+async function diffCmd(ctx: CliContext, args: string[]): Promise<number> {
+  flags(args, {});
+  const outcome = await diffCommand(projectDeps(ctx));
+  ctx.stdout(formatDiffReport(outcome));
+  return outcome.files.length > 0 ? 1 : 0;
 }

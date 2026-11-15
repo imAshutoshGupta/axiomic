@@ -78,6 +78,7 @@ export async function applyRules(input: Omit<SyncInput, "fetch" | "timeoutMs">, 
       etag: null,
       fetchedAt: (input.now?.() ?? new Date()).toISOString(),
       files: answer.files,
+      rules: answer.rules,
     });
   }
   return report;

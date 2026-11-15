@@ -243,3 +243,137 @@ export function closeOpenBlocks(text: string): string {
   const after = open.comment ? findOpenBlocks(result) : open;
   return after.fence ? `${result}\n${after.fence.marker}` : result;
 }
+
+// ===== Reading a rendered file back (for `axiomic push` and `diff`, DECISIONS #64) =====
+
+/** Where one rule ended up: which file, in which order. Same order as the renderer writes them. */
+export interface RenderedRuleRef {
+  path: string;
+  ruleId: string;
+  layer: Layer;
+  title: string;
+}
+
+/**
+ * The rules of renderClaude() in exactly the order they appear in each file. The server sends
+ * this with every pull, so the CLI can tell which "### Title" section is which rule.
+ * Kept here, beside the renderer, so the two can never disagree about order.
+ */
+export function renderIndex(result: MergeResult): RenderedRuleRef[] {
+  const refs: RenderedRuleRef[] = [];
+  const main = `${RULES_DIR}/axiomic.md`;
+  for (const [layer] of MAIN_SECTIONS) {
+    for (const rule of result.main) if (rule.source === layer) refs.push({ path: main, ruleId: rule.id, layer, title: rule.title });
+  }
+  for (const mod of result.modules) {
+    for (const rule of mod.rules) refs.push({ path: `${RULES_DIR}/axiomic-${mod.name}.md`, ruleId: rule.id, layer: "module", title: rule.title });
+  }
+  return refs;
+}
+
+/** One "### Title" section read back from a rule file. */
+export interface RenderedSection {
+  /** The layer from the "## … rules" heading above it; "module" in a folder file; null if before any layer heading. */
+  layer: Layer | null;
+  /** The title without the "MANDATORY: " label. */
+  title: string;
+  mandatory: boolean;
+  /** The text as it is in the file (headings still pushed down), without blank lines at either end. */
+  body: string;
+}
+
+export interface ParsedRuleFile {
+  /** Everything before the first "### " section (marker, intro, headings): axiomic's own text. */
+  preamble: string;
+  sections: RenderedSection[];
+}
+
+const LAYER_BY_HEADING = new Map(MAIN_SECTIONS.map(([layer, heading]) => [heading, layer]));
+
+/**
+ * Splits a rule file into its "### Title" sections. Code blocks are respected: a "### " line
+ * inside ``` is text, not a new section (the same fence rules as pushDownHeadings).
+ * Works for both kinds of file: in a folder file every section is a "module" rule.
+ */
+export function parseRenderedFile(content: string, kind: "main" | "module"): ParsedRuleFile {
+  const lines = content.replace(/\r\n?/g, "\n").split("\n");
+  const preamble: string[] = [];
+  const sections: RenderedSection[] = [];
+  let layer: Layer | null = kind === "module" ? "module" : null;
+  let current: { layer: Layer | null; title: string; mandatory: boolean; body: string[] } | undefined;
+  let fence: string | undefined;
+
+  const finish = () => {
+    if (!current) return;
+    sections.push({ layer: current.layer, title: current.title, mandatory: current.mandatory, body: trimBlankLines(current.body) });
+    current = undefined;
+  };
+
+  for (const line of lines) {
+    if (fence) {
+      const close = FENCE_CLOSE.exec(line);
+      if (close && close[1]![0] === fence[0] && close[1]!.length >= fence.length) fence = undefined;
+      (current ? current.body : preamble).push(line);
+      continue;
+    }
+    const open = FENCE_OPEN.exec(line);
+    if (open) {
+      fence = open[1];
+      (current ? current.body : preamble).push(line);
+      continue;
+    }
+    const h2 = /^## (.+?)\s*$/.exec(line);
+    if (h2 && kind === "main" && LAYER_BY_HEADING.has(h2[1]!)) {
+      finish();
+      layer = LAYER_BY_HEADING.get(h2[1]!)!;
+      continue;
+    }
+    const h3 = /^### (.*?)\s*$/.exec(line);
+    if (h3) {
+      finish();
+      const raw = h3[1]!;
+      const mandatory = raw.startsWith("MANDATORY: ");
+      current = { layer, title: mandatory ? raw.slice("MANDATORY: ".length) : raw, mandatory, body: [] };
+      continue;
+    }
+    (current ? current.body : preamble).push(line);
+  }
+  finish();
+  return { preamble: trimBlankLines(preamble), sections };
+}
+
+function trimBlankLines(lines: string[]): string {
+  let start = 0;
+  let end = lines.length;
+  while (start < end && lines[start]!.trim() === "") start++;
+  while (end > start && lines[end - 1]!.trim() === "") end--;
+  return lines.slice(start, end).join("\n");
+}
+
+/**
+ * The opposite of pushDownHeadings, for text coming BACK from a file: headings of level 4–6
+ * go up by three (#### → #). Code blocks are left alone. Without this, every push and pull
+ * would sink headings one level deeper. (Lossy at the edges: a "######" may once have been
+ * "####" before the cap at six, and an underline turned into "***" stays "***".)
+ */
+export function pullUpHeadings(text: string): string {
+  let fence: string | undefined;
+  return text
+    .replace(/\r\n?/g, "\n")
+    .split("\n")
+    .map((line) => {
+      if (fence) {
+        const close = FENCE_CLOSE.exec(line);
+        if (close && close[1]![0] === fence[0] && close[1]!.length >= fence.length) fence = undefined;
+        return line;
+      }
+      const open = FENCE_OPEN.exec(line);
+      if (open) {
+        fence = open[1];
+        return line;
+      }
+      const hashes = /^ {0,3}(#{4,6})(?=\s|$)/.exec(line);
+      return hashes ? "#".repeat(hashes[1]!.length - 3) + line.slice(hashes[0].length) : line;
+    })
+    .join("\n");
+}

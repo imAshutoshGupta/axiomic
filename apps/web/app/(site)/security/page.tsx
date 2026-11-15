@@ -25,8 +25,8 @@ const CONTROLS: { control: string; detail: string; status: Status }[] = [
     status: "local",
   },
   {
-    control: "Publish safety check (logic)",
-    detail: "Looks for secret patterns, oversized text, invisible characters, text that imitates axiomic's own labels and known prompt-injection phrases. The logic exists; it is not yet wired to a server.",
+    control: "Publish safety check",
+    detail: "Looks for secret patterns, oversized text, invisible characters, text that imitates axiomic's own labels and known prompt-injection phrases. The server runs it on every change sent with axiomic push, before anything is encrypted or stored; the website editor will run it too.",
     status: "local",
   },
   {

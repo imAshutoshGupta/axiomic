@@ -1,5 +1,5 @@
 import "server-only";
-import { merge, renderClaude, type LockableRule, type Module, type RenderedFile, type Rule } from "@axiomic/shared";
+import { merge, renderClaude, renderIndex, type LockableRule, type MergeInput, type Module, type RenderedFile, type Rule } from "@axiomic/shared";
 import { decryptText, ruleVersionAad, type Keyring } from "@axiomic/shared/crypto";
 import type { Tx } from "./db";
 
@@ -8,17 +8,31 @@ import type { Tx } from "./db";
  * (DB-DESIGN 6.13, R15): the three counters, then the rules, then report_pull with the
  * counters actually read. Row-level security decides what is visible; this code only picks
  * which visible rows belong to this project. No formatting here: merge() + renderClaude().
+ *
+ * loadProject() is the shared part: push (lib/push.ts) uses it too, to know each rule's
+ * scope and newest version, and to measure the combined size after a change.
  */
 
 export type PullResult =
   | { ok: true; body: PullBody }
   | { ok: false; status: 404 | 409; error: string };
 
+/** One rule's place in the files, so the CLI can map "### Title" sections back to rules (#64). */
+export interface IndexEntry {
+  path: string;
+  id: string;
+  layer: string;
+  version: number;
+  title: string;
+}
+
 export interface PullBody {
   project: { id: string; name: string; slug: string; space: string };
   /** The three counters this answer was built from (D3). The CLI compares them to know if it's up to date. */
   versions: { space: number; team: number; personal: number };
   files: RenderedFile[];
+  /** Which section of which file is which rule, in file order. */
+  rules: IndexEntry[];
   /** Rules dropped by the merge (e.g. tried to replace a locked rule), for the CLI to explain. */
   blocked: { title: string; layer: string; reason: string }[];
 }
@@ -26,6 +40,8 @@ export interface PullBody {
 type RuleRow = {
   id: string;
   layer: "company" | "team" | "project" | "module" | "personal";
+  team_id: string | null;
+  project_id: string | null;
   module_id: string | null;
   locked: boolean;
   version: number;
@@ -41,7 +57,29 @@ export interface ProjectRef {
   project: string;
 }
 
-export async function readPull(tx: Tx, ring: Keyring, ref: ProjectRef, cliVersion: string | null): Promise<PullResult> {
+export interface LoadedRule {
+  id: string;
+  layer: RuleRow["layer"];
+  teamId: string | null;
+  projectId: string | null;
+  moduleId: string | null;
+  locked: boolean;
+  version: number;
+}
+
+export interface LoadedProject {
+  project: { id: string; space_id: string; team_id: string; name: string; slug: string };
+  versions: { space: number; team: number; personal: number };
+  modules: { id: string; name: string; path: string }[];
+  /** The merge input (decrypted): what this person sees in this project. */
+  input: MergeInput;
+  /** Every rule in `input`, by id: its scope and newest version. */
+  rules: Map<string, LoadedRule>;
+}
+
+export type LoadResult = { ok: true; loaded: LoadedProject } | { ok: false; status: 404 | 409; error: string };
+
+export async function loadProject(tx: Tx, ring: Keyring, ref: ProjectRef): Promise<LoadResult> {
   // 1. The project, found by its space's slug + its own slug (both unique together, both unchangeable).
   //    RLS hides spaces and projects you can't read. Not visible or doesn't exist → the same 404,
   //    so nobody can probe which slugs exist.
@@ -70,7 +108,7 @@ export async function readPull(tx: Tx, ring: Keyring, ref: ProjectRef, cliVersio
   //    Personal: ONLY the caller's own. (An admin may see others' personal rules under RLS,
   //    but must never receive them in a pull.)
   const rows = await tx<RuleRow[]>`
-    select r.id, r.layer, r.module_id, r.locked,
+    select r.id, r.layer, r.team_id, r.project_id, r.module_id, r.locked,
            v.version, v.title, v.nonce, v.body_ciphertext, v.key_version
     from public.active_rules r
     join lateral (
@@ -93,6 +131,7 @@ export async function readPull(tx: Tx, ring: Keyring, ref: ProjectRef, cliVersio
     byModule.set(m.id, mod);
     input.modules.push(mod);
   }
+  const rules = new Map<string, LoadedRule>();
   for (const row of rows) {
     let body: string;
     try {
@@ -109,15 +148,28 @@ export async function readPull(tx: Tx, ring: Keyring, ref: ProjectRef, cliVersio
     if (row.layer === "company" || row.layer === "team") input[row.layer].push({ ...rule, locked: row.locked });
     else if (row.layer === "module") byModule.get(row.module_id!)?.rules.push(rule);
     else input[row.layer].push(rule);
+    rules.set(row.id, {
+      id: row.id, layer: row.layer, teamId: row.team_id, projectId: row.project_id, moduleId: row.module_id,
+      locked: row.locked, version: row.version,
+    });
   }
   input.modules = input.modules.filter((m) => m.rules.length > 0); // no empty folder files
+
+  return { ok: true, loaded: { project, versions, modules, input, rules } };
+}
+
+/** report: false = only looking (axiomic diff): don't record it as a pull this person received. */
+export async function readPull(tx: Tx, ring: Keyring, ref: ProjectRef, cliVersion: string | null, report = true): Promise<PullResult> {
+  const r = await loadProject(tx, ring, ref);
+  if (!r.ok) return r;
+  const { project, versions, input, rules } = r.loaded;
 
   // 6. Combine and render. The marker's single number: the three counters only ever grow, so their sum does too.
   const result = merge(input);
   const files = renderClaude(result, versions.space + versions.team + versions.personal);
 
   // 7. Record "this person pulled these counters" (agent keys: the function skips it, S5).
-  await tx`select api.report_pull(${project.id}, ${versions.space}, ${versions.team}, ${versions.personal}, ${cliVersion})`;
+  if (report) await tx`select api.report_pull(${project.id}, ${versions.space}, ${versions.team}, ${versions.personal}, ${cliVersion})`;
 
   return {
     ok: true,
@@ -125,6 +177,7 @@ export async function readPull(tx: Tx, ring: Keyring, ref: ProjectRef, cliVersio
       project: { id: project.id, name: project.name, slug: project.slug, space: ref.space },
       versions,
       files,
+      rules: renderIndex(result).map((x) => ({ path: x.path, id: x.ruleId, layer: x.layer, version: rules.get(x.ruleId)!.version, title: x.title })),
       blocked: result.blocked.map((b) => ({ title: b.title, layer: b.source, reason: b.reason })),
     },
   };

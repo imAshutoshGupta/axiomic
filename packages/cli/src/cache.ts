@@ -4,6 +4,7 @@ import { normalizeApiUrl } from "./api-url";
 import { ensurePrivateDir, readFileNoFollow, removeDirIfEmpty, removeFileIfExists, writeFileAtomic } from "./fs-safe";
 import { isManagedRulePath, MAX_MANAGED_FILES } from "./managed-paths";
 import { isValidSlug } from "./project-config";
+import { parseRuleRefs, type RuleRef } from "./remote";
 import { projectDataDir } from "./project-key";
 
 /**
@@ -32,6 +33,11 @@ export interface CacheEntry {
   /** When it was fetched (ISO date). */
   fetchedAt: string;
   files: RenderedFile[];
+  /**
+   * Which section is which rule (from the pull's index), so `axiomic push` can map edits back.
+   * Optional: caches written before push existed don't have it; push then asks for a pull first.
+   */
+  rules?: RuleRef[];
 }
 
 const FILE_NAME = "rules.json";
@@ -72,7 +78,14 @@ export function parseCacheEntry(text: string): CacheEntry | undefined {
     files.push({ path: f.path, content: f.content }); // copy only the known fields
   }
 
-  return { schemaVersion: 1, apiUrl, space: r.space, project: r.project, version: r.version, etag: r.etag, fetchedAt: r.fetchedAt, files };
+  let rules: RuleRef[] | undefined;
+  if (r.rules !== undefined) {
+    rules = parseRuleRefs(r.rules);
+    if (!rules) return undefined;
+  }
+  const entry: CacheEntry = { schemaVersion: 1, apiUrl, space: r.space, project: r.project, version: r.version, etag: r.etag, fetchedAt: r.fetchedAt, files };
+  if (rules) entry.rules = rules;
+  return entry;
 }
 
 /** Reads the cache for a project. Any problem (missing, damaged, symlink, too big) → undefined. Never throws. */

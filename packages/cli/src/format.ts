@@ -2,6 +2,8 @@ import type { HookStatus } from "./claude-hook";
 import type { RemoveReport } from "./remove";
 import type { StatusReport } from "./status";
 import type { WriteReport } from "./writer";
+import type { DiffOutcome, PushOutcome } from "./project-commands";
+import type { PlannedChange } from "./push-plan";
 
 /**
  * Turns the reports from `status`, `remove` and `hook status` into plain text for the terminal.
@@ -141,5 +143,47 @@ export function formatPullReport(
       answer.blocked.map((b) => `${b.title} (${b.layer} rule): ${BLOCKED_REASONS[b.reason] ?? b.reason}`),
     ),
   ];
+  return lines.join("\n") + "\n";
+}
+
+/** `axiomic push`: the preview, or what happened to each change. */
+export function formatPushReport(outcome: PushOutcome, sent: boolean): string {
+  const { plan, results, after } = outcome;
+  const lines: string[] = [];
+  const label = (c: PlannedChange) =>
+    c.kind === "update" ? `edit  ${c.layer} rule "${c.title}"` : `new   ${c.layer}${c.module ? ` (${c.module})` : ""} rule "${c.title}"`;
+
+  if (plan.changes.length === 0) lines.push("Nothing to send: your rule files match your last pull.");
+  else if (!results) {
+    lines.push(`${plan.changes.length} change${plan.changes.length === 1 ? "" : "s"} to send:`, ...plan.changes.map((c) => `  ${label(c)}`));
+    if (!sent) lines.push("", "Run axiomic push --yes to send. Rules you own are saved; others become suggestions for their owner.");
+  } else {
+    const words = { saved: "saved", suggested: "sent as a suggestion to the owner", conflict: "NOT sent", refused: "NOT sent" };
+    plan.changes.forEach((c, i) => {
+      const r = results[i]!;
+      lines.push(`  ${label(c)}: ${words[r.status]}${"reason" in r ? ` (${r.reason})` : ""}`);
+    });
+    if (after) {
+      lines.push("");
+      lines.push(after.report.keptModified.length > 0
+        ? `Kept with your edits (suggestions wait for the owner; anything not sent stays too): ${after.report.keptModified.join(", ")}. axiomic pull --force replaces them with the server's version.`
+        : "Rule files refreshed from the server.");
+    }
+  }
+  if (plan.notes.length > 0) lines.push("", "Notes:", ...plan.notes.map((n) => `  ${n}`));
+  return lines.join("\n") + "\n";
+}
+
+/** `axiomic diff`: "-" = the server's line, "+" = yours. */
+export function formatDiffReport(outcome: DiffOutcome): string {
+  const head = `${outcome.space}/${outcome.project}, server version ${outcome.version}`;
+  if (outcome.files.length === 0) return `${head}: your rule files match the server.\n`;
+  const lines = [`${head}. Lines starting with - are the server's, + are yours:`];
+  for (const f of outcome.files) {
+    lines.push("", `=== ${f.path}`);
+    if (f.state === "only-server") lines.push("  (not on this computer: axiomic pull writes it)");
+    else if (f.state === "only-local") lines.push("  (the server no longer sends it: axiomic pull removes it)");
+    else lines.push(f.text ?? "  (too big to show line by line)");
+  }
   return lines.join("\n") + "\n";
 }

@@ -12,6 +12,15 @@ import { runCli } from "./cli";
  *   and Claude Code must not be kept waiting for it. The hook prints nothing to stdout, so nothing is lost.
  */
 const argv = process.argv.slice(2);
+
+// `axiomic diff | head`: the reader stops early and closes the pipe. That's not an error for us:
+// stop quietly instead of crashing with a stack trace (EPIPE). (DECISIONS #65)
+for (const stream of [process.stdout, process.stderr]) {
+  stream.on("error", (error: NodeJS.ErrnoException) => {
+    if (error.code === "EPIPE") process.exit(process.exitCode ?? 0);
+    throw error;
+  });
+}
 const isHookEntry = argv[0] === "hook" && argv[1] === "session-start";
 
 try {

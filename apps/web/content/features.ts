@@ -112,8 +112,8 @@ export const FEATURE_CATEGORIES: FeatureCategory[] = [
       {
         id: "publish-gate",
         name: "Checks run on every publish",
-        benefit: "The website runs the check when a rule is saved and refuses blocking problems, including clashes with a locked rule.",
-        status: "planned",
+        benefit: "The server runs the check on every change sent with axiomic push and refuses blocking problems (built). The website editor will run it too, plus clashes with a locked rule (planned).",
+        status: "in-progress",
       },
     ],
   },
@@ -208,8 +208,8 @@ export const FEATURE_CATEGORIES: FeatureCategory[] = [
       {
         id: "suggestions",
         name: "Suggestions and approvals",
-        benefit: "Anyone can propose a change, including from their laptop with axiomic push. The layer owner approves it.",
-        status: "planned",
+        benefit: "Anyone can propose a change, including from their laptop with axiomic push (built). The layer owner approves it on the website (planned).",
+        status: "in-progress",
       },
       {
         id: "editor",
@@ -270,7 +270,7 @@ export const ROADMAP: { status: Status; title: string; text: string; extra?: str
     status: "in-progress",
     title: "In development",
     text: "The server: storage, the API and the sync that connects the CLI to it.",
-    extra: ["CLI commands: login, logout, init, pull, whoami"],
+    extra: ["CLI commands: login, logout, init, pull, push, diff, whoami"],
   },
   {
     status: "soon",
@@ -281,6 +281,6 @@ export const ROADMAP: { status: Status; title: string; text: string; extra?: str
     status: "planned",
     title: "Planned for 1.0",
     text: "The website side and team controls, then a pilot with one team before release.",
-    extra: ["CLI commands: push, diff, import", "axiomic 1.0 on npm, free"],
+    extra: ["CLI command: import", "axiomic 1.0 on npm, free"],
   },
 ];

@@ -138,10 +138,26 @@ export const CLI_COMMANDS: CliCommand[] = [
   },
   {
     usage: "push",
-    status: "coming",
-    summary: "Send local edits as a suggested change, or as a direct edit if you own that layer.",
+    example: ["# see what would be sent", "axiomic push", "# send it", "axiomic push --yes"],
+    status: "in-progress",
+    summary:
+      "Send your edits to the rule files back to axiomic. Each edited or added \"### Title\" section is one change: saved directly if you own that layer (your personal rules, or a project you own), otherwise sent to the owner as a suggestion. Without --yes it only shows what it would send.",
+    details: [
+      "Every change goes through the safety check first; a secret or hidden text is refused before anything is stored.",
+      "If someone changed that rule since your last pull, it is not sent: pull first, then redo your edit.",
+      "Deleting a section doesn't delete the rule: do that on the website. Locked rules can't be changed this way.",
+      "Company rules edited by an admin become suggestions too: admin changes happen on the website.",
+      "At most 20 changes per push. Afterwards it pulls, so saved rules come back in the server's own form.",
+    ],
+    flags: [{ flag: "--yes", summary: "Send the changes (without it, only show them)." }],
   },
-  { usage: "diff", status: "coming", summary: "Show the difference between the local files and the server." },
+  {
+    usage: "diff",
+    example: ["axiomic diff", "# in a script: exit 1 means different", "axiomic diff > /dev/null || echo changed"],
+    status: "in-progress",
+    summary:
+      "Show how your rule files differ from what the server would send now: lines starting with - are the server's, + are yours. Writes nothing. Exits 0 when they match, 1 when they don't.",
+  },
   {
     usage: "import",
     status: "coming",
@@ -151,14 +167,14 @@ export const CLI_COMMANDS: CliCommand[] = [
 
 /** What the CLI does when a command that isn't built yet is typed. */
 export const NOT_AVAILABLE_NOTE =
-  "In this build the commands push, diff and import print “not available in this build yet” and exit with code 1. There are no stand-in versions.";
+  "In this build the import command prints “not available in this build yet” and exits with code 1. There is no stand-in version.";
 
 export const EXIT_CODES: { code: number; meaning: string }[] = [
   { code: 0, meaning: "It worked, or you asked for help or the version." },
   {
     code: 1,
     meaning:
-      "The command failed or is not available in this build. For status: Git tracks or would not ignore a rule file, or a section reported an error. For init without a project: nothing was linked yet.",
+      "The command failed or is not available in this build. For status: Git tracks or would not ignore a rule file, or a section reported an error. For init without a project: nothing was linked yet. For diff: the files differ. For push --yes: a change was refused or conflicted.",
   },
   { code: 2, meaning: "The command line was wrong: an unknown command, an unknown flag or a stray word." },
 ];

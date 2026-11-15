@@ -73,8 +73,9 @@ const FAQS: { id: string; q: string; a: ReactNode }[] = [
     q: "What if I edit a rule file on my laptop?",
     a: (
       <p>
-        axiomic notices and keeps your edit instead of overwriting it. Sending local edits back as a suggested change
-        (<code>axiomic push</code>) is planned.
+        axiomic notices and keeps your edit instead of overwriting it. <code>axiomic push</code> sends it back: saved
+        directly if you own that layer, otherwise as a suggestion for the owner (built; approving suggestions on the
+        website is planned).
       </p>
     ),
   },

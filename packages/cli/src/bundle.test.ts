@@ -70,7 +70,7 @@ describe("the built bundle", () => {
   });
 
   it("commands not built yet fail honestly", async () => {
-    const result = await axiomic(["push"]);
+    const result = await axiomic(["import"]);
     expect(result.code).toBe(1);
     expect(result.stderr).toContain("not available in this build yet");
   });

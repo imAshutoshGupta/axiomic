@@ -17,6 +17,7 @@ const answer = (content = "# rules v1\n") => ({
   project: { id: "p", name: "Web app", slug: "web-app", space: "acme" },
   versions: { space: 1, team: 1, personal: 0 },
   files: [{ path: MAIN, content }],
+  rules: [],
   blocked: [],
 });
 

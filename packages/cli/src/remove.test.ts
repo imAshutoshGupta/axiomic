@@ -216,7 +216,7 @@ describe("command line", () => {
     expect((await cli(box, [])).out).toBe(help.out);
   });
 
-  it.each(["push", "diff", "import"])("%s says it is not available yet and fails", async (command) => {
+  it.each(["import"])("%s says it is not available yet and fails", async (command) => {
     const box = await makeSandbox();
     const result = await cli(box, [command, "--quiet"]);
     expect(result.code).toBe(1);

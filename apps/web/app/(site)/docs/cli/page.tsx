@@ -144,7 +144,7 @@ export default function CliDocsPage() {
           <h2 id="quick-start" className={styles.h2}>Quick start</h2>
           <p className={styles.sub}>
             Four steps once 1.0 ships. Today the hook, <code>status</code> and <code>remove</code> work on their own;{" "}
-            <code>login</code>, <code>init</code> and <code>pull</code> are built and tested against a local axiomic server, and
+            <code>login</code>, <code>init</code>, <code>pull</code>, <code>push</code> and <code>diff</code> are built and tested against a local axiomic server, and
             wait for the hosted one to go live.
           </p>
           <ol className={styles.steps}>

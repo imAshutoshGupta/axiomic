@@ -56,6 +56,7 @@ describe("answers from the server are checked", () => {
     project: { id: "x", name: "Web app", slug: "web-app", space: "acme" },
     versions: { space: 3, team: 2, personal: 1 },
     files: [{ path: ".claude/rules/axiomic.md", content: "# rules\n" }],
+    rules: [{ path: ".claude/rules/axiomic.md", id: "50000000-0000-4000-8000-000000000001", layer: "company", version: 2, title: "rules" }],
     blocked: [{ title: "Tabs", layer: "personal", reason: "personal-adds-only" }],
   };
   const pull = (body: unknown) =>
@@ -78,6 +79,7 @@ describe("answers from the server are checked", () => {
     ["a negative version", { ...good, versions: { ...good.versions, team: -1 } }],
     ["a file without content", { ...good, files: [{ path: "x" }] }],
     ["not an object", [1, 2]],
+    ["a bad rules index", { ...good, rules: [{ path: "x", id: "not-a-uuid", layer: "company", version: 1, title: "t" }] }],
   ])("refuses %s", async (_label, body) => {
     await expect(pull(body)).rejects.toThrow(/unexpected/);
   });
