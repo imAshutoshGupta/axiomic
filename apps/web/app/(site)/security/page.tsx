@@ -66,13 +66,23 @@ const CONTROLS: { control: string; detail: string; status: Status }[] = [
   },
   {
     control: "Encryption of rule text",
-    detail: "AES-GCM at the application level, with the key held outside the database.",
-    status: "planned",
+    detail: "AES-256-GCM on the server before text reaches the database, with the key held outside the database. Each text is tied to its own row, so it can't be copied to another.",
+    status: "local",
+  },
+  {
+    control: "Key check at start-up",
+    detail: "Before saving anything, the server checks that its key opens a known test row. If not, it refuses to save, so a wrong key never locks away new rules.",
+    status: "local",
+  },
+  {
+    control: "Server database access",
+    detail: "The server's database login has no rights of its own. Every request runs as the person asking, under the same row-level security.",
+    status: "local",
   },
   {
     control: "Tokens",
-    detail: "Stored hashed, revocable, sent only in the Authorization header and never in a URL. Kept in the CLI's config folder, never in the project.",
-    status: "planned",
+    detail: "Stored hashed, revocable, sent only in the Authorization header and never in a URL. Unused CLI tokens stop working after 90 days. Planned: the CLI keeps its token in its config folder, never in the project.",
+    status: "local",
   },
   {
     control: "Sign-in",

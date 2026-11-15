@@ -5,13 +5,15 @@
   "type": "module",
   "sideEffects": false,
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./crypto": "./src/crypto.ts"
   },
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc -p ."
   },
   "devDependencies": {
+    "@types/node": "^24.19.2",
     "typescript": "^7.0.2",
     "vitest": "^5.1.0"
   }
