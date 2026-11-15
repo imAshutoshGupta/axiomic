@@ -87,6 +87,13 @@ export function parseProjectRef(text: string): { space: string; project: string 
   return { space: parts[0], project: parts[1] };
 }
 
+/** "  space/project   Name (Space)" rows for `init` with no project. Long slugs (personal spaces) still get a gap. */
+export function formatProjectRows(spaces: SpaceList["spaces"]): string[] {
+  const items = spaces.flatMap((s) => s.projects.map((p) => [`  ${s.slug}/${p.slug}`, `${p.name} (${s.name})`] as const));
+  const width = Math.max(40, ...items.map(([ref]) => ref.length + 2));
+  return items.map(([ref, label]) => ref.padEnd(width) + label);
+}
+
 export type InitOutcome =
   | { kind: "choose"; spaces: SpaceList["spaces"] }
   | { kind: "linked"; root: string; created: boolean; outcome: PullOutcome };

@@ -102,7 +102,11 @@ const CONTROLS: { control: string; detail: string; status: Status }[] = [
   { control: "Two-factor sign-in for admins", detail: "Required for admin tools in company spaces.", status: "planned" },
   { control: "Publish alerts", detail: "An email on every publish, so a silent change is noticed.", status: "planned" },
   { control: "Rollback", detail: "Return to an earlier version in one step.", status: "planned" },
-  { control: "Data region", detail: "Database hosted in Mumbai, India (ap-south-1).", status: "planned" },
+  {
+    control: "Data region",
+    detail: "Database and server both run in Mumbai, India (Supabase ap-south-1, Vercel bom1).",
+    status: "built",
+  },
   {
     control: "Open, small CLI",
     detail: "Public source and minimal dependencies, so a security team can audit what runs on laptops.",
@@ -145,10 +149,11 @@ export default function SecurityPage() {
           </li>
         </ol>
 
-        <Callout tone="warning" title="Pilot stage: the server is not built yet">
+        <Callout tone="warning" title="Pilot stage: private testing">
           <p>
-            Nothing is stored on an axiomic server today. The controls marked “Planned” below are design decisions,
-            not running systems.
+            The axiomic server now runs in Mumbai, India, but only for our own testing: there is no public sign-up
+            and no customer data on it yet. The controls marked “Planned” below are design decisions, not running
+            systems.
           </p>
         </Callout>
 

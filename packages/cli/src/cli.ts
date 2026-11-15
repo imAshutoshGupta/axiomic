@@ -6,7 +6,7 @@ import { claudeSettingsPath, claudeHookStatus, installClaudeHook, resolveHookTar
 import { resolveDirs } from "./dirs";
 import { formatDiffReport, formatHookStatus, formatPullReport, formatPushReport, formatRemoveReport, formatStatus } from "./format";
 import { openUrl } from "./open-url";
-import { AccessGoneError, diffCommand, initCommand, parseProjectRef, pullCommand, pushCommand, type ProjectDeps } from "./project-commands";
+import { AccessGoneError, diffCommand, formatProjectRows, initCommand, parseProjectRef, pullCommand, pushCommand, type ProjectDeps } from "./project-commands";
 import { runRemove } from "./remove";
 import { runSessionStart } from "./session-start";
 import { collectStatus, statusHasProblems } from "./status";
@@ -363,7 +363,7 @@ async function initCmd(ctx: CliContext, args: string[]): Promise<number> {
   const outcome = await initCommand(projectDeps(ctx), ref);
 
   if (outcome.kind === "choose") {
-    const rows = outcome.spaces.flatMap((s) => s.projects.map((p) => `  ${s.slug}/${p.slug}`.padEnd(40) + `${p.name} (${s.name})`));
+    const rows = formatProjectRows(outcome.spaces);
     if (rows.length === 0) {
       ctx.stderr("axiomic: you have no projects yet. Create one on the website, or ask your admin for access.\n");
       return 1;

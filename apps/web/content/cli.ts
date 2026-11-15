@@ -2,7 +2,7 @@
  * The CLI facts shown on /docs/cli. This is the ONE place to correct when the CLI changes.
  * Source of truth: `axiomic --help` of the built CLI (packages/cli/src/cli.ts) and the modules it calls.
  * "available": works in the current build, with no server.
- * "in-progress": built and tested against a local axiomic server; the hosted server isn't live yet (DECISIONS #61).
+ * "in-progress": built and tested, also against the hosted server in private testing (#68); no public install yet.
  * "coming": not built yet.
  * Exact flags are still subject to change before 1.0.
  */

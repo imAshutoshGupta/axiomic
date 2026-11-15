@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { readCache } from "./cache";
 import { writeCredentials } from "./credentials";
-import { AccessGoneError, initCommand, NotLoggedInError, parseProjectRef, pullCommand, type ProjectDeps } from "./project-commands";
+import { AccessGoneError, formatProjectRows, initCommand, NotLoggedInError, parseProjectRef, pullCommand, type ProjectDeps } from "./project-commands";
 import { readProjectConfig, writeProjectConfig } from "./project-config";
 import { projectKey } from "./project-key";
 import { runSessionStart } from "./session-start";
@@ -43,6 +43,16 @@ describe("init", () => {
     const { deps, box } = await setup({ "GET /api/v1/projects": () => ({ status: 200, body: { spaces } }) });
     expect(await initCommand(deps, undefined)).toEqual({ kind: "choose", spaces });
     expect(await fs.readdir(box.project)).toEqual([]);
+  });
+
+  it("lists projects with a gap even after a long personal-space slug", () => {
+    const rows = formatProjectRows([
+      { slug: "acme", name: "Acme", kind: "work", projects: [{ slug: "web-app", name: "Web app" }] },
+      { slug: "u-f24615d18a6f9ed3bbf68fe448c0", name: "Personal", kind: "personal", projects: [{ slug: "sandbox", name: "Sandbox" }] },
+    ] as Parameters<typeof formatProjectRows>[0]);
+    expect(rows[0]).toMatch(/^  acme\/web-app {2,}Web app \(Acme\)$/);
+    expect(rows[1]).toMatch(/^  u-f24615d18a6f9ed3bbf68fe448c0\/sandbox {2,}Sandbox \(Personal\)$/);
+    expect(rows[0]?.indexOf("Web app")).toBe(rows[1]?.indexOf("Sandbox")); // columns line up
   });
 
   it("links: writes axiomic.json, the ignore block, the rule file and the cache", async () => {

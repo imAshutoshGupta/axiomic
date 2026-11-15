@@ -73,7 +73,7 @@ export default function PrivacyPage() {
 
         <h2 id="where">Where it is stored and who processes it</h2>
         <p>
-          The database is planned to be hosted in Mumbai, India. We expect to use these processors:{" "}
+          The database and the server are hosted in Mumbai, India. We expect to use these processors:{" "}
           <Placeholder>list of processors, such as hosting, database and email providers — to be confirmed</Placeholder>.
         </p>
 
