@@ -65,11 +65,6 @@ function inviteLink(secret: string): string {
   return `${siteUrl().origin}/invite#${secret}`;
 }
 
-/** An optional team picker: a malformed id counts as "no team", like an empty one. */
-function readOptionalTeam(form: FormData): string | null {
-  return readOptionalUuid(form, "team") ?? null;
-}
-
 // ----- the space -----
 
 async function renameSpace(tx: Tx, spaceId: string, form: FormData): Promise<IntentResult> {
@@ -84,9 +79,10 @@ async function renameSpace(tx: Tx, spaceId: string, form: FormData): Promise<Int
 async function createInvite(tx: Tx, spaceId: string, form: FormData): Promise<IntentResult> {
   const email = readText(form, "email").toLowerCase().slice(0, MAX_EMAIL_CHARS);
   const role = readText(form, "role");
-  const teamId = readOptionalTeam(form);
+  const teamId = readOptionalUuid(form, "team"); // null = no team; undefined = not a team id (a stale or edited form)
   if (!EMAIL_SHAPE.test(email)) return refuse("That doesn't look like an email address.");
   if (!SPACE_ROLES.has(role)) return refuse("Choose a role.");
+  if (teamId === undefined) return refuse(RELOAD);
   const result = await runApi(tx, (t) => t<{ r: { secret: string } }[]>`
     select api.create_invite(${spaceId}, ${email}, ${role}, ${teamId}::uuid) as r`);
   if (!result.ok) return result;
@@ -198,9 +194,10 @@ async function removeTeamMember(tx: Tx, _spaceId: string, form: FormData): Promi
 async function createProject(tx: Tx, spaceId: string, form: FormData): Promise<IntentResult> {
   const name = readName(form);
   const slug = readText(form, "slug");
-  const teamId = readOptionalTeam(form);
+  const teamId = readOptionalUuid(form, "team"); // null = no team; undefined = not a team id (a stale or edited form)
   if (!name) return refuse("Type a project name.");
   if (!isValidSlug(slug)) return refuse(SLUG_HINT);
+  if (teamId === undefined) return refuse(RELOAD);
   const result = await runApi(tx, (t) => t`select api.create_project(${spaceId}, ${teamId}::uuid, ${name}, ${slug})`);
   if (!result.ok) return result;
   const [space] = await tx<{ slug: string }[]>`select slug from public.spaces where id = ${spaceId}`;

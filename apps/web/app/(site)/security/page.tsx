@@ -28,6 +28,7 @@ const CONTROLS: { name: string; text: string; status: Status }[] = [
   { name: "Safety check", text: "Secrets blocked, hidden text and injection phrasing flagged, on every save.", status: "local" },
   { name: "Lock clashes refused", text: "A rule that would be dropped by a locked one is refused when saved.", status: "local" },
   { name: "Tamper-proof files", text: "A rule can't pose as a company rule or hide the rules after it.", status: "local" },
+  { name: "Server can't pick paths", text: "Every file path from the server is checked: only .claude/rules/axiomic*.md rule files are read or written.", status: "local" },
   { name: "Customer isolation", text: "Row-level security in the database: each space sees only its own rows.", status: "local" },
   { name: "The database decides", text: "Every save, approval and removal is checked by the database itself.", status: "local" },
   { name: "Encrypted rule text", text: "AES-256-GCM, key held outside the database, checked at start-up.", status: "local" },

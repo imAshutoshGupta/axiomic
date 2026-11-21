@@ -22,6 +22,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { RenderedFile } from "@axiomic/shared";
 import { UnsafePathError, isInside, isNotFound, readFileNoFollow, sha256, writeFileAtomic } from "../utils/fs-safe";
+import { printable } from "../utils/printable";
 import { gitCheckIgnored, gitTrackedFiles, type IgnoreResult } from "../project/git";
 import { projectKey } from "../project/project-key";
 import { MAX_MANAGED_FILES, TEMP_SAMPLE_PATH, isManagedRulePath, splitManagedPath, sweepRuleTempFiles } from "./managed-paths";
@@ -111,7 +112,7 @@ export function validateRenderedFiles(files: RenderedFile[]): void {
   const seen = new Set<string>();
   for (const file of files) {
     if (typeof file.path !== "string" || !isManagedRulePath(file.path)) {
-      throw new UnsafePathError(`Refusing to write an unexpected path: ${JSON.stringify(file.path)}`);
+      throw new UnsafePathError(`Refusing to write an unexpected path: ${JSON.stringify(typeof file.path === "string" ? printable(file.path) : file.path)}`);
     }
     if (seen.has(file.path)) throw new Error(`The same file appears twice: ${file.path}`);
     seen.add(file.path);

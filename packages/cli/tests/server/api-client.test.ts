@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { apiCall, ApiError } from "../../src/server/api-client";
-import { printable, pullRules } from "../../src/server/endpoints";
+import { pullRules } from "../../src/server/endpoints";
+import { printable } from "../../src/utils/printable";
 import { fakeServer, fakeToken } from "../helpers/test-helpers";
 
 const API = "https://axiomic.example";

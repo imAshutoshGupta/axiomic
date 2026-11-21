@@ -2,7 +2,8 @@ import path from "node:path";
 import { parseRenderedFile, pullUpHeadings, type RenderedSection } from "@axiomic/shared";
 import type { CacheEntry } from "../local-files/cache";
 import { readFileNoFollow } from "../utils/fs-safe";
-import { MAIN_RULES_FILE } from "../local-files/managed-paths";
+import { MAIN_RULES_FILE, RULES_DIR } from "../local-files/managed-paths";
+import { checkRuleDirs } from "../local-files/writer";
 import type { RuleRef } from "../server/endpoints";
 
 /**
@@ -38,9 +39,11 @@ export async function planPush(realRoot: string, cache: CacheEntry): Promise<Pus
   if (!cache.rules) throw new Error('the last pull is from an older axiomic. Run "axiomic pull" first, then redo your edit.');
   const changes: PlannedChange[] = [];
   const notes: string[] = [];
+  // Like pull: .claude and .claude/rules must be real folders inside the project (a symlink is refused).
+  const rulesFolderExists = await checkRuleDirs(realRoot, RULES_DIR.split("/"), false);
 
   for (const cached of cache.files) {
-    const raw = await readFileNoFollow(path.join(realRoot, ...cached.path.split("/")));
+    const raw = rulesFolderExists ? await readFileNoFollow(path.join(realRoot, ...cached.path.split("/"))) : undefined;
     if (raw === undefined) {
       notes.push(`${cached.path}: missing on disk, nothing to send (axiomic pull restores it)`);
       continue;

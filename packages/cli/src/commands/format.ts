@@ -135,7 +135,7 @@ export function formatPullReport(
       (changed === 0 ? "already up to date." : `${changed} file${changed === 1 ? "" : "s"} changed.`),
     ...list("Written:", report.written),
     ...list("Removed (no longer in your rules):", report.deleted),
-    ...list("Edited on this computer, so kept as they are (axiomic push, to send edits back, is coming):", report.keptModified),
+    ...list("Edited on this computer, so kept as they are (axiomic push sends your edits back):", report.keptModified),
     ...list("Not written by axiomic, so left alone:", report.keptUnmanaged),
     ...list("Not finished (run axiomic pull again):", report.deferred),
     ...list(

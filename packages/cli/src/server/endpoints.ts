@@ -7,18 +7,11 @@ import type { RenderedFile } from "@axiomic/shared";
 import { apiCall, ApiError, type ApiCallOptions } from "./api-client";
 import { isTokenShape } from "./auth";
 import { isValidSlug } from "../project/project-config";
+import { printable } from "../utils/printable";
 
 const bad = (what: string) => new ApiError(0, `the server sent an unexpected ${what}`);
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const isStr = (v: unknown, max = 500): v is string => typeof v === "string" && v.length <= max;
-
-/**
- * Text from the server that gets PRINTED (names, titles, reasons): control characters and
- * bidi overrides removed, so a name can't send escape codes to your terminal or hide text.
- */
-export function printable(text: string): string {
-  return text.replace(/[\u0000-\u001f\u007f-\u009f\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, "");
-}
 
 // ----- device login -----
 

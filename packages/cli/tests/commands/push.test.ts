@@ -157,6 +157,50 @@ describe("diff", () => {
     expect(out.files[0]!.text).toContain("+ Use Jest.");
   });
 
+  it("refuses a server path outside the rule files, before reading any file", async () => {
+    const answer = serverAnswer();
+    const { deps, box } = await setup({}, answer);
+    // The file the bad path points at really exists: before the fix, diff read it and printed it.
+    await fs.writeFile(path.join(box.project, "..", "secret.txt"), "PRIVATE KEY");
+    // A good path whose file can't be read (a symlink) comes FIRST: had diff read it before checking every
+    // path, the error would be about the symlink, not about the unexpected path that comes last.
+    await fs.rm(file(box, MAIN));
+    await fs.symlink(path.join(box.project, "..", "secret.txt"), file(box, MAIN));
+    const evil = { ...answer, files: [...answer.files, { path: "../secret.txt", content: "x" }] };
+    const fetch = fakeServer({ "GET /api/v1/pull": () => ({ status: 200, body: evil }) }).fetch;
+    await expect(diffProject({ ...deps, fetch })).rejects.toThrow(/unexpected path from the server: "\.\.\/secret\.txt"/);
+    for (const bad of ["/etc/passwd", ".claude/rules/../../secret.txt", "secret.txt", ".claude/settings.json", ".claude/rules/AXIOMIC.md"]) {
+      const body = { ...answer, files: [{ path: bad, content: "x" }] };
+      const badFetch = fakeServer({ "GET /api/v1/pull": () => ({ status: 200, body }) }).fetch;
+      await expect(diffProject({ ...deps, fetch: badFetch }), bad).rejects.toThrow(/unexpected path/);
+    }
+  });
+
+  it("shows a refused path without terminal control characters", async () => {
+    const answer = serverAnswer();
+    const { deps } = await setup({}, answer);
+    const body = { ...answer, files: [{ path: "../x\u202e\u001b[2Jtxt.md", content: "x" }] };
+    const fetch = fakeServer({ "GET /api/v1/pull": () => ({ status: 200, body }) }).fetch;
+    const error = await diffProject({ ...deps, fetch }).catch((e: Error) => e);
+    expect((error as Error).message).toContain('"../x[2Jtxt.md"');
+  });
+
+  it("refuses to read through a symlinked .claude folder, like pull (diff and push)", async () => {
+    const { deps, box } = await setup();
+    const outside = path.join(box.project, "..", "elsewhere");
+    await fs.rename(path.join(box.project, ".claude"), outside);
+    await fs.symlink(outside, path.join(box.project, ".claude"));
+    await expect(diffProject(deps)).rejects.toThrow(/symlink/);
+    await expect(pushEdits(deps, { send: false })).rejects.toThrow(/symlink/);
+  });
+
+  it("with no rule folder at all, every server file is only on the server", async () => {
+    const { deps, box } = await setup();
+    await fs.rm(path.join(box.project, ".claude"), { recursive: true });
+    const out = await diffProject(deps);
+    expect(out.files.map((f) => f.state)).toEqual(["only-server", "only-server"]);
+  });
+
   it("a file deleted locally shows as only on the server", async () => {
     const { deps, box } = await setup();
     await fs.rm(file(box, MOD));
