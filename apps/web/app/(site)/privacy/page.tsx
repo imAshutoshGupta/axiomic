@@ -49,7 +49,8 @@ export default function PrivacyPage() {
             <strong>Account data:</strong> your name, email address and profile picture from GitHub or Google sign-in.
           </li>
           <li>
-            <strong>Workspace data:</strong> the companies, teams and projects you belong to, and your role in each.
+            <strong>Workspace data:</strong> the companies, teams and projects you belong to, and your role in each. When an
+            admin invites someone, the invited email address is stored with the invite.
           </li>
           <li>
             <strong>Rule content:</strong> the rule text your team writes, its versions, and suggested changes. In a

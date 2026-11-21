@@ -202,8 +202,14 @@ export const FEATURE_CATEGORIES: FeatureCategory[] = [
       {
         id: "roles",
         name: "Roles and owners",
-        benefit: "Admin, editor and reader roles. Each layer has an owner who decides what goes in it.",
-        status: "planned",
+        benefit: "Admin, editor and reader roles, team leads, and owners for each project and folder, all managed on the website. Each layer's owner decides what goes in it. Admin actions in a company space wait for two-factor sign-in.",
+        status: "in-progress",
+      },
+      {
+        id: "invites",
+        name: "Invites",
+        benefit: "Invite a teammate with a link that works once, only for their email address, for 7 days. You send the link yourself for now; email delivery is planned.",
+        status: "in-progress",
       },
       {
         id: "suggestions",
@@ -220,7 +226,7 @@ export const FEATURE_CATEGORIES: FeatureCategory[] = [
       {
         id: "revoke",
         name: "Offboarding",
-        benefit: "Removing a person stops their updates, and the CLI deletes the managed files on its next run. The CLI side is built; removing people on the website comes with roles.",
+        benefit: "Removing a person on the website stops their updates, and the CLI deletes the managed files on its next run.",
         status: "in-progress",
       },
       {
@@ -269,7 +275,7 @@ export const ROADMAP: { status: Status; title: string; text: string; extra?: str
   {
     status: "in-progress",
     title: "In development",
-    text: "The server: storage, the API and the sync that connects the CLI to it. The signed-in website: projects, the rule viewer and editor, and the suggestions inbox.",
+    text: "The server: storage, the API and the sync that connects the CLI to it. The signed-in website: projects, the rule viewer and editor, the suggestions inbox, invites, roles and teams.",
     extra: ["CLI commands: login, logout, init, pull, push, diff, whoami"],
   },
   {

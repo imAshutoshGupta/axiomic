@@ -28,6 +28,7 @@ const SAVED: Record<string, string> = {
   rule: "Saved. Laptops get it at their next AI session.",
   suggestion: "Suggestion sent. The layer's owner can approve it under Suggestions.",
   deleted: "Rule deleted. Laptops drop it at their next AI session.",
+  project: "Project created, and you're its owner. Add folders and change settings under Settings.",
 };
 
 /**
@@ -50,7 +51,10 @@ export default async function ProjectPage({ params, searchParams }: Props) {
         <Crumbs space={space} />
         <PageHeader eyebrow="Project" title={project} />
         <Callout tone="warning" title="This project is archived">
-          <p>Archived projects keep their rules but can't be pulled or changed.</p>
+          <p>
+            Archived projects keep their rules but can't be pulled or changed.{" "}
+            <Link href={`/spaces/${space}/${project}/settings`}>Settings</Link>
+          </p>
         </Callout>
       </div>
     );
@@ -95,6 +99,9 @@ export default async function ProjectPage({ params, searchParams }: Props) {
         <Link href={`${base}?view=combined`} className={p.tab} aria-current={combined ? "page" : undefined}>
           Combined file
         </Link>
+        <Link href={`${base}/settings`} className={p.tab}>
+          Settings and folders
+        </Link>
       </nav>
 
       {combined ? <Combined v={v} /> : <ByLayer v={v} base={base} />}
@@ -109,7 +116,7 @@ function Crumbs({ space, spaceName }: { space: string; spaceName?: string }) {
         <Link href="/spaces">Projects</Link>
       </li>
       <li>
-        <Link href={`/spaces#${space}`}>{spaceName ?? space}</Link>
+        <Link href={`/spaces/${space}`}>{spaceName ?? space}</Link>
       </li>
     </ol>
   );

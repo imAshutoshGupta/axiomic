@@ -34,10 +34,14 @@ describe.skipIf(!live)("website read model (live, axiomic-dev)", () => {
 
   it("lists your spaces, work first, with only the projects you can read", async () => {
     const spaces = await withUser(browser(RAVI), (tx) => listSpaces(tx));
-    expect(spaces.map((s) => [s.kind, s.role])).toEqual([["work", "reader"], ["personal", "admin"]]);
-    expect(spaces[0]!.slug).toBe("acme");
-    expect(spaces[0]!.projects.map((p) => p.slug).sort()).toEqual(["api", "pipeline", "web-app"]);
-    expect(spaces[0]!.projects.find((p) => p.slug === "web-app")).toMatchObject({ teamName: "Web", modules: 1 });
+    // Other tests may leave Ravi a test company space (scheduled for deletion), so check what matters:
+    // Acme as reader, work spaces before the personal one, which comes last.
+    expect(spaces.find((s) => s.slug === "acme")?.role).toBe("reader");
+    expect(spaces.at(-1)!.kind).toBe("personal");
+    expect(spaces.filter((s) => s.kind === "personal")).toHaveLength(1);
+    const acme = spaces.find((s) => s.slug === "acme")!;
+    expect(acme.projects.map((p) => p.slug).sort()).toEqual(["api", "pipeline", "web-app"]);
+    expect(acme.projects.find((p) => p.slug === "web-app")).toMatchObject({ teamName: "Web", modules: 1 });
   });
 
   it("someone outside the space can't see it: same 404 as a project that doesn't exist", async () => {

@@ -6,6 +6,7 @@ import { PageHeader } from "../../../components/ui/page-header";
 import buttonStyles from "../../../components/ui/button.module.css";
 import { getVerifiedClaims } from "../../../lib/auth";
 import { getMe } from "../../../lib/me";
+import { PendingInviteNotice } from "../invite/accept-invite";
 
 export const metadata: Metadata = {
   title: "Account",
@@ -21,6 +22,7 @@ export default async function AccountPage() {
   return (
     <div className={`container ${p.page}`}>
       <PageHeader eyebrow="Account" title={me.displayName} lead={me.email ?? undefined} />
+      <PendingInviteNotice />
       <ul className={p.list}>
         <li className={p.row}>
           <span>

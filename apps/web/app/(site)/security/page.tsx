@@ -104,6 +104,11 @@ const CONTROLS: { control: string; detail: string; status: Status }[] = [
     detail: "The website offers Edit or Suggest exactly as the database would decide, and every save, delete and approval is decided again by the database: only a layer's owner changes it directly. Every save runs the same safety check as axiomic push. Rule text is shown as plain text, never run as HTML.",
     status: "in-progress",
   },
+  {
+    control: "Invites",
+    detail: "The only way into a company space. A link works once, for 7 days, and only for someone signed in with the invited email address. Only its hash is stored; the secret sits after the # in the link, which browsers never send to a server, so it stays out of logs. Tries are rate limited.",
+    status: "in-progress",
+  },
   { control: "Two-factor sign-in for admins", detail: "Required for admin tools in company spaces.", status: "planned" },
   { control: "Publish alerts", detail: "An email on every publish, so a silent change is noticed.", status: "planned" },
   { control: "Rollback", detail: "Return to an earlier version in one step.", status: "planned" },
@@ -212,7 +217,8 @@ export default function SecurityPage() {
             When a login is revoked, or a person no longer has access to a project, the CLI deletes the rule files it
             wrote there the next time it runs (at session start or on <code>axiomic pull</code>). Files they edited are kept
             and reported. A laptop that stays offline keeps its last files until then, and copies already made cannot be
-            recalled. Removing a person on the website is planned.
+            recalled. An admin removes a person on the website (in development; in a company space it needs the admin's
+            two-factor sign-in, which is still planned).
           </li>
         </ul>
 

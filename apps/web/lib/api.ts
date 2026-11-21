@@ -55,7 +55,12 @@ export function cliVersionOf(request: Request): string | null {
  * is set by Vercel itself; on localhost there is none, so everyone shares "local".
  */
 export function clientIp(request: Request): string {
-  const ip = request.headers.get("x-real-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0];
+  return clientIpFromHeaders(request.headers);
+}
+
+/** The same, from bare headers (server actions get headers(), not a Request). */
+export function clientIpFromHeaders(headers: Headers): string {
+  const ip = headers.get("x-real-ip") ?? headers.get("x-forwarded-for")?.split(",")[0];
   const clean = ip?.trim() ?? "";
   return /^[0-9a-fA-F:.]{2,45}$/.test(clean) ? clean : "local";
 }

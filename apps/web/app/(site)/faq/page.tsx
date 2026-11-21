@@ -96,7 +96,7 @@ const FAQS: { id: string; q: string; a: ReactNode }[] = [
     a: (
       <p>
         Their access stops, and the CLI deletes the rule files it wrote the next time it runs (built; removing a person
-        on the website is planned). A laptop that stays offline keeps its last files until then, and copies they
+        on the website is in development). A laptop that stays offline keeps its last files until then, and copies they
         already made cannot be recalled, which is true of any tool.
       </p>
     ),

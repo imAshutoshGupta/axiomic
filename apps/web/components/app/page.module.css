@@ -223,3 +223,76 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+/* Small management forms (members, teams, folders) */
+.formTight {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.inlineForm {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.inlineForm .select,
+.formTight .select,
+.formTight .input {
+  min-width: 0;
+}
+
+.secret {
+  display: block;
+  margin: 8px 0;
+  word-break: break-all;
+  user-select: all;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.table {
+  width: 100%;
+  margin-top: 16px;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.table th,
+.table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.table th {
+  font-size: var(--text-small);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  /* Phones: one person per block instead of a cramped table. */
+  .table thead {
+    display: none;
+  }
+  .table tr {
+    display: block;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .table td {
+    display: block;
+    padding: 4px 0;
+    border: 0;
+  }
+}
