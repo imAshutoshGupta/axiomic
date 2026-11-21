@@ -1,0 +1,225 @@
+/* Shared styles for signed-in pages: lists, cards, small labels, forms. */
+.page {
+  padding-bottom: 96px;
+}
+
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-small);
+  color: var(--muted);
+}
+
+.crumbs li + li::before {
+  content: "/";
+  margin-right: 6px;
+  color: var(--muted-2);
+}
+
+.h2 {
+  margin: 40px 0 12px;
+  font-size: 22px;
+}
+
+.h3 {
+  margin: 24px 0 8px;
+  font-size: 17px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: var(--text-small);
+  color: var(--muted);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.row:first-child {
+  border-top: 1px solid var(--border);
+}
+
+.card {
+  margin: 16px 0;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.cardHead {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px 16px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 18px;
+}
+
+.tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.tagAccent {
+  composes: tag;
+  border-color: transparent;
+  background: var(--soft);
+  color: var(--soft-fg);
+}
+
+.tagWarn {
+  composes: tag;
+  color: var(--warn);
+}
+
+/* Rule text: shown as written (Markdown source), never as HTML. */
+.ruleBody {
+  margin: 10px 0 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-code);
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 420px;
+  overflow: auto;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.inline {
+  display: inline;
+}
+
+/* Forms */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 820px;
+  margin: 24px 0;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.input,
+.textarea,
+.select {
+  padding: 9px 11px;
+  font: inherit;
+  font-weight: 400;
+  color: inherit;
+  background: var(--surface);
+  border: 1px solid var(--dash);
+  border-radius: 8px;
+}
+
+.textarea {
+  min-height: 320px;
+  font-family: var(--font-mono);
+  font-size: var(--text-code);
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.findings {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.findings li + li {
+  margin-top: 4px;
+}
+
+/* Tabs-like layer filter on the project page */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 24px 0 8px;
+}
+
+.tab {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: var(--text-ui);
+  color: var(--muted);
+}
+
+.tab[aria-current="page"] {
+  border-color: transparent;
+  background: var(--inv);
+  color: var(--inv-fg);
+}
+
+.pre {
+  margin: 12px 0;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: var(--term);
+  color: var(--term-fg);
+  font-family: var(--font-mono);
+  font-size: var(--text-code);
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

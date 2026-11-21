@@ -1,0 +1,154 @@
+/* App header: same rhythm as the public header (components/site/site.module.css), fewer parts. */
+.header {
+  position: relative;
+  z-index: 30;
+  padding-top: 22px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.headerInner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.appNav {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto; /* phones: the two links scroll rather than wrap */
+}
+
+.navLink {
+  padding: 12px 12px;
+  font-size: var(--text-ui);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.navLink[aria-current="page"] {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.headerEnd {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+.signInLink {
+  padding: 12px 14px;
+  font-size: var(--text-ui);
+  font-weight: 600;
+}
+
+/* Account menu */
+.account {
+  position: relative;
+}
+
+.accountButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  max-width: 220px;
+  padding: 0 12px 0 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-ui);
+  cursor: pointer;
+}
+
+.accountButton:hover {
+  border-color: var(--dash);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--soft);
+  color: var(--soft-fg);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.accountName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.accountPanel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(280px, calc(100vw - 2 * var(--gutter)));
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+
+.accountPanel[hidden] {
+  display: none;
+}
+
+.accountWho {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 6px;
+  overflow-wrap: anywhere;
+}
+
+.accountEmail {
+  font-size: var(--text-small);
+  color: var(--muted);
+}
+
+/* Links and the sign-out button look the same. */
+.menuItem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menuItem:hover {
+  background: var(--surface-2);
+}
+
+@media (max-width: 480px) {
+  .accountName {
+    display: none; /* the round initial is enough on a phone */
+  }
+  .accountButton {
+    padding: 0 6px;
+  }
+}

@@ -74,8 +74,8 @@ const FAQS: { id: string; q: string; a: ReactNode }[] = [
     a: (
       <p>
         axiomic notices and keeps your edit instead of overwriting it. <code>axiomic push</code> sends it back: saved
-        directly if you own that layer, otherwise as a suggestion for the owner (built; approving suggestions on the
-        website is planned).
+        directly if you own that layer, otherwise as a suggestion that the owner approves or rejects on the website (in
+        development).
       </p>
     ),
   },

@@ -112,7 +112,7 @@ export const FEATURE_CATEGORIES: FeatureCategory[] = [
       {
         id: "publish-gate",
         name: "Checks run on every publish",
-        benefit: "The server runs the check on every change sent with axiomic push and refuses blocking problems (built). The website editor will run it too, plus clashes with a locked rule (planned).",
+        benefit: "The server runs the check on every change sent with axiomic push and on every save in the website editor, and refuses blocking problems. The editor also refuses a rule whose title clashes with a locked rule, and shows warnings before saving.",
         status: "in-progress",
       },
     ],
@@ -208,14 +208,14 @@ export const FEATURE_CATEGORIES: FeatureCategory[] = [
       {
         id: "suggestions",
         name: "Suggestions and approvals",
-        benefit: "Anyone can propose a change, including from their laptop with axiomic push (built). The layer owner approves it on the website (planned).",
+        benefit: "Anyone can propose a change, from the website editor or from their laptop with axiomic push. The layer owner approves or rejects it in the website's Suggestions inbox, with a note to the author.",
         status: "in-progress",
       },
       {
         id: "editor",
         name: "Rule editor on the website",
-        benefit: "Write and preview rules, see who changed what, and roll back to an earlier version.",
-        status: "planned",
+        benefit: "See every project's rules layer by layer and the combined file a laptop gets, then add, edit or delete rules in the layers you own. Version history and roll back are planned.",
+        status: "in-progress",
       },
       {
         id: "revoke",
@@ -269,7 +269,7 @@ export const ROADMAP: { status: Status; title: string; text: string; extra?: str
   {
     status: "in-progress",
     title: "In development",
-    text: "The server: storage, the API and the sync that connects the CLI to it.",
+    text: "The server: storage, the API and the sync that connects the CLI to it. The signed-in website: projects, the rule viewer and editor, and the suggestions inbox.",
     extra: ["CLI commands: login, logout, init, pull, push, diff, whoami"],
   },
   {

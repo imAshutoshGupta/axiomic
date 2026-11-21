@@ -18,7 +18,7 @@ describe("renderClaude: main file", () => {
       {
         path: ".claude/rules/axiomic.md",
         content: [
-          "<!-- Managed by axiomic (version 7). Change these rules on the axiomic website, not here. -->",
+          "<!-- Managed by axiomic (version 7). Change these rules on the axiomic website, or edit here and run axiomic push. -->",
           "# Rules from axiomic",
           "",
           "These rules are listed from widest to narrowest: company, team, project, then personal.",
@@ -97,7 +97,7 @@ describe("renderClaude: folder files", () => {
           "paths:",
           '  - "src/payments/**"',
           "---",
-          "<!-- Managed by axiomic (version 7). Change these rules on the axiomic website, not here. -->",
+          "<!-- Managed by axiomic (version 7). Change these rules on the axiomic website, or edit here and run axiomic push. -->",
           "# Rules for src/payments/",
           "",
           "These rules apply when you work on files in `src/payments/`. Here they win over the general axiomic rules, except MANDATORY ones. If folders are nested, the deeper folder's rules win.",

@@ -66,8 +66,8 @@ export function parsePushBody(body: unknown): { ref: ProjectRef; changes: PushCh
   return { ref: { space: b.space, project: b.project }, changes };
 }
 
-/** The combined size of this project's files after one change, for the database's 256 KiB check. */
-function sizeAfter(loaded: LoadedProject, change: PushChange, newRuleId: string | undefined): number {
+/** This project's merge input with one change applied (for the size check and the website's lock-clash check). */
+export function inputAfter(loaded: LoadedProject, change: PushChange, newRuleId: string | undefined): MergeInput {
   const input: MergeInput = structuredClone(loaded.input);
   const rule = { id: newRuleId ?? (change as { ruleId: string }).ruleId, title: change.title, body: change.body };
   const replace = <T extends { id: string }>(list: T[], extra: Partial<T>) => {
@@ -88,7 +88,12 @@ function sizeAfter(loaded: LoadedProject, change: PushChange, newRuleId: string 
     }
     replace(mod.rules, {});
   }
-  return renderClaude(merge(input), 0).reduce((n, f) => n + Buffer.byteLength(f.content, "utf8"), 0);
+  return input;
+}
+
+/** The combined size of this project's files after one change, for the database's 256 KiB check. */
+export function sizeAfter(loaded: LoadedProject, change: PushChange, newRuleId: string | undefined): number {
+  return renderClaude(merge(inputAfter(loaded, change, newRuleId)), 0).reduce((n, f) => n + Buffer.byteLength(f.content, "utf8"), 0);
 }
 
 /** Our own database refusal texts (private.deny / bad_input) are fixed sentences: safe to pass on, when printable. */
@@ -101,7 +106,16 @@ function dbReason(e: unknown): string {
  * Applies ONE change in the caller's transaction. Never throws for an expected refusal: it
  * answers with a status. Unexpected errors (connection, bugs) do throw.
  */
-export async function applyChange(tx: Tx, ring: Keyring, loaded: LoadedProject, change: PushChange): Promise<ChangeResult> {
+export interface ApplyOptions {
+  /** Merged sizes of the OTHER projects this change reaches (website editor). Push sends none (known limit, #64). */
+  otherSizes?: Record<string, number>;
+  /** Company/team only: set or clear the lock. Default: create unlocked, update keeps it. */
+  locked?: boolean;
+  /** The id a new rule gets (the website picks it first, to check lock clashes). Default: a fresh one. */
+  newRuleId?: string;
+}
+
+export async function applyChange(tx: Tx, ring: Keyring, loaded: LoadedProject, change: PushChange, opts: ApplyOptions = {}): Promise<ChangeResult> {
   // 1. Safety check first: a secret never even gets encrypted and stored.
   const safety = checkRule({ title: change.title, body: change.body });
   if (!safety.ok) {
@@ -128,7 +142,7 @@ export async function applyChange(tx: Tx, ring: Keyring, loaded: LoadedProject, 
     scopeId = rule.teamId ?? rule.projectId ?? rule.moduleId;
     baseVersion = rule.version;
   } else {
-    ruleId = randomUUID();
+    ruleId = opts.newRuleId ?? randomUUID();
     version = 1;
     layer = change.layer;
     if (change.layer === "module") {
@@ -139,7 +153,7 @@ export async function applyChange(tx: Tx, ring: Keyring, loaded: LoadedProject, 
       scopeId = change.layer === "team" ? project.team_id : change.layer === "project" ? project.id : null;
     }
   }
-  const sizes = { [project.id]: sizeAfter(loaded, change, change.kind === "create" ? ruleId : undefined) };
+  const sizes = { ...opts.otherSizes, [project.id]: sizeAfter(loaded, change, change.kind === "create" ? ruleId : undefined) };
 
   // 3. Try a direct save; if the layer isn't yours, make it a suggestion instead.
   try {
@@ -147,7 +161,7 @@ export async function applyChange(tx: Tx, ring: Keyring, loaded: LoadedProject, 
     await tx.savepoint((sp) => sp`
       select api.save_rule(${ruleId}::uuid, ${version}::integer, ${project.space_id}::uuid, ${layer}::text, ${scopeId}::uuid,
                            ${change.title}::text, ${sealed.nonce}::bytea, ${sealed.ciphertext}::bytea, ${sealed.keyVersion}::smallint,
-                           ${change.kind === "create" ? false : null}::boolean, ${JSON.stringify(sizes)}::text::jsonb)`);
+                           ${opts.locked ?? (change.kind === "create" ? false : null)}::boolean, ${JSON.stringify(sizes)}::text::jsonb)`);
     return { status: "saved", ruleId, version };
   } catch (e) {
     const code = pgCode(e);

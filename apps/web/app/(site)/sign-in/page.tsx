@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { Callout } from "../../../components/ui/callout";
 import { PageHeader } from "../../../components/ui/page-header";
 import buttonStyles from "../../../components/ui/button.module.css";
@@ -26,27 +27,8 @@ export default async function SignInPage({ searchParams }: Props) {
   const { error } = await searchParams;
   const message = error ? (ERRORS[error] ?? ERRORS.callback) : null;
 
-  if (claims) {
-    return (
-      <div className={`container ${styles.page}`}>
-        <PageHeader eyebrow="Sign in" title="You're already signed in" />
-        <form method="post" action="/auth/sign-out" className={styles.buttons}>
-          <a href="/device" className={`${buttonStyles.button} ${buttonStyles.primary} ${buttonStyles.lg}`}>
-            Approve a CLI login
-          </a>
-          <a href="/account/tokens" className={`${buttonStyles.button} ${buttonStyles.secondary} ${buttonStyles.lg}`}>
-            CLI tokens
-          </a>
-          <button
-            type="submit"
-            className={`${buttonStyles.button} ${buttonStyles.secondary} ${buttonStyles.lg}`}
-          >
-            Sign out
-          </button>
-        </form>
-      </div>
-    );
-  }
+  // Already signed in: the account page has everything this page used to offer (and sign-out).
+  if (claims) redirect("/account");
 
   return (
     <div className={`container ${styles.page}`}>

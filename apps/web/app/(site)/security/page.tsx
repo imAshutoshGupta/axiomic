@@ -99,6 +99,11 @@ const CONTROLS: { control: string; detail: string; status: Status }[] = [
     detail: "GitHub or Google only, no passwords. 15-minute sessions; every page checks the session's signature on the server.",
     status: "local",
   },
+  {
+    control: "Website editor: the database decides",
+    detail: "The website offers Edit or Suggest exactly as the database would decide, and every save, delete and approval is decided again by the database: only a layer's owner changes it directly. Every save runs the same safety check as axiomic push. Rule text is shown as plain text, never run as HTML.",
+    status: "in-progress",
+  },
   { control: "Two-factor sign-in for admins", detail: "Required for admin tools in company spaces.", status: "planned" },
   { control: "Publish alerts", detail: "An email on every publish, so a silent change is noticed.", status: "planned" },
   { control: "Rollback", detail: "Return to an earlier version in one step.", status: "planned" },

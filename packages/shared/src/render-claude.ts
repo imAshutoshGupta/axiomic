@@ -94,7 +94,7 @@ function renderRule(rule: MergedRule): string[] {
 
 /** Hidden from the AI (Claude Code strips HTML comments), so it costs no tokens. */
 function marker(version: number): string {
-  return `<!-- Managed by axiomic (version ${version}). Change these rules on the axiomic website, not here. -->`;
+  return `<!-- Managed by axiomic (version ${version}). Change these rules on the axiomic website, or edit here and run axiomic push. -->`;
 }
 
 /**

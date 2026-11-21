@@ -19,8 +19,7 @@ export async function GET(request: NextRequest) {
     return back("/sign-in?error=callback");
   }
 
-  // No account page yet: /sign-in shows "You're already signed in". Step 9 changes this to /account.
-  return back("/sign-in");
+  return back("/account");
 }
 
 // Redirect within our own site only (built from our constant, never the request's Host header).
