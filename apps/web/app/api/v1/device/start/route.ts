@@ -1,5 +1,5 @@
-import { apiError, clientIp, ok } from "../../../../../lib/api";
-import { withServer } from "../../../../../lib/db";
+import { apiError, clientIp, ok } from "@/lib/api/route-helpers";
+import { withServer } from "@/lib/db";
 
 /**
  * POST /api/v1/device/start   (no token: this is how you get one)

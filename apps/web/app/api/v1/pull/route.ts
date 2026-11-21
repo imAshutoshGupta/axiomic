@@ -1,8 +1,8 @@
 import { isValidSlug } from "@axiomic/shared";
-import { apiError, cliVersionOf, fail, ok, requireToken } from "../../../../lib/api";
-import { withUser } from "../../../../lib/db";
-import { readPull } from "../../../../lib/pull";
-import { keyring } from "../../../../lib/rule-keys";
+import { apiError, cliVersionOf, fail, ok, requireToken } from "@/lib/api/route-helpers";
+import { withUser } from "@/lib/db";
+import { readPull } from "@/lib/rules/pull";
+import { keyring } from "@/lib/rules/rule-keys";
 
 /**
  * GET /api/v1/pull?space=<slug>&project=<slug>[&dry=1]   (the two slugs from axiomic.json, #56)

@@ -1,8 +1,9 @@
+/** /faq: common questions and their answers. */
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { PageHeader } from "../../../components/ui/page-header";
-import { Mark } from "../../../components/ui/type";
+import { PageHeader } from "@/components/ui/page-header";
+import { Mark } from "@/components/ui/type";
 import s from "./faq.module.css";
 
 export const metadata: Metadata = {

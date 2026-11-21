@@ -1,3 +1,4 @@
+/** Callout: a highlighted box for a note, a warning or a draft notice. */
 import type { ReactNode } from "react";
 import styles from "./callout.module.css";
 

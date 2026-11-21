@@ -1,5 +1,6 @@
 "use client";
 
+/** The light / dark theme switch. */
 import styles from "./site.module.css";
 
 const STORAGE_KEY = "axiomic-theme"; // also read by the inline script in app/layout.tsx

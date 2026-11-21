@@ -86,48 +86,6 @@
   margin-top: 20px;
 }
 
-/* Tables scroll sideways on small screens instead of breaking the page width. */
-.tableWrap {
-  margin-top: 20px;
-  overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-}
-
-.tableWrap table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14.5px;
-  line-height: 1.55;
-}
-
-.tableWrap th,
-.tableWrap td {
-  padding: 12px 14px;
-  text-align: left;
-  vertical-align: top;
-  border-bottom: 1px solid var(--border);
-}
-
-.tableWrap tr:last-child td {
-  border-bottom: 0;
-}
-
-.tableWrap th {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted-2);
-  background: var(--surface-2);
-}
-
-.tableWrap td:first-child {
-  color: var(--text);
-  font-weight: 600;
-}
-
 /* Placeholder text in legal drafts, e.g. [legal entity — to be confirmed] */
 .placeholder {
   padding: 0 4px;
@@ -137,39 +95,4 @@
   font-family: var(--font-mono);
   font-size: 0.88em;
   white-space: normal;
-}
-
-/* Stacked rows instead of a three-column table on narrow screens: control and status on one line, description below. */
-@media (max-width: 640px) {
-  .tableWrap table,
-  .tableWrap tbody {
-    display: block;
-  }
-  .tableWrap thead {
-    display: none;
-  }
-  .tableWrap tr {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 6px 12px;
-    align-items: center;
-    padding: 14px;
-    border-bottom: 1px solid var(--border);
-  }
-  .tableWrap tr:last-child {
-    border-bottom: 0;
-  }
-  .tableWrap td {
-    padding: 0;
-    border: 0;
-  }
-  .tableWrap td:nth-child(2) {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    color: var(--muted);
-  }
-  .tableWrap td:nth-child(3) {
-    grid-column: 2;
-    grid-row: 1;
-  }
 }

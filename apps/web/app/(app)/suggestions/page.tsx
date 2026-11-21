@@ -1,14 +1,15 @@
+/** /suggestions: suggested rule changes waiting for you, and the ones you sent. */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import p from "../../../components/app/page.module.css";
-import { Callout } from "../../../components/ui/callout";
-import { PageHeader } from "../../../components/ui/page-header";
-import { getVerifiedClaims } from "../../../lib/auth";
-import { withUser } from "../../../lib/db";
-import { keyring } from "../../../lib/rule-keys";
-import { listSuggestions, type SuggestionItem } from "../../../lib/suggestions";
-import { spaceLabel } from "../../../lib/workspace";
+import p from "@/components/app/page.module.css";
+import { Callout } from "@/components/ui/callout";
+import { PageHeader } from "@/components/ui/page-header";
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { withUser } from "@/lib/db";
+import { keyring } from "@/lib/rules/rule-keys";
+import { listSuggestions, type SuggestionItem } from "@/lib/rules/suggestions";
+import { spaceLabel } from "@/lib/spaces/workspace";
 import { DecideForm, WithdrawForm } from "./decide-form";
 
 export const metadata: Metadata = {

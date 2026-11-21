@@ -1,6 +1,6 @@
-import { PRIMARY_CTA } from "../../content/site";
-import { ButtonLink } from "../ui/button";
-import { Mark } from "../ui/type";
+import { PRIMARY_CTA } from "@/content/site";
+import { ButtonLink } from "@/components/ui/button";
+import { Mark } from "@/components/ui/type";
 import { GatherCard } from "./gather-card";
 import styles from "./hero.module.css";
 

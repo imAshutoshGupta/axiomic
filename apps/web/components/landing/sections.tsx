@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import { PRIMARY_CTA } from "../../content/site";
-import { ButtonLink } from "../ui/button";
-import { Section } from "../ui/section";
-import { Mark } from "../ui/type";
+import { PRIMARY_CTA } from "@/content/site";
+import { ButtonLink } from "@/components/ui/button";
+import { Section } from "@/components/ui/section";
+import { Mark } from "@/components/ui/type";
 import styles from "./sections.module.css";
 import v from "./visuals.module.css";
 

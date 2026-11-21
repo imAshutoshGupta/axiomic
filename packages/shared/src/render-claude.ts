@@ -166,58 +166,77 @@ export function findOpenBlocks(text: string): OpenBlocks {
 
   lines.forEach((line, i) => {
     if (fence) {
-      const close = FENCE_CLOSE.exec(line);
-      if (close && close[1]![0] === fence.marker[0] && close[1]!.length >= fence.marker.length) fence = undefined;
+      if (closesFence(line, fence)) fence = undefined;
     } else {
       const open = comment ? null : FENCE_OPEN.exec(line);
-      if (open) {
-        fence = { marker: open[1]!, line: i + 1 };
-      } else {
-        // Backtick runs on this line, and for each the next run of exactly the same length (its closing partner).
-        // Built right to left in one pass so the whole line stays linear.
-        const runs = [...line.matchAll(/`+/g)].map((m) => ({ start: m.index, length: m[0].length }));
-        const partner: (number | undefined)[] = new Array(runs.length);
-        const lastSeen = new Map<number, number>();
-        for (let r = runs.length - 1; r >= 0; r--) {
-          partner[r] = lastSeen.get(runs[r]!.length);
-          lastSeen.set(runs[r]!.length, r);
-        }
-
-        let pos = 0;
-        let r = 0; // first backtick run at or after pos
-        let nextOpen = -2; // cached position of the next "<!--" (-2: not looked up yet)
-        for (;;) {
-          if (comment) {
-            const end = line.indexOf("-->", pos);
-            if (end === -1) break;
-            comment = undefined;
-            pos = end + 3;
-            continue;
-          }
-          while (r < runs.length && runs[r]!.start < pos) r++;
-          if (nextOpen !== -1 && nextOpen < pos) nextOpen = line.indexOf("<!--", pos);
-          if (nextOpen === -1 && r >= runs.length) break;
-          if (nextOpen !== -1 && (r >= runs.length || nextOpen < runs[r]!.start)) {
-            const end = line.indexOf("-->", nextOpen + 2);
-            if (end === -1) {
-              comment = { index: offset + nextOpen, line: i + 1 };
-              break;
-            }
-            pos = end + 3;
-          } else {
-            // A backtick run: if a run of the same length follows on this line it's an inline code span, and a "<!--"
-            // inside is plain text. With no partner ("`<!-- hide" with the backtick never closed) it isn't code at all,
-            // so the comment is real: that is how an unbalanced backtick could otherwise be used to dodge the check.
-            const close = partner[r];
-            pos = close !== undefined ? runs[close]!.start + runs[close]!.length : runs[r]!.start + runs[r]!.length;
-          }
-        }
-      }
+      if (open) fence = { marker: open[1]!, line: i + 1 };
+      else comment = commentOpenAfterLine(line, comment, i + 1, offset);
     }
     offset += line.length + 1;
   });
 
   return { ...(fence ? { fence } : {}), ...(comment ? { comment } : {}) };
+}
+
+/** True when this line closes the open code block: the same character, at least as many of them. */
+function closesFence(line: string, fence: { marker: string }): boolean {
+  const close = FENCE_CLOSE.exec(line);
+  return close !== null && close[1]![0] === fence.marker[0] && close[1]!.length >= fence.marker.length;
+}
+
+type BacktickRun = { start: number; length: number };
+
+/**
+ * Backtick runs on this line, and for each the next run of exactly the same length (its closing partner).
+ * Built right to left in one pass so the whole line stays linear.
+ */
+function backtickRuns(line: string): { runs: BacktickRun[]; partner: (number | undefined)[] } {
+  const runs = [...line.matchAll(/`+/g)].map((match) => ({ start: match.index, length: match[0].length }));
+  const partner: (number | undefined)[] = new Array(runs.length);
+  const lastSeen = new Map<number, number>();
+  for (let r = runs.length - 1; r >= 0; r--) {
+    partner[r] = lastSeen.get(runs[r]!.length);
+    lastSeen.set(runs[r]!.length, r);
+  }
+  return { runs, partner };
+}
+
+/**
+ * Follows "<!--", "-->" and inline code spans along one line outside a code block.
+ * `comment` is the comment already open when the line starts; returns the one still open at its end.
+ */
+function commentOpenAfterLine(line: string, comment: OpenBlocks["comment"], lineNumber: number, offset: number): OpenBlocks["comment"] {
+  const { runs, partner } = backtickRuns(line);
+  let pos = 0;
+  let r = 0; // first backtick run at or after pos
+  let nextOpen = -2; // cached position of the next "<!--" (-2: not looked up yet)
+  for (;;) {
+    if (comment) {
+      const end = line.indexOf("-->", pos);
+      if (end === -1) return comment;
+      comment = undefined;
+      pos = end + 3;
+      continue;
+    }
+    while (r < runs.length && runs[r]!.start < pos) r++;
+    if (nextOpen !== -1 && nextOpen < pos) nextOpen = line.indexOf("<!--", pos);
+    const nextRun = runs[r];
+    if (nextOpen === -1 && nextRun === undefined) return undefined;
+
+    if (nextOpen !== -1 && (nextRun === undefined || nextOpen < nextRun.start)) {
+      const end = line.indexOf("-->", nextOpen + 2);
+      if (end === -1) return { index: offset + nextOpen, line: lineNumber };
+      pos = end + 3;
+      continue;
+    }
+    // A backtick run (nextRun is set: either no "<!--" is left, or the run comes first). If a run of the same
+    // length follows on this line it's an inline code span, and a "<!--" inside is plain text. With no partner
+    // ("`<!-- hide" with the backtick never closed) it isn't code at all, so the comment is real: that is how an
+    // unbalanced backtick could otherwise be used to dodge the check.
+    const close = partner[r];
+    const skipTo = close !== undefined ? runs[close]! : nextRun!;
+    pos = skipTo.start + skipTo.length;
+  }
 }
 
 /**

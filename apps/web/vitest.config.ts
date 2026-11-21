@@ -5,10 +5,17 @@ import { defineConfig } from "vitest/config";
 // Database tests read AXIOMIC_DATABASE_URL etc. from .env.local; they skip themselves when it's missing.
 if (existsSync(".env.local")) process.loadEnvFile(".env.local");
 
+const webRoot = fileURLToPath(new URL("./", import.meta.url));
+
 export default defineConfig({
   resolve: {
-    // "server-only" throws outside Next's server bundle; in tests we are the server.
-    alias: { "server-only": fileURLToPath(new URL("./test/server-only-stub.ts", import.meta.url)) },
+    alias: [
+      // "@/lib/db" means apps/web/lib/db (same as "paths" in tsconfig.json, which Next.js reads).
+      { find: /^@\//, replacement: webRoot },
+      // "server-only" throws outside Next's server bundle; in tests we are the server.
+      { find: "server-only", replacement: fileURLToPath(new URL("./tests/helpers/server-only-stub.ts", import.meta.url)) },
+    ],
   },
-  test: { testTimeout: 30_000, fileParallelism: false },
+  // Tests live in tests/, mirroring the app (tests/rules/push.test.ts tests lib/rules/push.ts).
+  test: { include: ["tests/**/*.test.ts"], testTimeout: 30_000, fileParallelism: false },
 });

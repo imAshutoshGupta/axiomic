@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { SiteFooter } from "../../components/site/site-footer";
-import { SiteHeader } from "../../components/site/site-header";
-import styles from "../../components/site/site.module.css";
+import { SiteFooter } from "@/components/site/site-footer";
+import { SiteHeader } from "@/components/site/site-header";
+import styles from "@/components/site/site.module.css";
 
 /**
  * Layout for the public pages (no login). The "(site)" folder name is a route group:

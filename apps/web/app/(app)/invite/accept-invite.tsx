@@ -1,9 +1,9 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import p from "../../../components/app/page.module.css";
-import buttonStyles from "../../../components/ui/button.module.css";
-import { Callout } from "../../../components/ui/callout";
+import p from "@/components/app/page.module.css";
+import buttonStyles from "@/components/ui/button.module.css";
+import { Callout } from "@/components/ui/callout";
 import { acceptInvite, type AcceptState } from "./actions";
 
 /** Where a not-yet-signed-in visitor's invite waits during sign-in (this tab only, cleared on use). */

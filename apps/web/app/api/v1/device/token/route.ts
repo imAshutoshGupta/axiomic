@@ -1,5 +1,5 @@
-import { apiError, fail, ok } from "../../../../../lib/api";
-import { withServer } from "../../../../../lib/db";
+import { apiError, fail, ok } from "@/lib/api/route-helpers";
+import { withServer } from "@/lib/db";
 
 /**
  * POST /api/v1/device/token   body: { "device_code": "…" }   (no token yet)

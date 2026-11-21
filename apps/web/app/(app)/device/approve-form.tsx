@@ -1,8 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
-import { Callout } from "../../../components/ui/callout";
-import buttonStyles from "../../../components/ui/button.module.css";
+import { Callout } from "@/components/ui/callout";
+import buttonStyles from "@/components/ui/button.module.css";
 import { deviceAction, type DeviceState } from "./actions";
 import styles from "./device.module.css";
 

@@ -1,11 +1,12 @@
+/** /product: what axiomic is made of and what each part does. */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ButtonLink } from "../../../components/ui/button";
-import { PageHeader } from "../../../components/ui/page-header";
-import { StatusBadge } from "../../../components/ui/status-badge";
-import { Mark } from "../../../components/ui/type";
-import { FEATURE_CATEGORIES } from "../../../content/features";
-import { PRIMARY_CTA } from "../../../content/site";
+import { ButtonLink } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { Mark } from "@/components/ui/type";
+import { FEATURE_CATEGORIES } from "@/content/features";
+import { PRIMARY_CTA } from "@/content/site";
 import s from "./product.module.css";
 
 export const metadata: Metadata = {

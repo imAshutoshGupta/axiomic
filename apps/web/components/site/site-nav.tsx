@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import type { NavLink } from "../../content/site";
+import type { NavLink } from "@/content/site";
 import styles from "./site.module.css";
 
 /** Links that point at a section of the home page ("/#how") are never marked as the current page. */

@@ -1,19 +1,17 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { getVerifiedClaims } from "../../../../lib/auth";
-import { pgCode, withUser } from "../../../../lib/db";
-
 /**
  * Server actions for /account/tokens (DECISIONS #46). Next.js only accepts server actions
  * posted from our own origin, and each one re-checks the signed-in session itself.
  * The database decides the rest: api.issue_token refuses CLI tokens (website only) and
  * api.revoke_token refuses anyone else's token.
  */
+import { revalidatePath } from "next/cache";
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { pgCode, withUser } from "@/lib/db";
+import { isUuid } from "@/lib/input";
 
 export type CreateState = { token?: string; error?: string };
-
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export async function createCliToken(_prev: CreateState, formData: FormData): Promise<CreateState> {
   const claims = await getVerifiedClaims();
@@ -37,7 +35,7 @@ export async function revokeCliToken(formData: FormData): Promise<void> {
   const claims = await getVerifiedClaims();
   if (!claims) return;
   const id = formData.get("id");
-  if (typeof id !== "string" || !UUID.test(id)) return;
+  if (typeof id !== "string" || !isUuid(id)) return;
   try {
     await withUser(claims, (tx) => tx`select api.revoke_token(${id})`);
   } catch (e) {

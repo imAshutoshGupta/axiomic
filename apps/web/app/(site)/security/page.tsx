@@ -1,11 +1,12 @@
+/** /security: how axiomic protects rules, and its known limits. */
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import v from "../../../components/landing/visuals.module.css";
-import { Callout } from "../../../components/ui/callout";
-import { PageHeader } from "../../../components/ui/page-header";
-import { StatusBadge, type Status } from "../../../components/ui/status-badge";
-import { Mark } from "../../../components/ui/type";
+import v from "@/components/landing/visuals.module.css";
+import { Callout } from "@/components/ui/callout";
+import { PageHeader } from "@/components/ui/page-header";
+import { StatusBadge, type Status } from "@/components/ui/status-badge";
+import { Mark } from "@/components/ui/type";
 import s from "./security.module.css";
 
 export const metadata: Metadata = {

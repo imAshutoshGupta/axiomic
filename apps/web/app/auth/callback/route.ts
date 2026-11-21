@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createSupabaseServerClient } from "../../../lib/supabase/server";
-import { siteUrl } from "../../../lib/site-url";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { siteUrl } from "@/lib/site-url";
 
 /**
  * Swap 2 of the sign-in flow. Supabase sends the browser here with ?code=<ticket B>.

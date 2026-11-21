@@ -1,7 +1,8 @@
 "use client";
 
+/** The landing page's animated "how it works" steps. */
 import { useEffect, useState } from "react";
-import { Eyebrow, Mark, SectionTitle } from "../ui/type";
+import { Eyebrow, Mark, SectionTitle } from "@/components/ui/type";
 import styles from "./how.module.css";
 import { useMotion, useReducedMotion } from "./motion";
 

@@ -1,3 +1,4 @@
+/** /manifest.webmanifest: the web app manifest (name, colours, icons). */
 import type { MetadataRoute } from "next";
 
 // Same values as public/brand/favicon/site.webmanifest. The PNGs live in public/.

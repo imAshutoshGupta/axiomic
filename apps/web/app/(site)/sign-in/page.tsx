@@ -1,9 +1,10 @@
+/** /sign-in: the GitHub and Google sign-in buttons. */
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Callout } from "../../../components/ui/callout";
-import { PageHeader } from "../../../components/ui/page-header";
-import buttonStyles from "../../../components/ui/button.module.css";
-import { getVerifiedClaims } from "../../../lib/auth";
+import { Callout } from "@/components/ui/callout";
+import { PageHeader } from "@/components/ui/page-header";
+import buttonStyles from "@/components/ui/button.module.css";
+import { getVerifiedClaims } from "@/lib/auth/session";
 import { signIn } from "./actions";
 import styles from "./sign-in.module.css";
 

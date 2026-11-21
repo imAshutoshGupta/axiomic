@@ -1,11 +1,12 @@
+/** /spaces/new: create a company (work) space. */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ActionForm } from "../../../../components/app/action-form";
-import p from "../../../../components/app/page.module.css";
-import { PageHeader } from "../../../../components/ui/page-header";
-import { getVerifiedClaims } from "../../../../lib/auth";
-import { createSpace } from "../[space]/actions";
+import { ActionForm } from "@/components/app/action-form";
+import p from "@/components/app/page.module.css";
+import { PageHeader } from "@/components/ui/page-header";
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { createSpace } from "@/app/(app)/spaces/[space]/actions";
 
 export const metadata: Metadata = {
   title: "New company space",

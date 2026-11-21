@@ -7,7 +7,7 @@
  *  - "planned": decided in docs/PLAN.md, not written yet.
  * Never mark something "local" without code and tests behind it. `short` is one line, no more.
  */
-import type { Status } from "../components/ui/status-badge";
+import type { Status } from "@/components/ui/status-badge";
 
 export type Feature = {
   /** Anchor id on /product. */

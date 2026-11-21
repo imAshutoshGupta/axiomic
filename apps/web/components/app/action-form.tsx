@@ -1,8 +1,8 @@
 "use client";
 
 import { useActionState, useState, type ReactNode } from "react";
-import buttonStyles from "../ui/button.module.css";
-import { Callout } from "../ui/callout";
+import buttonStyles from "@/components/ui/button.module.css";
+import { Callout } from "@/components/ui/callout";
 import p from "./page.module.css";
 
 /** What a management server action answers. `link`: an invite link, shown once (never stored). */

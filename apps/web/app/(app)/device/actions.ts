@@ -1,9 +1,5 @@
 "use server";
 
-import { getVerifiedClaims } from "../../../lib/auth";
-import { pgCode, withUser } from "../../../lib/db";
-import { normalizeUserCode } from "../../../lib/user-code";
-
 /**
  * Server actions for /device: approving a CLI login (DECISIONS #55, #58).
  * Two steps, so you see WHAT you are approving before you approve it:
@@ -12,6 +8,9 @@ import { normalizeUserCode } from "../../../lib/user-code";
  * Next.js only accepts server actions posted from our own origin; each action re-checks the
  * session. The database refuses CLI tokens here (website session only).
  */
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { pgCode, withUser } from "@/lib/db";
+import { normalizeUserCode } from "@/lib/api/user-code";
 
 export type DeviceState =
   | { step: "enter"; error?: string }

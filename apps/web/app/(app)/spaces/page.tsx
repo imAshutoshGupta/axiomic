@@ -1,13 +1,14 @@
+/** /spaces: every space you belong to, with its projects. */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import p from "../../../components/app/page.module.css";
-import { Callout } from "../../../components/ui/callout";
-import { PageHeader } from "../../../components/ui/page-header";
-import buttonStyles from "../../../components/ui/button.module.css";
-import { getVerifiedClaims } from "../../../lib/auth";
-import { withUser } from "../../../lib/db";
-import { listSpaces, spaceLabel } from "../../../lib/workspace";
+import p from "@/components/app/page.module.css";
+import { Callout } from "@/components/ui/callout";
+import { PageHeader } from "@/components/ui/page-header";
+import buttonStyles from "@/components/ui/button.module.css";
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { withUser } from "@/lib/db";
+import { listSpaces, spaceLabel } from "@/lib/spaces/workspace";
 
 export const metadata: Metadata = {
   title: "Projects",

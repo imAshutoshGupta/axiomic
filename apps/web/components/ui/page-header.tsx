@@ -1,3 +1,4 @@
+/** PageHeader: the title block at the top of a page. */
 import type { ReactNode } from "react";
 import styles from "./page-header.module.css";
 

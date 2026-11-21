@@ -1,17 +1,17 @@
 "use server";
 
-import { redirect } from "next/navigation";
-import { isValidSlug, LAYERS, type Layer } from "@axiomic/shared";
-import { getVerifiedClaims } from "../../../../../../../lib/auth";
-import { pgCode, withUser } from "../../../../../../../lib/db";
-import { saveFromEditor, trashFromEditor } from "../../../../../../../lib/editor";
-import { assertWritesAllowed, keyring } from "../../../../../../../lib/rule-keys";
-
 /**
  * Server actions for the rule editor. Next.js only accepts them from our own origin; each one
  * re-checks the session. The hidden form fields only say WHICH rule or layer: who may change
  * it is decided by the database (can_edit_layer) inside api.save_rule / api.trash_rule.
  */
+import { redirect } from "next/navigation";
+import { isValidSlug, LAYERS, type Layer } from "@axiomic/shared";
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { pgCode, withUser } from "@/lib/db";
+import { saveFromEditor, trashFromEditor } from "@/lib/rules/editor";
+import { isUuid, readRawText } from "@/lib/input";
+import { assertWritesAllowed, keyring } from "@/lib/rules/rule-keys";
 
 export type EditorState = {
   error?: string;
@@ -20,28 +20,26 @@ export type EditorState = {
   warnings?: string[];
 };
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const str = (f: FormData, k: string) => {
-  const v = f.get(k);
-  return typeof v === "string" ? v : "";
-};
+/** A first, cheap size cut before the safety check (which allows 64 KiB of rule text). */
+const MAX_FORM_BODY_CHARS = 70_000;
+const MAX_FORM_TITLE_CHARS = 500;
 
 export async function saveRule(_prev: EditorState, form: FormData): Promise<EditorState> {
   const claims = await getVerifiedClaims();
   if (!claims) return { error: "Your sign-in has expired. Sign in again (copy your text first)." };
 
-  const space = str(form, "space");
-  const project = str(form, "project");
+  const space = readRawText(form, "space");
+  const project = readRawText(form, "project");
   if (!isValidSlug(space) || !isValidSlug(project)) return { error: "Reload the page and try again." };
-  const ruleId = str(form, "ruleId");
-  const baseVersion = Number(str(form, "baseVersion"));
-  const layer = str(form, "layer");
-  const moduleId = str(form, "moduleId");
-  if (ruleId && (!UUID.test(ruleId) || !Number.isSafeInteger(baseVersion) || baseVersion < 1)) return { error: "Reload the page and try again." };
+  const ruleId = readRawText(form, "ruleId");
+  const baseVersion = Number(readRawText(form, "baseVersion"));
+  const layer = readRawText(form, "layer");
+  const moduleId = readRawText(form, "moduleId");
+  if (ruleId && (!isUuid(ruleId) || !Number.isSafeInteger(baseVersion) || baseVersion < 1)) return { error: "Reload the page and try again." };
   if (!ruleId && !(LAYERS as readonly string[]).includes(layer)) return { error: "Choose a layer." };
-  if (layer === "module" && !UUID.test(moduleId)) return { error: "Choose a folder." };
-  const body = str(form, "body").replace(/\r\n?/g, "\n");
-  if (body.length > 70_000) return { error: "That text is too long (a rule can be at most 64 KiB)." };
+  if (layer === "module" && !isUuid(moduleId)) return { error: "Choose a folder." };
+  const body = readRawText(form, "body").replace(/\r\n?/g, "\n");
+  if (body.length > MAX_FORM_BODY_CHARS) return { error: "That text is too long (a rule can be at most 64 KiB)." };
 
   try {
     await assertWritesAllowed();
@@ -55,7 +53,7 @@ export async function saveRule(_prev: EditorState, form: FormData): Promise<Edit
       saveFromEditor(tx, keyring(), {
         ref: { space, project },
         ...(ruleId ? { ruleId, baseVersion } : { layer: layer as Layer, ...(layer === "module" ? { moduleId } : {}) }),
-        title: str(form, "title").slice(0, 500),
+        title: readRawText(form, "title").slice(0, MAX_FORM_TITLE_CHARS),
         body,
         ...(form.has("lockedField") ? { locked: form.get("locked") === "on" } : {}),
         ackWarnings: form.get("ack") === "1",
@@ -76,10 +74,10 @@ export async function saveRule(_prev: EditorState, form: FormData): Promise<Edit
 export async function deleteRule(_prev: EditorState, form: FormData): Promise<EditorState> {
   const claims = await getVerifiedClaims();
   if (!claims) return { error: "Your sign-in has expired. Sign in again." };
-  const space = str(form, "space");
-  const project = str(form, "project");
-  const ruleId = str(form, "ruleId");
-  if (!isValidSlug(space) || !isValidSlug(project) || !UUID.test(ruleId)) return { error: "Reload the page and try again." };
+  const space = readRawText(form, "space");
+  const project = readRawText(form, "project");
+  const ruleId = readRawText(form, "ruleId");
+  if (!isValidSlug(space) || !isValidSlug(project) || !isUuid(ruleId)) return { error: "Reload the page and try again." };
   if (form.get("confirm") !== "on") return { error: "Tick the box to confirm." };
 
   try {

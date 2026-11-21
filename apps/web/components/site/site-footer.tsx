@@ -1,5 +1,6 @@
+/** The public site's footer. */
 import Link from "next/link";
-import { FOOTER_NAV } from "../../content/site";
+import { FOOTER_NAV } from "@/content/site";
 import { BrandLink } from "./brand-link";
 import styles from "./site.module.css";
 

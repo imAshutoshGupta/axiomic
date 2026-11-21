@@ -1,7 +1,8 @@
+/** /device: approve the code that `axiomic login` shows. */
 import type { Metadata } from "next";
-import { PageHeader } from "../../../components/ui/page-header";
-import buttonStyles from "../../../components/ui/button.module.css";
-import { getVerifiedClaims } from "../../../lib/auth";
+import { PageHeader } from "@/components/ui/page-header";
+import buttonStyles from "@/components/ui/button.module.css";
+import { getVerifiedClaims } from "@/lib/auth/session";
 import { ApproveForm } from "./approve-form";
 import styles from "./device.module.css";
 

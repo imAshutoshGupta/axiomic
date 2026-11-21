@@ -1,7 +1,7 @@
 import Link from "next/link";
-import type { Me } from "../../lib/me";
-import { BrandLink } from "../site/brand-link";
-import { ThemeToggle } from "../site/theme-toggle";
+import type { Me } from "@/lib/auth/profile";
+import { BrandLink } from "@/components/site/brand-link";
+import { ThemeToggle } from "@/components/site/theme-toggle";
 import { AccountMenu } from "./account-menu";
 import { AppNav } from "./app-nav";
 import styles from "./app.module.css";

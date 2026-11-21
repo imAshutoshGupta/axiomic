@@ -1,8 +1,9 @@
+/** The root layout for every page: fonts, theme, icons and link-preview metadata. */
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import Script from "next/script";
 import { inter, jetbrainsMono, sourceSerif } from "./fonts";
-import { siteUrl } from "../lib/site-url";
+import { siteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 // Icons and the link-preview image come from files in this folder (favicon.ico, icon.svg,

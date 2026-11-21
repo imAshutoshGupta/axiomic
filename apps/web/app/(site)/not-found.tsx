@@ -1,6 +1,7 @@
-import { ButtonLink } from "../../components/ui/button";
-import { PageHeader } from "../../components/ui/page-header";
-import { Mark } from "../../components/ui/type";
+/** The public site's 404 page. */
+import { ButtonLink } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
+import { Mark } from "@/components/ui/type";
 
 export default function NotFound() {
   return (

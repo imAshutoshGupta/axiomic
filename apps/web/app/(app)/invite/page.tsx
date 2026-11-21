@@ -1,7 +1,8 @@
+/** /invite: join a company space from an invite link. */
 import type { Metadata } from "next";
-import p from "../../../components/app/page.module.css";
-import { PageHeader } from "../../../components/ui/page-header";
-import { getVerifiedClaims } from "../../../lib/auth";
+import p from "@/components/app/page.module.css";
+import { PageHeader } from "@/components/ui/page-header";
+import { getVerifiedClaims } from "@/lib/auth/session";
 import { AcceptInvite } from "./accept-invite";
 
 export const metadata: Metadata = {

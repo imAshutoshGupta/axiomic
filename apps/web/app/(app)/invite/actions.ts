@@ -1,11 +1,12 @@
 "use server";
 
+/** Server action for /invite: accept an invite to a company space. */
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { clientIpFromHeaders } from "../../../lib/api";
-import { getVerifiedClaims } from "../../../lib/auth";
-import { pgCode, withUser } from "../../../lib/db";
-import { runApi } from "../../../lib/manage";
+import { clientIpFromHeaders } from "@/lib/api/route-helpers";
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { pgCode, withUser } from "@/lib/db";
+import { runApi } from "@/lib/spaces/manage";
 
 export type AcceptState = { error?: string };
 

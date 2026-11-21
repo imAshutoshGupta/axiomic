@@ -1,3 +1,4 @@
+/** ButtonLink: a link styled as a button, in three variants. */
 import Link from "next/link";
 import type { ComponentProps } from "react";
 import styles from "./button.module.css";

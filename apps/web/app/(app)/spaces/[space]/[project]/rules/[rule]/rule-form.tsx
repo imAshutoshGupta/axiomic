@@ -1,9 +1,10 @@
 "use client";
 
+/** The rule editor form (client side): title, text, lock, and the save / delete buttons. */
 import { useActionState, useState } from "react";
-import p from "../../../../../../../components/app/page.module.css";
-import buttonStyles from "../../../../../../../components/ui/button.module.css";
-import { Callout } from "../../../../../../../components/ui/callout";
+import p from "@/components/app/page.module.css";
+import buttonStyles from "@/components/ui/button.module.css";
+import { Callout } from "@/components/ui/callout";
 import { deleteRule, saveRule, type EditorState } from "./actions";
 
 export type RuleFormProps = {

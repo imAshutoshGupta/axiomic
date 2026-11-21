@@ -1,15 +1,16 @@
+/** /spaces/<space>/<project>: one project's rules, layer by layer, and the combined result. */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { estimateTokens, isValidSlug, type Layer } from "@axiomic/shared";
-import p from "../../../../../components/app/page.module.css";
-import buttonStyles from "../../../../../components/ui/button.module.css";
-import { Callout } from "../../../../../components/ui/callout";
-import { PageHeader } from "../../../../../components/ui/page-header";
-import { getVerifiedClaims } from "../../../../../lib/auth";
-import { withUser } from "../../../../../lib/db";
-import { keyring } from "../../../../../lib/rule-keys";
-import { loadProjectView, spaceLabel, type ProjectView } from "../../../../../lib/workspace";
+import p from "@/components/app/page.module.css";
+import buttonStyles from "@/components/ui/button.module.css";
+import { Callout } from "@/components/ui/callout";
+import { PageHeader } from "@/components/ui/page-header";
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { withUser } from "@/lib/db";
+import { keyring } from "@/lib/rules/rule-keys";
+import { loadProjectView, spaceLabel, type ProjectView } from "@/lib/spaces/workspace";
 
 export const metadata: Metadata = {
   title: "Project rules",

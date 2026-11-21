@@ -1,3 +1,4 @@
+/** CodeBlock: a plain panel for terminal commands or file contents. */
 import type { ReactNode } from "react";
 import styles from "./code-block.module.css";
 

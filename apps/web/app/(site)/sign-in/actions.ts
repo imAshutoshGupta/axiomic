@@ -1,8 +1,9 @@
 "use server";
 
+/** Server action for /sign-in: start a GitHub or Google sign-in. */
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "../../../lib/supabase/server";
-import { siteUrl } from "../../../lib/site-url";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { siteUrl } from "@/lib/site-url";
 
 const PROVIDERS = ["github", "google"] as const;
 type Provider = (typeof PROVIDERS)[number];

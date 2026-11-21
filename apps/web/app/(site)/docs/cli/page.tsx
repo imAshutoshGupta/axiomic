@@ -1,11 +1,12 @@
+/** /docs/cli: the CLI guide, built from content/cli.ts. */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CodeBlock } from "../../../../components/ui/code-block";
-import { PageHeader } from "../../../../components/ui/page-header";
-import { StatusBadge } from "../../../../components/ui/status-badge";
-import { Mark } from "../../../../components/ui/type";
-import { CLI_COMMANDS, CLI_FOLDERS, EXIT_CODES, NOT_AVAILABLE_NOTE, type CliCommand } from "../../../../content/cli";
-import styles from "../docs.module.css";
+import { CodeBlock } from "@/components/ui/code-block";
+import { PageHeader } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { Mark } from "@/components/ui/type";
+import { CLI_COMMANDS, CLI_FOLDERS, EXIT_CODES, NOT_AVAILABLE_NOTE, type CliCommand } from "@/content/cli";
+import styles from "@/app/(site)/docs/docs.module.css";
 
 export const metadata: Metadata = {
   title: "CLI docs",

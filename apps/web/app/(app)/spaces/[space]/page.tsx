@@ -1,15 +1,16 @@
+/** /spaces/<space>: one space's projects, teams and people. */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { isValidSlug } from "@axiomic/shared";
-import { ActionForm } from "../../../../components/app/action-form";
-import p from "../../../../components/app/page.module.css";
-import { Callout } from "../../../../components/ui/callout";
-import { PageHeader } from "../../../../components/ui/page-header";
-import { getVerifiedClaims } from "../../../../lib/auth";
-import { withUser } from "../../../../lib/db";
-import { loadSpaceManage, type SpaceManageView } from "../../../../lib/manage";
-import { listSpaces, spaceLabel, type SpaceSummary } from "../../../../lib/workspace";
+import { ActionForm } from "@/components/app/action-form";
+import p from "@/components/app/page.module.css";
+import { Callout } from "@/components/ui/callout";
+import { PageHeader } from "@/components/ui/page-header";
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { withUser } from "@/lib/db";
+import { loadSpaceManage, type SpaceManageView } from "@/lib/spaces/manage";
+import { listSpaces, spaceLabel, type SpaceSummary } from "@/lib/spaces/workspace";
 import { manageSpace } from "./actions";
 
 export const metadata: Metadata = {
@@ -31,7 +32,7 @@ const day = (d: Date) => d.toISOString().slice(0, 10);
 
 /**
  * One space: its projects, its teams and its people. Buttons only appear for what you may do,
- * but every one is decided again by the database (lib/manage.ts, ./actions.ts).
+ * but every one is decided again by the database (lib/spaces/manage.ts, ./actions.ts).
  */
 export default async function SpacePage({ params, searchParams }: Props) {
   const claims = await getVerifiedClaims();

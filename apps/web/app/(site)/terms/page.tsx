@@ -1,8 +1,9 @@
+/** /terms: the terms of use (draft). */
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Callout } from "../../../components/ui/callout";
-import { PageHeader } from "../../../components/ui/page-header";
-import { Placeholder, Prose } from "../../../components/ui/prose";
+import { Callout } from "@/components/ui/callout";
+import { PageHeader } from "@/components/ui/page-header";
+import { Placeholder, Prose } from "@/components/ui/prose";
 
 export const metadata: Metadata = {
   title: "Terms (draft)",

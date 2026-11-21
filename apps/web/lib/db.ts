@@ -1,10 +1,6 @@
-import "server-only";
-import postgres from "postgres";
-import type { VerifiedClaims } from "./claims";
-
 /**
  * The ONE door to the database (DB-DESIGN 10, S1). Nothing else may import "postgres";
- * lib/one-door.test.ts enforces that.
+ * tests/structure/one-door.test.ts enforces that.
  *
  * We connect as axiomic_server: a login with NO rights of its own (noinherit). Every user
  * query runs inside withUser(), which in one transaction does
@@ -15,11 +11,14 @@ import type { VerifiedClaims } from "./claims";
  * Pooler: Supavisor transaction mode (port 6543). It can hand each transaction to a
  * different Postgres connection, so prepared statements are off (prepare: false).
  */
+import "server-only";
+import postgres from "postgres";
+import type { VerifiedClaims } from "./auth/claims";
 
-/** Claims for a browser request: the verified Supabase session (lib/auth.ts). */
+/** Claims for a browser request: the verified Supabase session (lib/auth/session.ts). */
 export type BrowserClaims = VerifiedClaims;
 
-/** Claims for a CLI or agent-key request, built from a resolved Bearer token (lib/tokens.ts). */
+/** Claims for a CLI or agent-key request, built from a resolved Bearer token (lib/api/bearer-auth.ts). */
 export type TokenClaims = {
   sub: string;
   role: "authenticated";

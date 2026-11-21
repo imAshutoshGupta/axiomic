@@ -1,5 +1,5 @@
-import { apiError, fail, requireToken } from "../../../../lib/api";
-import { withUser } from "../../../../lib/db";
+import { apiError, fail, requireToken } from "@/lib/api/route-helpers";
+import { withUser } from "@/lib/db";
 
 /**
  * DELETE /api/v1/token   (Bearer token)

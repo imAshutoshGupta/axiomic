@@ -1,12 +1,13 @@
+/** /account: the signed-in home page (your name card, where to go next, sign out). */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import p from "../../../components/app/page.module.css";
-import { PageHeader } from "../../../components/ui/page-header";
-import buttonStyles from "../../../components/ui/button.module.css";
-import { getVerifiedClaims } from "../../../lib/auth";
-import { getMe } from "../../../lib/me";
-import { PendingInviteNotice } from "../invite/accept-invite";
+import p from "@/components/app/page.module.css";
+import { PageHeader } from "@/components/ui/page-header";
+import buttonStyles from "@/components/ui/button.module.css";
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { getMe } from "@/lib/auth/profile";
+import { PendingInviteNotice } from "@/app/(app)/invite/accept-invite";
 
 export const metadata: Metadata = {
   title: "Account",

@@ -1,5 +1,5 @@
-import { apiError, ok, requireToken } from "../../../../lib/api";
-import { withUser } from "../../../../lib/db";
+import { apiError, ok, requireToken } from "@/lib/api/route-helpers";
+import { withUser } from "@/lib/db";
 
 /**
  * GET /api/v1/projects   (Bearer token)

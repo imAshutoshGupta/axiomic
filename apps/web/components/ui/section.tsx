@@ -1,3 +1,4 @@
+/** Section: one band of a page with a label, a title and its content. */
 import type { ReactNode } from "react";
 import styles from "./section.module.css";
 import { Eyebrow, Lead, SectionTitle } from "./type";

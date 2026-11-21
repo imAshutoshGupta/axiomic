@@ -1,13 +1,14 @@
+/** /spaces/<space>/<project>/settings: rename, archive, owner, delete, and folders. */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { isValidSlug } from "@axiomic/shared";
-import { ActionForm } from "../../../../../../components/app/action-form";
-import p from "../../../../../../components/app/page.module.css";
-import { PageHeader } from "../../../../../../components/ui/page-header";
-import { getVerifiedClaims } from "../../../../../../lib/auth";
-import { withUser } from "../../../../../../lib/db";
-import { loadProjectSettings, type ProjectSettingsView } from "../../../../../../lib/manage";
+import { ActionForm } from "@/components/app/action-form";
+import p from "@/components/app/page.module.css";
+import { PageHeader } from "@/components/ui/page-header";
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { withUser } from "@/lib/db";
+import { loadProjectSettings, type ProjectSettingsView } from "@/lib/spaces/manage";
 import { manageProject } from "./actions";
 
 export const metadata: Metadata = {

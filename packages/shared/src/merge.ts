@@ -1,11 +1,14 @@
 import { LAYERS, type Layer } from "./layers";
 import type { BlockedRule, MergeInput, MergeResult, MergedModule, MergedRule, Rule } from "./rules";
 
-/** Characters you can't see, e.g. zero-width spaces. Someone could hide them in a title to dodge a lock. */
-const INVISIBLE = /[­​-‏⁠-⁤﻿]/g;
+/**
+ * Characters you can't see. Someone could hide them in a title to dodge a lock.
+ * Soft hyphen, zero-width spaces and joiners, direction marks, word joiners, byte-order mark.
+ */
+const INVISIBLE = /[\u00AD\u200B-\u200F\u2060-\u2064\uFEFF]/g;
 
 /**
- * Turns a title into a comparison key, so "  Deploys", "deploys" and "Dep​loys" all count as the same topic.
+ * Turns a title into a comparison key, so "  Deploys", "deploys" and "Dep\u200Bloys" (with a zero-width space) all count as the same topic.
  */
 export function titleKey(title: string): string {
   return title

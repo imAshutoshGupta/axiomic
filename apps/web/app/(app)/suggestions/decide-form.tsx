@@ -1,9 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
-import p from "../../../components/app/page.module.css";
-import buttonStyles from "../../../components/ui/button.module.css";
-import { Callout } from "../../../components/ui/callout";
+import p from "@/components/app/page.module.css";
+import buttonStyles from "@/components/ui/button.module.css";
+import { Callout } from "@/components/ui/callout";
 import { decide, withdraw, type DecideState } from "./actions";
 
 /** Approve / reject, with an optional note to the author. `canApprove` false: reject only (text can't be opened). */

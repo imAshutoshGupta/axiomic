@@ -179,7 +179,7 @@ export const EXIT_CODES: { code: number; meaning: string }[] = [
   { code: 2, meaning: "The command line was wrong: an unknown command, an unknown flag or a stray word." },
 ];
 
-/** Where axiomic keeps its own files on this computer, never inside a project. Taken from packages/cli/src/dirs.ts. */
+/** Where axiomic keeps its own files on this computer, never inside a project. Taken from packages/cli/src/local-files/dirs.ts. */
 export const CLI_FOLDERS: { name: string; holds: string; unix: string; windows: string }[] = [
   {
     name: "Config",

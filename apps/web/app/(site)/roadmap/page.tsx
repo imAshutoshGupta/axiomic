@@ -1,9 +1,10 @@
+/** /roadmap: what is built, in progress and planned (from content/features.ts). */
 import type { Metadata } from "next";
 import Link from "next/link";
-import v from "../../../components/landing/visuals.module.css";
-import { PageHeader } from "../../../components/ui/page-header";
-import { Mark } from "../../../components/ui/type";
-import { ALL_FEATURES, ROADMAP } from "../../../content/features";
+import v from "@/components/landing/visuals.module.css";
+import { PageHeader } from "@/components/ui/page-header";
+import { Mark } from "@/components/ui/type";
+import { ALL_FEATURES, ROADMAP } from "@/content/features";
 
 export const metadata: Metadata = {
   title: "Roadmap",

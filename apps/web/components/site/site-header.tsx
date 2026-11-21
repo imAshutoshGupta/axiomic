@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { MAIN_NAV, PRIMARY_CTA, SIGN_IN } from "../../content/site";
-import { ButtonLink } from "../ui/button";
+import { MAIN_NAV, PRIMARY_CTA, SIGN_IN } from "@/content/site";
+import { ButtonLink } from "@/components/ui/button";
 import { BrandLink } from "./brand-link";
 import { DesktopNav, MobileNav } from "./site-nav";
 import { ThemeToggle } from "./theme-toggle";

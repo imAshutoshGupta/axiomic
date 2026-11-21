@@ -1,9 +1,10 @@
+/** /account/tokens: list, create and revoke your CLI tokens. */
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { PageHeader } from "../../../../components/ui/page-header";
-import buttonStyles from "../../../../components/ui/button.module.css";
-import { getVerifiedClaims } from "../../../../lib/auth";
-import { withUser } from "../../../../lib/db";
+import { PageHeader } from "@/components/ui/page-header";
+import buttonStyles from "@/components/ui/button.module.css";
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { withUser } from "@/lib/db";
 import { revokeCliToken } from "./actions";
 import { CreateToken } from "./create-token";
 import styles from "./tokens.module.css";

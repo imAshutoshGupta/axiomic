@@ -1,20 +1,18 @@
 "use server";
 
-import { redirect } from "next/navigation";
-import { getVerifiedClaims } from "../../../lib/auth";
-import { pgCode, withUser } from "../../../lib/db";
-import { assertWritesAllowed, keyring } from "../../../lib/rule-keys";
-import { decideSuggestion, withdrawSuggestion } from "../../../lib/suggestions";
-
 /**
  * Server actions for /suggestions. Each re-checks the session; the database decides who may
  * approve (can_edit_layer) or withdraw (the author). A refusal comes back to the form as state
  * (never through the URL: the page only shows fixed sentences for ?done= codes).
  */
+import { redirect } from "next/navigation";
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { pgCode, withUser } from "@/lib/db";
+import { assertWritesAllowed, keyring } from "@/lib/rules/rule-keys";
+import { decideSuggestion, withdrawSuggestion } from "@/lib/rules/suggestions";
+import { isUuid } from "@/lib/input";
 
 export type DecideState = { error?: string; findings?: string[] };
-
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export async function decide(_prev: DecideState, form: FormData): Promise<DecideState> {
   const claims = await getVerifiedClaims();
@@ -22,7 +20,7 @@ export async function decide(_prev: DecideState, form: FormData): Promise<Decide
   const id = form.get("id");
   const intent = form.get("intent");
   const note = form.get("note");
-  if (typeof id !== "string" || !UUID.test(id) || (intent !== "approve" && intent !== "reject")) {
+  if (typeof id !== "string" || !isUuid(id) || (intent !== "approve" && intent !== "reject")) {
     return { error: "Reload the page and try again." };
   }
 
@@ -45,7 +43,7 @@ export async function withdraw(_prev: DecideState, form: FormData): Promise<Deci
   const claims = await getVerifiedClaims();
   if (!claims) return { error: "Your sign-in has expired. Sign in again." };
   const id = form.get("id");
-  if (typeof id !== "string" || !UUID.test(id)) return { error: "Reload the page and try again." };
+  if (typeof id !== "string" || !isUuid(id)) return { error: "Reload the page and try again." };
 
   try {
     const res = await withUser(claims, (tx) => withdrawSuggestion(tx, id));

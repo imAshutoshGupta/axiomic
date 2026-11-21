@@ -1,8 +1,8 @@
-import { apiError, fail, ok, requireToken } from "../../../../lib/api";
-import { withUser } from "../../../../lib/db";
-import { loadProject } from "../../../../lib/pull";
-import { applyChange, parsePushBody, type ChangeResult } from "../../../../lib/push";
-import { assertWritesAllowed, keyring } from "../../../../lib/rule-keys";
+import { apiError, fail, ok, requireToken } from "@/lib/api/route-helpers";
+import { withUser } from "@/lib/db";
+import { loadProject } from "@/lib/rules/pull";
+import { applyChange, parsePushBody, type ChangeResult } from "@/lib/rules/push";
+import { assertWritesAllowed, keyring } from "@/lib/rules/rule-keys";
 
 /**
  * POST /api/v1/push   (Bearer token, CLI logins only)

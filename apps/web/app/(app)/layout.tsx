@@ -1,15 +1,15 @@
 import type { ReactNode } from "react";
-import { AppHeader } from "../../components/app/app-header";
-import styles from "../../components/site/site.module.css";
-import { getVerifiedClaims } from "../../lib/auth";
-import { getMe } from "../../lib/me";
+import { AppHeader } from "@/components/app/app-header";
+import styles from "@/components/site/site.module.css";
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { getMe } from "@/lib/auth/profile";
 
 /**
  * Layout for signed-in pages. "(app)" is a route group: it picks this layout but doesn't appear
  * in URLs, so /device and /account/tokens keep their addresses (the CLI prints <server>/device).
  *
  * This layout is NOT the lock. Next.js keeps a layout between page changes without re-running
- * it, so every page checks the session itself (lib/app-pages.test.ts enforces that), and the
+ * it, so every page checks the session itself (tests/structure/app-pages.test.ts enforces that), and the
  * database's row-level security is the real lock behind both.
  */
 export default async function AppLayout({ children }: { children: ReactNode }) {

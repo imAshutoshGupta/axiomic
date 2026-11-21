@@ -1,14 +1,16 @@
+/** /spaces/<space>/<project>/rules/<rule>: edit one rule, or write a new one. */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { isValidSlug, LAYERS, type Layer } from "@axiomic/shared";
-import p from "../../../../../../../components/app/page.module.css";
-import { Callout } from "../../../../../../../components/ui/callout";
-import { PageHeader } from "../../../../../../../components/ui/page-header";
-import { getVerifiedClaims } from "../../../../../../../lib/auth";
-import { withUser } from "../../../../../../../lib/db";
-import { keyring } from "../../../../../../../lib/rule-keys";
-import { loadProjectView, spaceLabel } from "../../../../../../../lib/workspace";
+import p from "@/components/app/page.module.css";
+import { Callout } from "@/components/ui/callout";
+import { PageHeader } from "@/components/ui/page-header";
+import { getVerifiedClaims } from "@/lib/auth/session";
+import { withUser } from "@/lib/db";
+import { isUuid } from "@/lib/input";
+import { keyring } from "@/lib/rules/rule-keys";
+import { loadProjectView, spaceLabel } from "@/lib/spaces/workspace";
 import { RuleForm } from "./rule-form";
 
 export const metadata: Metadata = {
@@ -21,7 +23,6 @@ type Props = {
   searchParams: Promise<{ layer?: string; module?: string }>;
 };
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const LAYER_NAME: Record<Layer, string> = {
   company: "Company rule", team: "Team rule", project: "Project rule", module: "Folder rule", personal: "Personal rule",
 };
@@ -37,7 +38,7 @@ export default async function RulePage({ params, searchParams }: Props) {
   const { space, project, rule: ruleParam } = await params;
   const q = await searchParams;
   if (!isValidSlug(space) || !isValidSlug(project)) notFound();
-  if (ruleParam !== "new" && !UUID.test(ruleParam)) notFound();
+  if (ruleParam !== "new" && !isUuid(ruleParam)) notFound();
 
   const r = await withUser(claims, (tx) => loadProjectView(tx, keyring(), { space, project }), { snapshot: true });
   if (!r.ok) notFound();

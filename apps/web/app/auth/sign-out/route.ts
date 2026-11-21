@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createSupabaseServerClient } from "../../../lib/supabase/server";
-import { siteUrl } from "../../../lib/site-url";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { siteUrl } from "@/lib/site-url";
 
 /**
  * Sign out of THIS browser. POST only: a GET could be fired by any link or image.

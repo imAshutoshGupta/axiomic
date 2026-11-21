@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { supabasePublishableKey, supabaseUrl } from "./lib/supabase/env";
+import { supabasePublishableKey, supabaseUrl } from "@/lib/supabase/env";
 
 /**
  * Runs before each matching request. Its ONLY job: if the 15-minute pass has expired, swap the
