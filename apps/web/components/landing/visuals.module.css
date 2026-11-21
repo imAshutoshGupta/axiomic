@@ -495,3 +495,146 @@
 @media (max-width: 480px) {
   .tiles { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* ---------- Team lead: a suggestion card + four tiles ---------- */
+.team {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: center;
+}
+
+.diff {
+  margin: 0;
+  padding: 18px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.del {
+  color: var(--warn);
+  background: var(--warn-soft);
+}
+
+.add {
+  color: var(--soft-fg);
+  background: var(--soft);
+}
+
+.decide {
+  display: flex;
+  gap: 8px;
+  padding: 0 18px 18px;
+}
+
+.approve,
+.reject {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.approve {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.reject {
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.teamTiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.teamTile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.teamTile b {
+  display: block;
+  color: var(--text);
+  font-weight: 700;
+}
+
+/* ---------- Get started: three steps ---------- */
+.start {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.startStep {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+
+.startNum {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--soft);
+  color: var(--soft-fg);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.startCode {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--term);
+  color: var(--term-fg);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.startCode i {
+  font-style: normal;
+  color: var(--term-muted);
+}
+
+@media (max-width: 860px) {
+  .team,
+  .start {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 420px) {
+  .teamTiles {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

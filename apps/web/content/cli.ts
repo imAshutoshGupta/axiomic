@@ -1,8 +1,8 @@
 /**
  * The CLI facts shown on /docs/cli. This is the ONE place to correct when the CLI changes.
  * Source of truth: `axiomic --help` of the built CLI (packages/cli/src/cli.ts) and the modules it calls.
- * "available": works in the current build, with no server.
- * "in-progress": built and tested, also against the hosted server in private testing (#68); no public install yet.
+ * "available": works in the current preview build, against the live site (DECISIONS #81).
+ * "in-progress": built, not usable for real yet.
  * "coming": not built yet.
  * Exact flags are still subject to change before 1.0.
  */
@@ -85,7 +85,7 @@ export const CLI_COMMANDS: CliCommand[] = [
   {
     usage: "login",
     example: ["axiomic login", "# on a computer without a browser", "axiomic login --no-browser"],
-    status: "in-progress",
+    status: "available",
     summary:
       "Sign in through the browser. The terminal shows a short code; you open the axiomic website, sign in, type the code and approve. The terminal then gets its own token, saved in the config folder (readable only by you), never in the project.",
     details: [
@@ -101,7 +101,7 @@ export const CLI_COMMANDS: CliCommand[] = [
   {
     usage: "init",
     example: ["# list the projects you can link", "axiomic init", "# link this repo (run at the top of the repo)", "axiomic init acme/web-app"],
-    status: "in-progress",
+    status: "available",
     summary:
       "Link this repo to a project: writes axiomic.json (the space and project names only, no secrets), writes your rules and installs the session hook. Commit axiomic.json: in a repo that already has it, a teammate's axiomic init needs no project name.",
     details: [
@@ -112,7 +112,7 @@ export const CLI_COMMANDS: CliCommand[] = [
   {
     usage: "pull",
     example: ["axiomic pull", "axiomic pull --quiet"],
-    status: "in-progress",
+    status: "available",
     summary:
       "Fetch your combined rules, write them as gitignored files and keep a private offline copy. The session hook does the same at every Claude Code start, falling back to the offline copy if the server is slow or unreachable.",
     details: [
@@ -127,19 +127,19 @@ export const CLI_COMMANDS: CliCommand[] = [
   {
     usage: "whoami",
     example: ["axiomic whoami"],
-    status: "in-progress",
+    status: "available",
     summary: "Show who you are logged in as, the server, and the token in use (its first characters only).",
   },
   {
     usage: "logout",
     example: ["axiomic logout"],
-    status: "in-progress",
+    status: "available",
     summary: "Revoke this computer's token on the server and delete it. If the server can't be reached, the token is still deleted and you are told to revoke it on the website.",
   },
   {
     usage: "push",
     example: ["# see what would be sent", "axiomic push", "# send it", "axiomic push --yes"],
-    status: "in-progress",
+    status: "available",
     summary:
       "Send your edits to the rule files back to axiomic. Each edited or added \"### Title\" section is one change: saved directly if you own that layer (your personal rules, or a project you own), otherwise sent to the owner as a suggestion. Without --yes it only shows what it would send.",
     details: [
@@ -154,7 +154,7 @@ export const CLI_COMMANDS: CliCommand[] = [
   {
     usage: "diff",
     example: ["axiomic diff", "# in a script: exit 1 means different", "axiomic diff > /dev/null || echo changed"],
-    status: "in-progress",
+    status: "available",
     summary:
       "Show how your rule files differ from what the server would send now: lines starting with - are the server's, + are yours. Writes nothing. Exits 0 when they match, 1 when they don't.",
   },

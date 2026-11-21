@@ -1,0 +1,144 @@
+/* /product: short, visual blocks. One line per item, no paragraphs. */
+.block {
+  margin: 56px 0 0;
+}
+
+.h2 {
+  margin: 0 0 18px;
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.grid4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.grid3 {
+  composes: grid4;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.tile b {
+  color: var(--text);
+  font-size: 16px;
+}
+
+.emoji {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.part {
+  composes: tile;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+}
+
+.flowArrow {
+  color: var(--muted-2);
+  font-size: 13px;
+}
+
+.cats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.cat {
+  padding: 20px 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.catTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+
+.items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.items li {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.items li:first-child {
+  border-top: 0;
+}
+
+.items b {
+  color: var(--text);
+}
+
+.tick {
+  color: var(--accent-text);
+  font-weight: 700;
+}
+
+.later {
+  color: var(--muted-2);
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin: 56px 0 0;
+  padding: 28px;
+  border-radius: var(--radius-lg);
+  background: var(--soft);
+  color: var(--soft-fg);
+}
+
+.cta p {
+  margin: 0;
+  flex: 1 1 260px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .grid4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grid3,
+  .cats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

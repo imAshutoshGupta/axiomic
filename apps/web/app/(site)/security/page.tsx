@@ -1,127 +1,46 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { ReactNode } from "react";
+import v from "../../../components/landing/visuals.module.css";
 import { Callout } from "../../../components/ui/callout";
 import { PageHeader } from "../../../components/ui/page-header";
-import { Prose, TableWrap } from "../../../components/ui/prose";
 import { StatusBadge, type Status } from "../../../components/ui/status-badge";
 import { Mark } from "../../../components/ui/type";
-import styles from "./security.module.css";
+import s from "./security.module.css";
 
 export const metadata: Metadata = {
   title: "Security",
-  description:
-    "What axiomic protects and what it does not: rules stay out of Git, but they are on the developer's disk and your AI tool still sends them to its model provider.",
+  description: "What axiomic protects, what it does not, and every security control with its real status.",
 };
 
-const CONTROLS: { control: string; detail: string; status: Status }[] = [
-  {
-    control: "Layer merge",
-    detail: "Combines company, team, project, module and personal rules. Locked rules cannot be replaced; a clash that gets through is dropped and reported.",
-    status: "local",
-  },
-  {
-    control: "Path guards",
-    detail: "Module names and folder paths go through strict allow-lists: no absolute paths, no “..”, nothing under .git/.",
-    status: "local",
-  },
-  {
-    control: "Publish safety check",
-    detail: "Looks for secret patterns, oversized text, invisible characters, text that imitates axiomic's own labels and known prompt-injection phrases. The server runs it on every change sent with axiomic push, before anything is encrypted or stored; the website editor will run it too.",
-    status: "local",
-  },
-  {
-    control: "Safe rendering",
-    detail: "The Claude Code file renderer refuses unsafe module names and folder paths, and keeps each rule inside its own section.",
-    status: "local",
-  },
-  {
-    control: "Safe file writer",
-    detail: "Writes only axiomic's own rule files, refuses symlinks and paths outside the repo, and detects local edits so they are not overwritten.",
-    status: "local",
-  },
-  {
-    control: "Git and Docker ignore",
-    detail: "Owns a block in .gitignore and .dockerignore, and checks that Git really ignores the files and tracks none of them.",
-    status: "local",
-  },
-  {
-    control: "Offline cache and remove",
-    detail: "The last rules are stored locally for offline use, and axiomic remove undoes what axiomic wrote. Hook install and uninstall also work locally.",
-    status: "local",
-  },
-  {
-    control: "Hook that fails open (local part)",
-    detail: "The installed hook runs the installed CLI with a short timeout, always exits 0 and prints nothing, so your AI session always starts.",
-    status: "local",
-  },
-  {
-    control: "Hook fetches rules from the server",
-    detail: "At session start, fetch the latest rules from the server (waiting at most 1.2 seconds), and fall back to the last copy if it is slow or down.",
-    status: "local",
-  },
-  {
-    control: "Customer isolation",
-    detail: "Row-level security on every table, so one company can never read another's rules.",
-    status: "local",
-  },
-  {
-    control: "Encryption of rule text",
-    detail: "AES-256-GCM on the server before text reaches the database, with the key held outside the database. Each text is tied to its own row, so it can't be copied to another.",
-    status: "local",
-  },
-  {
-    control: "Key check at start-up",
-    detail: "Before saving anything, the server checks that its key opens a known test row. If not, it refuses to save, so a wrong key never locks away new rules.",
-    status: "local",
-  },
-  {
-    control: "Server database access",
-    detail: "The server's database login has no rights of its own. Every request runs as the person asking, under the same row-level security.",
-    status: "local",
-  },
-  {
-    control: "Tokens",
-    detail: "Stored hashed, revocable, sent only in the Authorization header and never in a URL, and only to the server that issued them. Unused CLI tokens stop working after 90 days. The CLI keeps its token in its config folder, readable only by you, never in the project; logging in again revokes the old one.",
-    status: "local",
-  },
-  {
-    control: "CLI login by code",
-    detail: "axiomic login shows a short code that you type on the website after signing in. The page shows which device asked; there is no ready-made approve link, so a link someone sends you can't log their terminal in as you. Codes expire after 10 minutes, work once, and tries are rate limited.",
-    status: "local",
-  },
-  {
-    control: "Rate limits on the CLI's API",
-    detail: "Each token is limited to 120 requests a minute; starting a login is limited per network address (addresses are kept 24 hours at most).",
-    status: "local",
-  },
-  {
-    control: "Sign-in",
-    detail: "GitHub or Google only, no passwords. 15-minute sessions; every page checks the session's signature on the server.",
-    status: "local",
-  },
-  {
-    control: "Website editor: the database decides",
-    detail: "The website offers Edit or Suggest exactly as the database would decide, and every save, delete and approval is decided again by the database: only a layer's owner changes it directly. Every save runs the same safety check as axiomic push. Rule text is shown as plain text, never run as HTML.",
-    status: "in-progress",
-  },
-  {
-    control: "Invites",
-    detail: "The only way into a company space. A link works once, for 7 days, and only for someone signed in with the invited email address. Only its hash is stored; the secret sits after the # in the link, which browsers never send to a server, so it stays out of logs. Tries are rate limited.",
-    status: "in-progress",
-  },
-  { control: "Two-factor sign-in for admins", detail: "Required for admin tools in company spaces.", status: "planned" },
-  { control: "Publish alerts", detail: "An email on every publish, so a silent change is noticed.", status: "planned" },
-  { control: "Rollback", detail: "Return to an earlier version in one step.", status: "planned" },
-  {
-    control: "Data region",
-    detail: "Database and server both run in Mumbai, India (Supabase ap-south-1, Vercel bom1).",
-    status: "built",
-  },
-  {
-    control: "Open, small CLI",
-    detail: "Public source and minimal dependencies, so a security team can audit what runs on laptops.",
-    status: "planned",
-  },
+/** Two things it protects, two it does not. */
+const TILES: { yes: boolean; icon: ReactNode; title: string; text: string }[] = [
+  { yes: true, icon: <><circle cx="6" cy="6" r="2" /><circle cx="6" cy="18" r="2" /><circle cx="18" cy="9" r="2" /><path d="M6 8v8M18 11c0 4-6 3-12 6" /></>, title: "Out of Git", text: "Repos, forks and PRs carry code only." },
+  { yes: true, icon: <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" />, title: "Checked first", text: "Secrets and tricks are stopped on every save." },
+  { yes: false, icon: <path d="M7 18a4 4 0 0 1 0-8 6 6 0 0 1 11.5 1.5A3.5 3.5 0 0 1 18 18z" />, title: "Still sent to the AI", text: "Your AI tool reads them, like any instructions." },
+  { yes: false, icon: <><rect x="4" y="5" width="16" height="11" rx="1.5" /><path d="M2 19h20" /></>, title: "Plain files on the laptop", text: "Gitignored, but readable there. No secrets in rules." },
+];
+
+/** One line per control. "local" = Available (built, tested, live). Keep in step with what's built. */
+const CONTROLS: { name: string; text: string; status: Status }[] = [
+  { name: "Verified gitignore", text: "Git itself confirms rule files are ignored, or nothing is written.", status: "local" },
+  { name: "Safety check", text: "Secrets blocked, hidden text and injection phrasing flagged, on every save.", status: "local" },
+  { name: "Lock clashes refused", text: "A rule that would be dropped by a locked one is refused when saved.", status: "local" },
+  { name: "Tamper-proof files", text: "A rule can't pose as a company rule or hide the rules after it.", status: "local" },
+  { name: "Customer isolation", text: "Row-level security in the database: each space sees only its own rows.", status: "local" },
+  { name: "The database decides", text: "Every save, approval and removal is checked by the database itself.", status: "local" },
+  { name: "Encrypted rule text", text: "AES-256-GCM, key held outside the database, checked at start-up.", status: "local" },
+  { name: "Tokens", text: "Hashed, header-only, revocable; unused ones expire after 90 days.", status: "local" },
+  { name: "CLI login by code", text: "You type the code yourself; no approve link anyone could send you.", status: "local" },
+  { name: "Rate limits", text: "On logins, invites and the CLI's API.", status: "local" },
+  { name: "Sign-in", text: "GitHub or Google only, no passwords; 15-minute sessions.", status: "local" },
+  { name: "Data in India", text: "Database and server in Mumbai (Supabase ap-south-1, Vercel bom1).", status: "local" },
+  { name: "Offboarding", text: "A revoked login or removed person: the laptop deletes the files next session.", status: "local" },
+  { name: "Open, small CLI", text: "Public source and no dependencies, so it can be audited.", status: "local" },
+  { name: "Invites", text: "One use, one email, 7 days; the secret never reaches a server log.", status: "in-progress" },
+  { name: "Two-factor sign-in for admins", text: "Required for admin tools in company spaces.", status: "planned" },
+  { name: "Publish alerts", text: "An email on every publish.", status: "planned" },
+  { name: "Rollback", text: "Return to an earlier version in one step.", status: "planned" },
 ];
 
 export default function SecurityPage() {
@@ -131,107 +50,50 @@ export default function SecurityPage() {
         eyebrow="Security"
         title={
           <>
-            What axiomic protects, and <Mark padded>what it does not.</Mark>
+            What it protects, <Mark padded>and what it does not.</Mark>
           </>
         }
-        lead="axiomic keeps AI rule files out of Git and under your team's control. It is not a vault, and it cannot control an AI. This page says exactly where the limits are."
+        lead="Out of Git and under your team's control. Not a vault, and no tool can force an AI to obey."
       />
-      <Prose>
-        <h2 id="limits">Four things to know first</h2>
-        <ol>
-          <li>
-            <strong>axiomic keeps rules out of Git.</strong> Rules live on axiomic&apos;s server and are written to each
-            laptop as gitignored files. Your repository, its forks and its history carry code only.
-          </li>
-          <li>
-            <strong>Your AI tool still sends the rules to its model provider.</strong> Claude Code reads the files and
-            includes them in what it sends to its model. axiomic does not change that, and cannot.
-          </li>
-          <li>
-            <strong>The rules are on the developer&apos;s disk.</strong> They are plain Markdown files in{" "}
-            <code>.claude/rules/</code>, gitignored but readable by anyone and anything with access to that laptop. Do
-            not put secrets in rules.
-          </li>
-          <li>
-            <strong>An AI cannot be truly forced to obey a rule.</strong> Locked rules are placed first and marked
-            MANDATORY. That is a strong instruction, not an enforcement mechanism. Keep real controls (reviews, CI,
-            permissions) in place.
-          </li>
-        </ol>
 
-        <Callout tone="warning" title="Pilot stage: private testing">
+      <ul className={v.tiles} id="limits">
+        {TILES.map((t) => (
+          <li key={t.title} className={`${v.tile} ${t.yes ? v.tileYes : v.tileNo}`}>
+            <span className={v.icon}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                {t.icon}
+              </svg>
+            </span>
+            <h3>{t.title}</h3>
+            <p>{t.text}</p>
+          </li>
+        ))}
+      </ul>
+
+      <h2 id="controls" className={s.h2}>Controls</h2>
+      <ul className={s.controls}>
+        {CONTROLS.map((c) => {
+          const ready = c.status === "local";
+          return (
+            <li key={c.name} className={`${s.control} ${ready ? "" : s.later}`}>
+              <span className={s.tick} aria-hidden="true">{ready ? "✓" : "○"}</span>
+              <span>
+                <b>{c.name}</b> {c.text} {ready ? null : <StatusBadge status={c.status} />}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+
+      <div className={s.note}>
+        <Callout tone="note" title="Early access">
           <p>
-            The axiomic server now runs in Mumbai, India, but only for our own testing: there is no public sign-up
-            and no customer data on it yet. The controls marked “Planned” below are design decisions, not running
-            systems.
+            Anyone can sign up and try axiomic in a private space. In company spaces, inviting people and admin tools
+            wait for two-factor sign-in. Found a problem? Tell the person who gave you access; a public security contact
+            comes before 1.0. See also <Link href="/privacy">privacy</Link> and <Link href="/terms">terms</Link> (drafts).
           </p>
         </Callout>
-
-        <h2 id="controls">Controls and their status</h2>
-        <p>“Available (local)” means the code exists, is tested and runs on the laptop today. “Planned” means it is decided but not written yet.</p>
-      </Prose>
-      <div className={styles.controls}>
-        <TableWrap label="Security controls">
-          <thead>
-            <tr>
-              <th scope="col">Control</th>
-              <th scope="col">What it does</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {CONTROLS.map((row) => (
-              <tr key={row.control}>
-                <td>{row.control}</td>
-                <td>{row.detail}</td>
-                <td>
-                  <StatusBadge status={row.status} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </TableWrap>
       </div>
-      <Prose spaced>
-        <h2 id="why">Why this matters</h2>
-        <p>
-          A tool that writes instructions for every AI agent on a team is a sensitive place. Whoever can publish a rule
-          can influence what those agents do. That is why the planned controls focus on who can publish (roles,
-          two-factor sign-in, approvals), on noticing changes (alerts, versions, rollback), and on checking rule text
-          for hidden instructions before it is published.
-        </p>
-
-        <h2 id="laptop">On the laptop</h2>
-        <ul>
-          <li>
-            axiomic writes only <code>.claude/rules/axiomic.md</code> and <code>.claude/rules/axiomic-&lt;module&gt;.md</code>.
-            It never writes or overwrites <code>CLAUDE.md</code> or <code>AGENTS.md</code>.
-          </li>
-          <li>
-            Every written path is added to an axiomic-owned block in <code>.gitignore</code> (and <code>.dockerignore</code>), and the CLI checks that Git really ignores the files.
-          </li>
-          <li>
-            <code>axiomic remove</code> deletes the files axiomic wrote, its ignore-file blocks and the local cache. It keeps files you edited unless you add <code>--force</code>, and never deletes files axiomic did not write; the blocks stay while such files remain.
-          </li>
-          <li>
-            When a login is revoked, or a person no longer has access to a project, the CLI deletes the rule files it
-            wrote there the next time it runs (at session start or on <code>axiomic pull</code>). Files they edited are kept
-            and reported. A laptop that stays offline keeps its last files until then, and copies already made cannot be
-            recalled. An admin removes a person on the website (in development; in a company space it needs the admin's
-            two-factor sign-in, which is still planned).
-          </li>
-        </ul>
-
-        <h2 id="report">Reporting a problem</h2>
-        <p>
-          There is no public contact address yet. During the pilot, report problems to the person who gave you access.
-          A security contact will be published here before any public launch.
-        </p>
-        <p>
-          See also the <Link href="/docs/cli">CLI docs</Link>, and the draft <Link href="/privacy">privacy</Link> and{" "}
-          <Link href="/terms">terms</Link> pages.
-        </p>
-      </Prose>
     </div>
   );
 }

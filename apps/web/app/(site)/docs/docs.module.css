@@ -142,8 +142,8 @@
   font-family: var(--font-mono);
   font-size: 12.5px;
   line-height: 1.7;
-  white-space: pre;
-  overflow-x: auto;
+  white-space: pre-wrap; /* soft-wrap long commands on phones; copying still gives one line */
+  overflow-wrap: anywhere;
 }
 
 .snip i {

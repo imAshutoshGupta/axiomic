@@ -1,19 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import v from "../../../components/landing/visuals.module.css";
 import { PageHeader } from "../../../components/ui/page-header";
-import { Prose } from "../../../components/ui/prose";
-import { StatusBadge } from "../../../components/ui/status-badge";
 import { Mark } from "../../../components/ui/type";
-import { FEATURE_CATEGORIES, ROADMAP } from "../../../content/features";
+import { ALL_FEATURES, ROADMAP } from "../../../content/features";
 
 export const metadata: Metadata = {
   title: "Roadmap",
-  description: "What axiomic can do today, what is being built now, and what is planned for 1.0.",
+  description: "What axiomic does today, what is being built, and what comes with 1.0.",
 };
 
-/** Every feature, flattened, so a stage can list the ones with its status. */
-const ALL = FEATURE_CATEGORIES.flatMap((c) => c.features);
+const CLS: Record<string, string | undefined> = { local: "", "in-progress": v.stageNow, soon: v.stageNext, planned: v.stageNext };
 
+/** Four columns from content/features.ts, so a status changes in one place. */
 export default function RoadmapPage() {
   return (
     <div className="container">
@@ -21,53 +20,33 @@ export default function RoadmapPage() {
         eyebrow="Roadmap"
         title={
           <>
-            Built in the open, <Mark padded>step by step.</Mark>
+            Where it stands, <Mark padded>at a glance.</Mark>
           </>
         }
-        lead="Where every part stands, from what works today to what arrives with 1.0."
+        lead="Built with one team first. Free during 1.0."
       />
-      <Prose>
-        {ROADMAP.map((stage) => {
-          const items = ALL.filter((f) => f.status === stage.status);
-          return (
-            <section key={stage.status} aria-labelledby={`stage-${stage.status}`}>
-              <h2 id={`stage-${stage.status}`}>{stage.title}</h2>
-              <p>
-                <StatusBadge status={stage.status} />
-              </p>
-              <p>{stage.text}</p>
-              <p>
-                {items.map((f, i) => (
-                  <span key={f.id}>
-                    {i > 0 ? " · " : null}
-                    <Link href={`/features#${f.id}`}>{f.name}</Link>
-                  </span>
-                ))}
-              </p>
-              {stage.extra ? (
-                <ul>
-                  {stage.extra.map((e) => (
-                    <li key={e}>{e}</li>
-                  ))}
-                </ul>
-              ) : null}
-            </section>
-          );
-        })}
-
-        <h2 id="after">Later</h2>
-        <p>
-          Also planned, after the core is in place: a guard that stops rule files being committed by mistake, keys for
-          cloud agents that run without a person signed in, and reporting which rule version each laptop has. More AI
-          tools will follow Claude Code and Cursor.
-        </p>
-
-        <h2 id="pilot">The pilot</h2>
-        <p>
-          axiomic is being shaped with one development team first. There is no public sign-up yet, and 1.0 will be
-          free. The <Link href="/docs/cli">CLI docs</Link> show what you can try locally today.
-        </p>
-      </Prose>
+      <ol className={v.track} style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+        {ROADMAP.map((stage) => (
+          <li key={stage.status} className={`${v.stage} ${CLS[stage.status] ?? ""}`}>
+            <div className={v.stageHead}>
+              <h2 className={v.stageTitle}>{stage.title}</h2>
+            </div>
+            <ul className={v.items}>
+              {ALL_FEATURES.filter((f) => f.status === stage.status).map((f) => (
+                <li key={f.id}>
+                  <Link href={`/product#${f.id}`}>{f.name}</Link>
+                </li>
+              ))}
+              {stage.extra?.map((e) => (
+                <li key={e}>{e}</li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ol>
+      <p className={v.foot} style={{ marginBottom: 96 }}>
+        Later: more AI tools (GitHub Copilot, then Windsurf), Slack notifications, starter templates.
+      </p>
     </div>
   );
 }

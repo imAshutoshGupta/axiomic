@@ -1,292 +1,107 @@
 /**
- * Every product capability shown on /features and /roadmap. The ONE place to change a status.
- * Status rules (DECISIONS.md #25):
- *  - "local": built and tested in packages/shared or packages/cli, works without a server.
- *  - "in-progress": the server side (database, API, fetch) that is the current build step.
+ * Every product capability, for /product and /roadmap. The ONE place to change a status.
+ * Status rules (DECISIONS #25, updated #81 once the hosted service went live):
+ *  - "local" (shown "Available"): built, tested and usable today, on the laptop or on the live site.
+ *  - "in-progress": built or being built, but not usable for real yet (e.g. waits for two-factor sign-in).
  *  - "soon": decided and waiting on a small check (Cursor: the gitignore test in docs/TOOLS.md).
  *  - "planned": decided in docs/PLAN.md, not written yet.
- * Never mark something "local" without code and tests behind it.
+ * Never mark something "local" without code and tests behind it. `short` is one line, no more.
  */
 import type { Status } from "../components/ui/status-badge";
 
 export type Feature = {
-  /** Anchor id on /features. */
+  /** Anchor id on /product. */
   id: string;
   name: string;
-  /** What it does for the team, in one or two sentences. */
-  benefit: string;
+  /** One short line: what it does for you. */
+  short: string;
   status: Status;
 };
 
 export type FeatureCategory = {
   id: string;
-  /** Small label above the title. */
-  eyebrow: string;
   title: string;
-  /** One-line promise of the category. */
-  summary: string;
+  /** One emoji, shown beside the title. */
+  emoji: string;
   features: Feature[];
 };
 
 export const FEATURE_CATEGORIES: FeatureCategory[] = [
   {
     id: "layers",
-    eyebrow: "Organise",
-    title: "Rule layers and merging",
-    summary: "Write a rule once, where it belongs. Every developer gets one combined, conflict-free set.",
+    title: "Layers",
+    emoji: "🧱",
     features: [
-      {
-        id: "five-layers",
-        name: "Five layers, combined per person",
-        benefit:
-          "Company, team, project, folder and personal rules become one file per developer. A narrower rule with the same title replaces the wider one, so a project can refine a team default.",
-        status: "local",
-      },
-      {
-        id: "locked-rules",
-        name: "Locked company and team rules",
-        benefit: "Rules that must hold everywhere can be locked. Narrower layers cannot replace them, and they are placed first, marked MANDATORY.",
-        status: "local",
-      },
-      {
-        id: "personal-rules",
-        name: "Personal rules that only add",
-        benefit: "Developers keep their own preferences, like explanation style, without being able to override a work rule.",
-        status: "local",
-      },
-      {
-        id: "folder-rules",
-        name: "Folder rules",
-        benefit:
-          "Rules for one module (say, checkout/) go in their own file that Claude Code loads only while working in that folder. Less noise in every other session.",
-        status: "local",
-      },
-      {
-        id: "tamper-proof-format",
-        name: "A file format rules cannot fake",
-        benefit:
-          "Headings inside a rule are pushed down a level, and unclosed code blocks or comments are repaired, so one rule cannot pose as a company rule or hide the rules after it.",
-        status: "local",
-      },
+      { id: "five-layers", name: "Five layers, one file", short: "Company, team, project, folder and personal rules, combined per person.", status: "local" },
+      { id: "locked-rules", name: "Locked rules", short: "Rules no narrower layer can replace, placed first as MANDATORY.", status: "local" },
+      { id: "personal-rules", name: "Personal rules", short: "Your own preferences, which never override a work rule.", status: "local" },
+      { id: "folder-rules", name: "Folder rules", short: "Rules for one folder, loaded only while working there.", status: "local" },
+      { id: "tamper-proof-format", name: "A format rules can't fake", short: "No rule can pose as a company rule or hide the ones after it.", status: "local" },
     ],
   },
   {
     id: "safety",
-    eyebrow: "Protect",
-    title: "Publish safety check",
-    summary: "Every rule is checked before anyone's AI reads it.",
+    title: "Safety check",
+    emoji: "🛡️",
     features: [
-      {
-        id: "secret-scan",
-        name: "Secret scanning",
-        benefit:
-          "Catches private keys, cloud and API tokens (GitHub, AWS, Stripe, OpenAI, Anthropic, Slack and more), database connection strings and passwords. Placeholders such as YOUR_KEY_HERE are not flagged.",
-        status: "local",
-      },
-      {
-        id: "hidden-characters",
-        name: "Hidden character detection",
-        benefit:
-          "Blocks invisible text tricks, such as direction overrides and invisible copies of letters, that hide instructions from a human reviewer. Normal emoji and Indian scripts keep working.",
-        status: "local",
-      },
-      {
-        id: "injection-hints",
-        name: "Prompt-injection warnings",
-        benefit:
-          "Flags phrasing that tries to make an AI ignore instructions, change role, hide things from the user or send data elsewhere.",
-        status: "local",
-      },
-      {
-        id: "label-imitation",
-        name: "Authority imitation checks",
-        benefit: "Stops a rule from faking axiomic's own MANDATORY labels or headings, including with look-alike letters.",
-        status: "local",
-      },
-      {
-        id: "size-limits",
-        name: "Size limits",
-        benefit: "Warns before rules get long enough to crowd the AI's context, and blocks files Claude Code would cut off.",
-        status: "local",
-      },
-      {
-        id: "publish-gate",
-        name: "Checks run on every publish",
-        benefit: "The server runs the check on every change sent with axiomic push and on every save in the website editor, and refuses blocking problems. The editor also refuses a rule whose title clashes with a locked rule, and shows warnings before saving.",
-        status: "in-progress",
-      },
+      { id: "secret-scan", name: "Secret scanning", short: "Keys, tokens, passwords and database URLs are blocked.", status: "local" },
+      { id: "hidden-characters", name: "Hidden characters", short: "Invisible-text tricks are blocked; emoji and Indian scripts work.", status: "local" },
+      { id: "injection-hints", name: "Prompt-injection warnings", short: "“Ignore previous instructions” and similar get flagged.", status: "local" },
+      { id: "label-imitation", name: "No fake labels", short: "Rules can't imitate axiomic's MANDATORY labels or headings.", status: "local" },
+      { id: "size-limits", name: "Size limits", short: "A warning before rules crowd the AI's context.", status: "local" },
+      { id: "publish-gate", name: "Checked on every save", short: "On the website and on axiomic push, including clashes with locked rules.", status: "local" },
     ],
   },
   {
     id: "delivery",
-    eyebrow: "Deliver",
-    title: "Delivery to the laptop",
-    summary: "Rules appear when an AI session starts, and Git never sees them.",
+    title: "On the laptop",
+    emoji: "💻",
     features: [
-      {
-        id: "session-hook",
-        name: "Claude Code session hook",
-        benefit:
-          "One install covers every project. Rule files are refreshed each time Claude Code starts, resumes or compacts, with no step for the developer.",
-        status: "local",
-      },
-      {
-        id: "fail-open",
-        name: "Never blocks a session",
-        benefit: "Strict time limits and a local copy mean a slow network or server never delays the AI session.",
-        status: "local",
-      },
-      {
-        id: "offline-cache",
-        name: "Offline copy",
-        benefit: "The last rules received are kept privately on the laptop and restored if files are deleted, for example by git clean.",
-        status: "local",
-      },
-      {
-        id: "gitignore",
-        name: "Verified gitignore",
-        benefit:
-          "Rule paths are added to an axiomic block in .gitignore (and .dockerignore), then Git itself is asked to confirm. If Git cannot confirm, nothing is written.",
-        status: "local",
-      },
-      {
-        id: "never-claude-md",
-        name: "Your CLAUDE.md stays yours",
-        benefit: "axiomic writes only its own files in .claude/rules/. It never writes CLAUDE.md or AGENTS.md.",
-        status: "local",
-      },
-      {
-        id: "edit-detection",
-        name: "Local edits are respected",
-        benefit: "Files a developer changed are detected and kept, not overwritten. Files axiomic did not write are never touched.",
-        status: "local",
-      },
-      {
-        id: "clean-undo",
-        name: "Clean undo",
-        benefit: "axiomic remove takes away exactly what axiomic added: its files, ignore blocks and cache. Nothing else.",
-        status: "local",
-      },
-      {
-        id: "health-check",
-        name: "Health check",
-        benefit: "axiomic status shows whether the hook works and whether any rule file is tracked by Git or at risk of being committed.",
-        status: "local",
-      },
-      {
-        id: "server-sync",
-        name: "Sync from the server",
-        benefit: "The hook fetches the latest combined rules at every session start and falls back to the offline copy. Built and tested against a local server; waiting for the hosted one.",
-        status: "in-progress",
-      },
+      { id: "session-hook", name: "Claude Code session hook", short: "Fresh rules at every session start. Nothing to run.", status: "local" },
+      { id: "server-sync", name: "Sync from the server", short: "The latest combined rules, with the last copy kept for offline use.", status: "local" },
+      { id: "fail-open", name: "Never blocks a session", short: "A slow network or server never delays Claude Code.", status: "local" },
+      { id: "gitignore", name: "Verified gitignore", short: "Git itself confirms the files are ignored, or nothing is written.", status: "local" },
+      { id: "never-claude-md", name: "Your CLAUDE.md stays yours", short: "axiomic writes only its own files in .claude/rules/.", status: "local" },
+      { id: "edit-detection", name: "Edit locally, push back", short: "axiomic push sends your edits; axiomic diff shows them.", status: "local" },
+      { id: "clean-undo", name: "Clean undo", short: "axiomic remove takes away exactly what axiomic added.", status: "local" },
     ],
   },
   {
     id: "control",
-    eyebrow: "Govern",
     title: "Team control",
-    summary: "Clear owners for every rule, and access that ends when someone leaves.",
+    emoji: "👥",
     features: [
-      {
-        id: "storage",
-        name: "Encrypted, versioned storage",
-        benefit: "Every published version is kept, hosted in Mumbai, India.",
-        status: "in-progress",
-      },
-      {
-        id: "sign-in",
-        name: "Sign-in with GitHub or Google",
-        benefit: "No new passwords. Two-factor sign-in for admins is planned.",
-        status: "local",
-      },
-      {
-        id: "roles",
-        name: "Roles and owners",
-        benefit: "Admin, editor and reader roles, team leads, and owners for each project and folder, all managed on the website. Each layer's owner decides what goes in it. Admin actions in a company space wait for two-factor sign-in.",
-        status: "in-progress",
-      },
-      {
-        id: "invites",
-        name: "Invites",
-        benefit: "Invite a teammate with a link that works once, only for their email address, for 7 days. You send the link yourself for now; email delivery is planned.",
-        status: "in-progress",
-      },
-      {
-        id: "suggestions",
-        name: "Suggestions and approvals",
-        benefit: "Anyone can propose a change, from the website editor or from their laptop with axiomic push. The layer owner approves or rejects it in the website's Suggestions inbox, with a note to the author.",
-        status: "in-progress",
-      },
-      {
-        id: "editor",
-        name: "Rule editor on the website",
-        benefit: "See every project's rules layer by layer and the combined file a laptop gets, then add, edit or delete rules in the layers you own. Version history and roll back are planned.",
-        status: "in-progress",
-      },
-      {
-        id: "revoke",
-        name: "Offboarding",
-        benefit: "Removing a person on the website stops their updates, and the CLI deletes the managed files on its next run.",
-        status: "in-progress",
-      },
-      {
-        id: "alerts",
-        name: "Publish alerts",
-        benefit: "An email on every publish, so no change goes unnoticed.",
-        status: "planned",
-      },
-      {
-        id: "import",
-        name: "Import existing CLAUDE.md files",
-        benefit: "Move the rules already scattered across your repos into axiomic, then take them out of Git.",
-        status: "planned",
-      },
+      { id: "editor", name: "Rule editor", short: "See each layer and the combined file; edit the layers you own.", status: "local" },
+      { id: "suggestions", name: "Suggestions and approvals", short: "Changes to someone else's layer wait for the owner's OK.", status: "local" },
+      { id: "storage", name: "Encrypted, versioned storage", short: "Every version kept, encrypted, in Mumbai, India.", status: "local" },
+      { id: "sign-in", name: "GitHub or Google sign-in", short: "No new passwords.", status: "local" },
+      { id: "roles", name: "Roles, teams and owners", short: "Admin, editor, reader; team leads; project and folder owners.", status: "in-progress" },
+      { id: "invites", name: "Invites", short: "A link that works once, for one email, for 7 days.", status: "in-progress" },
+      { id: "revoke", name: "Offboarding", short: "Remove a person and their laptop drops the rules at the next session.", status: "in-progress" },
+      { id: "two-factor", name: "Two-factor sign-in for admins", short: "Unlocks inviting and admin tools in company spaces.", status: "planned" },
+      { id: "history", name: "History and rollback", short: "Who changed what, and one-click return to an older version.", status: "planned" },
+      { id: "alerts", name: "Publish alerts", short: "An email on every publish.", status: "planned" },
+      { id: "import", name: "Import CLAUDE.md files", short: "Move existing rules into axiomic, then out of Git.", status: "planned" },
     ],
   },
   {
     id: "tools",
-    eyebrow: "Integrate",
     title: "AI tools",
-    summary: "One set of rules, written in each tool's own format.",
+    emoji: "🤖",
     features: [
-      {
-        id: "claude-code",
-        name: "Claude Code",
-        benefit: "Rules are written to .claude/rules/, which Claude Code loads like CLAUDE.md. Tested end to end.",
-        status: "local",
-      },
-      {
-        id: "cursor",
-        name: "Cursor",
-        benefit: "The same rules as Cursor project rules, from the same merge.",
-        status: "soon",
-      },
+      { id: "claude-code", name: "Claude Code", short: "Loaded from .claude/rules/ like CLAUDE.md. Tested end to end.", status: "local" },
+      { id: "cursor", name: "Cursor", short: "The same rules as Cursor project rules.", status: "soon" },
     ],
   },
 ];
 
-/** Roadmap stages, in order. Each groups features by status, plus milestones not tied to one feature. */
-export const ROADMAP: { status: Status; title: string; text: string; extra?: string[] }[] = [
-  {
-    status: "local",
-    title: "Available today",
-    text: "The core: layer merging, the safety check, the file format and the laptop side of the CLI. Built and tested, ready for the server to feed it.",
-  },
-  {
-    status: "in-progress",
-    title: "In development",
-    text: "The server: storage, the API and the sync that connects the CLI to it. The signed-in website: projects, the rule viewer and editor, the suggestions inbox, invites, roles and teams.",
-    extra: ["CLI commands: login, logout, init, pull, push, diff, whoami"],
-  },
-  {
-    status: "soon",
-    title: "Coming soon",
-    text: "Cursor support, once its gitignore behaviour is confirmed.",
-  },
-  {
-    status: "planned",
-    title: "Planned for 1.0",
-    text: "The website side and team controls, then a pilot with one team before release.",
-    extra: ["CLI command: import", "axiomic 1.0 on npm, free"],
-  },
+/** Every feature, flattened. */
+export const ALL_FEATURES: Feature[] = FEATURE_CATEGORIES.flatMap((c) => c.features);
+
+/** Roadmap columns, in order. Each lists the features with its status, plus a few milestones. */
+export const ROADMAP: { status: Status; title: string; extra?: string[] }[] = [
+  { status: "local", title: "Available now" },
+  { status: "in-progress", title: "In development" },
+  { status: "soon", title: "Coming soon" },
+  { status: "planned", title: "Planned for 1.0", extra: ["axiomic 1.0 on npm, free"] },
 ];

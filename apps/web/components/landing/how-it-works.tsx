@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Eyebrow, Mark, SectionTitle } from "../ui/type";
 import styles from "./how.module.css";
@@ -67,10 +66,6 @@ export function HowItWorks() {
           </span>
         </p>
       </div>
-      <p className={styles.planned}>
-        The laptop side is built today; the server is in development. See the{" "}
-        <Link href="/roadmap">roadmap</Link>.
-      </p>
     </section>
   );
 }

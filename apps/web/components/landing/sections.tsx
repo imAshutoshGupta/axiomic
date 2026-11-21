@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { PRIMARY_CTA } from "../../content/site";
 import { ButtonLink } from "../ui/button";
 import { Section } from "../ui/section";
 import { Mark } from "../ui/type";
@@ -16,11 +17,11 @@ function Icon({ d, size = 18 }: { d: ReactNode; size?: number }) {
 const LOCK = <><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></>;
 const SWAP = <><path d="M7 7h11l-3-3M17 17H6l3 3" /></>;
 const PLUS = <><path d="M12 5v14M5 12h14" /></>;
-const GIT = <><circle cx="6" cy="6" r="2" /><circle cx="6" cy="18" r="2" /><circle cx="18" cy="9" r="2" /><path d="M6 8v8M18 11c0 4-6 3-12 6" /></>;
-const CLOUD = <><path d="M7 18a4 4 0 0 1 0-8 6 6 0 0 1 11.5 1.5A3.5 3.5 0 0 1 18 18z" /></>;
-const LAPTOP = <><rect x="4" y="5" width="16" height="11" rx="1.5" /><path d="M2 19h20" /></>;
-const SHIELD = <><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" /></>;
 const ARROW = <path d="M5 12h14M13 6l6 6-6 6" />;
+const LAYERS_ICON = <><path d="M12 3l9 5-9 5-9-5z" /><path d="M3 13l9 5 9-5" /></>;
+const CHECK = <><circle cx="12" cy="12" r="9" /><path d="M8 12l3 3 5-6" /></>;
+const PEOPLE = <><circle cx="9" cy="8" r="3" /><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6" /><path d="M16 4a3 3 0 0 1 0 6M21 20c0-3-1.8-5.2-4.5-5.8" /></>;
+const LINK = <><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></>;
 
 /* ------------------------------------------------------------------ */
 /** Before and after: what Git sees. */
@@ -148,7 +149,7 @@ export function LayersSection() {
         </li>
       </ul>
       <p className={styles.more}>
-        <ButtonLink href="/features#layers" variant="text">
+        <ButtonLink href="/product#layers" variant="text">
           How layers work →
         </ButtonLink>
       </p>
@@ -204,85 +205,94 @@ export function SafetySection() {
 }
 
 /* ------------------------------------------------------------------ */
-const TILES = [
-  { yes: true, icon: GIT, title: "Out of Git", text: "Repos, forks and PRs carry code only." },
-  { yes: true, icon: SHIELD, title: "Checked first", text: "Secrets and tricks stopped at publish." },
-  { yes: false, icon: CLOUD, title: "Still sent to the AI", text: "Your AI tool reads them, like any instructions." },
-  { yes: false, icon: LAPTOP, title: "On the laptop", text: "Plain files. Don’t put secrets in rules." },
+const TEAM = [
+  { icon: LAYERS_ICON, title: "Edit by layer", text: "Company, team, project, folder." },
+  { icon: CHECK, title: "Approve changes", text: "Suggestions wait for the owner." },
+  { icon: PEOPLE, title: "Roles & owners", text: "Admin, editor, reader." },
+  { icon: LINK, title: "Invite by link", text: "One use, one email, 7 days." },
 ];
 
-/** Two things it protects, two it does not. */
-export function SecuritySection() {
+/** The website side: a suggestion waiting for approval, and four things a lead does there. */
+export function TeamSection() {
   return (
     <Section
-      id="security"
-      eyebrow="Security, honestly"
+      id="team"
+      eyebrow="For the team lead"
       title={
         <>
-          What it protects, and <Mark>what it does not.</Mark>
+          One place to <Mark>run the rules.</Mark>
         </>
       }
     >
-      <ul className={v.tiles}>
-        {TILES.map((t) => (
-          <li key={t.title} className={`${v.tile} ${t.yes ? v.tileYes : v.tileNo}`}>
-            <span className={v.icon}><Icon d={t.icon} /></span>
-            <h3>{t.title}</h3>
-            <p>{t.text}</p>
-          </li>
-        ))}
-      </ul>
-      <p className={styles.more}>
-        <ButtonLink href="/security" variant="secondary">
-          Read the security page
-        </ButtonLink>
-      </p>
+      <div className={v.team}>
+        <div className={v.card}>
+          <div className={v.cardHead}>
+            <span className={`${v.tag} ${v.tagGood}`}>Suggestion</span>
+            <span>Testing · from Ravi</span>
+          </div>
+          <pre className={v.diff}>
+            <span className={v.del}>- Use Jest for unit tests.</span>{"\n"}
+            <span className={v.add}>+ Use Vitest and Testing Library.</span>{"\n"}
+            <span className={v.add}>+ Test behaviour, not implementation.</span>
+          </pre>
+          <div className={v.decide} aria-hidden="true">
+            <span className={v.approve}>Approve</span>
+            <span className={v.reject}>Reject</span>
+          </div>
+        </div>
+        <ul className={v.teamTiles}>
+          {TEAM.map((t) => (
+            <li key={t.title} className={v.teamTile}>
+              <span className={v.icon}><Icon d={t.icon} /></span>
+              <span><b>{t.title}</b>{t.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </Section>
   );
 }
 
 /* ------------------------------------------------------------------ */
-const STAGES = [
-  { title: "Built", cls: "", items: ["Layer merge & locks", "Safety check", "Laptop CLI & hook", "Claude Code"] },
-  { title: "Building", cls: v.stageNow, items: ["Server & storage", "Sign-in", "Sync to laptops", "Website editor & approvals", "Roles & invites"] },
-  { title: "Next", cls: v.stageNext, items: ["Two-factor sign-in", "Cursor", "1.0 on npm, free"] },
+const START = [
+  { n: "1", title: "Sign up free", lines: ["# GitHub or Google"] },
+  { n: "2", title: "Add a project", lines: ["# on the website"] },
+  { n: "3", title: "Link your repo", lines: ["axiomic login", "axiomic init you/my-app"] },
 ];
 
-/** Where the product stands, at a glance. */
-export function StatusSection() {
+/** The closing call to action: three short steps and the button. */
+export function GetStartedSection() {
   return (
     <Section
-      id="status"
-      eyebrow="Status"
+      id="start"
+      eyebrow="Get started"
       title={
         <>
-          Pilot stage. <Mark>Moving fast.</Mark>
+          Your rules, out of Git, <Mark>in minutes.</Mark>
         </>
       }
-      lead="Being built with one team first. Free during 1.0."
+      lead="Free during 1.0. Claude Code today."
     >
-      <ol className={v.track}>
-        {STAGES.map((s) => (
-          <li key={s.title} className={`${v.stage} ${s.cls}`}>
-            <div className={v.stageHead}>
-              <h3 className={v.stageTitle}>{s.title}</h3>
-            </div>
-            <ul className={v.items}>
-              {s.items.map((i) => (
-                <li key={i}>{i}</li>
+      <ol className={v.start}>
+        {START.map((s) => (
+          <li key={s.n} className={v.startStep}>
+            <span className={v.startNum}>{s.n}</span>
+            <b>{s.title}</b>
+            <pre className={v.startCode}>
+              {s.lines.map((l) => (
+                <span key={l}>
+                  {l.startsWith("#") ? <i>{l}</i> : <><i>$ </i>{l}</>}
+                  {"\n"}
+                </span>
               ))}
-            </ul>
+            </pre>
           </li>
         ))}
       </ol>
-      <p className={v.foot}>
-        “Built” parts run on the laptop today; they connect to the server once it ships. Please don’t install the old 0.x
-        npm versions.
-      </p>
       <p className={styles.more}>
-        <ButtonLink href="/roadmap">See the roadmap</ButtonLink>
-        <ButtonLink href="/features" variant="text">
-          Explore all features →
+        <ButtonLink href={PRIMARY_CTA.href} size="lg">{PRIMARY_CTA.label}</ButtonLink>
+        <ButtonLink href="/docs/cli#quick-start" variant="text">
+          Install the CLI →
         </ButtonLink>
       </p>
     </Section>

@@ -42,8 +42,8 @@ export default function PrivacyPage() {
           from this site. The hosting provider keeps standard server logs (such as IP address and time of request).
         </p>
 
-        <h2 id="data">Data the service is expected to handle</h2>
-        <p>The service is not running yet. When it is, we expect to handle:</p>
+        <h2 id="data">Data the service handles</h2>
+        <p>The service is in early access. It handles:</p>
         <ul>
           <li>
             <strong>Account data:</strong> your name, email address and profile picture from GitHub or Google sign-in.
@@ -74,7 +74,7 @@ export default function PrivacyPage() {
 
         <h2 id="where">Where it is stored and who processes it</h2>
         <p>
-          The database and the server are hosted in Mumbai, India. We expect to use these processors:{" "}
+          The database and the server are hosted in Mumbai, India, by Supabase (database and sign-in) and Vercel (website and server). Other processors:{" "}
           <Placeholder>list of processors, such as hosting, database and email providers — to be confirmed</Placeholder>.
         </p>
 

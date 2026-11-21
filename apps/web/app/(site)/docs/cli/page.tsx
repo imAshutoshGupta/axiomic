@@ -17,12 +17,14 @@ export const metadata: Metadata = {
 const slug = (usage: string) => `cmd-${usage.replace(/[^a-z]+/g, "-").replace(/^-|-$/g, "")}`;
 
 const AVAILABLE = CLI_COMMANDS.filter((c) => c.status === "available" && !c.usage.startsWith("-"));
-const BUILDING = CLI_COMMANDS.filter((c) => c.status === "in-progress");
 const COMING = CLI_COMMANDS.filter((c) => c.status === "coming");
 
+/** The preview build until 1.0 is on npm (README has the same line). Needs Node 22 or newer. */
+const INSTALL = "npm i -g https://github.com/imAshutoshGupta/axiomic/raw/main/office-test/axiomic-1.0.0-dev.0.tgz";
+
 const QUICK_START = [
-  { title: "Install", code: ["# with 1.0 (not yet)", "npm install -g axiomic"], text: "Once per laptop." },
-  { title: "Sign in and link the repo", code: ["axiomic login", "axiomic init acme/web-app"], text: "Approve the login in your browser, then link the repo (at its top folder). This also installs the session hook." },
+  { title: "Install", code: ["# preview build, Node 22+", INSTALL], text: "Once per laptop. Version 1.0 will be on npm." },
+  { title: "Sign in and link the repo", code: ["axiomic login", "axiomic init acme/web-app"], text: "Type the code in your browser, then link the repo from its top folder. Your project's exact command is on its page on the website." },
   { title: "Open Claude Code", code: ["claude"], text: "The hook writes your rules. Nothing to run, nothing to commit." },
   { title: "Check anytime", code: ["axiomic status"], text: "Confirms the hook works and Git ignores every rule file." },
 ];
@@ -114,11 +116,6 @@ export default function CliDocsPage() {
                 <a href={`#${slug(c.usage)}`}><code>{c.usage}</code></a>
               </li>
             ))}
-            {BUILDING.map((c) => (
-              <li key={c.usage}>
-                <a href={`#${slug(c.usage)}`}><code>{c.usage}</code></a>
-              </li>
-            ))}
             <li><a href="#coming">Coming next</a></li>
           </ul>
           <h2>Reference</h2>
@@ -143,9 +140,7 @@ export default function CliDocsPage() {
 
           <h2 id="quick-start" className={styles.h2}>Quick start</h2>
           <p className={styles.sub}>
-            Four steps once 1.0 ships. Today the hook, <code>status</code> and <code>remove</code> work on their own;{" "}
-            <code>login</code>, <code>init</code>, <code>pull</code>, <code>push</code> and <code>diff</code> are built and tested against a local axiomic server, and
-            wait for the hosted one to go live.
+            Four steps. First <Link href="/sign-in">sign up free</Link> and add a project on the website.
           </p>
           <ol className={styles.steps}>
             {QUICK_START.map((s) => (
@@ -165,17 +160,9 @@ export default function CliDocsPage() {
 
           <h2 id="commands" className={styles.h2}>Commands</h2>
           <p className={styles.sub}>
-            Work today, no server needed. Also: <code>--help</code>, <code>--version</code>.
+            Also: <code>--help</code>, <code>--version</code>.
           </p>
           {AVAILABLE.map((cmd) => (
-            <Command key={cmd.usage} cmd={cmd} />
-          ))}
-
-          <h2 id="server-commands" className={styles.h2}>Built, waiting for the hosted server</h2>
-          <p className={styles.sub}>
-            These work against a local axiomic server and are tested. They become usable for everyone once the hosted server is live.
-          </p>
-          {BUILDING.map((cmd) => (
             <Command key={cmd.usage} cmd={cmd} />
           ))}
 

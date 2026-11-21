@@ -5,11 +5,11 @@ export type Status = "built" | "local" | "in-progress" | "soon" | "planned" | "a
 
 const LABELS: Record<Status, string> = {
   built: "Built",
-  local: "Available (local)",
+  local: "Available",
   "in-progress": "In development",
   soon: "Coming soon",
   planned: "Planned",
-  available: "In this build",
+  available: "Available",
   coming: "Coming: needs the server",
 };
 

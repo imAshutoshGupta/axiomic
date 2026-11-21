@@ -3,32 +3,30 @@ export type NavLink = { href: string; label: string };
 
 export const MAIN_NAV: NavLink[] = [
   { href: "/product", label: "Product" },
-  { href: "/features", label: "Features" },
   { href: "/docs/cli", label: "Docs" },
   { href: "/security", label: "Security" },
 ];
 
-/**
- * The filled button in the header and hero. The mockup says "Get early access", but there is
- * no sign-up or waitlist yet, so it points at the honest pilot status instead.
- */
-export const PRIMARY_CTA: NavLink = { href: "/#status", label: "See pilot status" };
+/** The filled button in the header, hero and closing section: open sign-up (DECISIONS #81). */
+export const PRIMARY_CTA: NavLink = { href: "/sign-in", label: "Get started free" };
+
+/** The quiet text link beside it, for people who already have an account. */
+export const SIGN_IN: NavLink = { href: "/sign-in", label: "Sign in" };
 
 export const FOOTER_NAV: { title: string; links: NavLink[] }[] = [
   {
     title: "Product",
     links: [
       { href: "/product", label: "Overview" },
-      { href: "/features", label: "Features" },
       { href: "/roadmap", label: "Roadmap" },
-      { href: "/#how", label: "How it works" },
+      { href: "/faq", label: "FAQ" },
     ],
   },
   {
-    title: "Docs",
+    title: "Developers",
     links: [
-      { href: "/docs/cli", label: "CLI" },
-      { href: "/faq", label: "FAQ" },
+      { href: "/docs/cli", label: "CLI docs" },
+      { href: "https://github.com/imAshutoshGupta/axiomic", label: "Source on GitHub" },
     ],
   },
   {

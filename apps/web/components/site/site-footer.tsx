@@ -27,8 +27,8 @@ export function SiteFooter() {
         </nav>
       </div>
       <div className={`container ${styles.footerBottom}`}>
-        <p>Pilot build. axiomic 1.0 is not published yet.</p>
-        <p>No cookies, analytics or third-party scripts on this site.</p>
+        <p>Early access · free during 1.0 · data stored in India</p>
+        <p>No analytics or third-party scripts. Cookies only to keep you signed in.</p>
       </div>
     </footer>
   );

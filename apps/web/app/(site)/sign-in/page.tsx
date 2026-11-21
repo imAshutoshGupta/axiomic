@@ -8,8 +8,8 @@ import { signIn } from "./actions";
 import styles from "./sign-in.module.css";
 
 export const metadata: Metadata = {
-  title: "Sign in",
-  description: "Sign in to axiomic with GitHub or Google.",
+  title: "Get started",
+  description: "Sign in or create a free axiomic account with GitHub or Google.",
   robots: { index: false },
 };
 
@@ -33,9 +33,9 @@ export default async function SignInPage({ searchParams }: Props) {
   return (
     <div className={`container ${styles.page}`}>
       <PageHeader
-        eyebrow="Sign in"
-        title="Sign in to axiomic"
-        lead="Use your GitHub or Google account. axiomic never sees your password."
+        eyebrow="Get started"
+        title="Sign in or create your account"
+        lead="Free during 1.0. New accounts get a private space to try it. axiomic never sees your password."
       />
       {message ? <Callout tone="warning" title={message} /> : null}
       <form action={signIn} className={styles.buttons}>
@@ -56,6 +56,7 @@ export default async function SignInPage({ searchParams }: Props) {
           Continue with Google
         </button>
       </form>
+      <p className={styles.note}>Google sign-in is open to pilot users only for now. Everyone else: use GitHub.</p>
     </div>
   );
 }

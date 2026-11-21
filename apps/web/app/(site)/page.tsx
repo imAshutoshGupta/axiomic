@@ -2,7 +2,7 @@ import { Hero } from "../../components/landing/hero";
 import heroStyles from "../../components/landing/hero.module.css";
 import { HowItWorks } from "../../components/landing/how-it-works";
 import { MotionProvider } from "../../components/landing/motion";
-import { DeveloperSection, LayersSection, SafetySection, SecuritySection, StatusSection } from "../../components/landing/sections";
+import { DeveloperSection, GetStartedSection, LayersSection, SafetySection, TeamSection } from "../../components/landing/sections";
 
 export default function HomePage() {
   return (
@@ -13,8 +13,8 @@ export default function HomePage() {
       <DeveloperSection />
       <LayersSection />
       <SafetySection />
-      <SecuritySection />
-      <StatusSection />
+      <TeamSection />
+      <GetStartedSection />
     </MotionProvider>
   );
 }

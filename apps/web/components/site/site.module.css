@@ -108,8 +108,14 @@
   color: var(--accent-text);
 }
 
+.signIn {
+  font-weight: 600;
+  color: var(--text);
+}
+
 @media (max-width: 760px) {
-  .desktopNav {
+  .desktopNav,
+  .signIn {
     display: none;
   }
   .mobileNav {

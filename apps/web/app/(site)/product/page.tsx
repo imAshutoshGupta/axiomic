@@ -1,122 +1,108 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CodeBlock } from "../../../components/ui/code-block";
+import { ButtonLink } from "../../../components/ui/button";
 import { PageHeader } from "../../../components/ui/page-header";
-import { Prose } from "../../../components/ui/prose";
 import { StatusBadge } from "../../../components/ui/status-badge";
 import { Mark } from "../../../components/ui/type";
+import { FEATURE_CATEGORIES } from "../../../content/features";
+import { PRIMARY_CTA } from "../../../content/site";
+import s from "./product.module.css";
 
 export const metadata: Metadata = {
-  title: "Product overview",
-  description:
-    "Why AI rule files do not belong in Git, and how axiomic stores, checks, combines and delivers them to every developer instead.",
+  title: "Product",
+  description: "Why AI rule files don't belong in Git, and everything axiomic does instead: layers, a safety check, delivery to every laptop and team control.",
 };
 
-const FLOW = `Website       a lead writes a rule
-   │ publish
-   ▼
-Safety check  secrets, hidden text
-   ▼
-Server        versions, per person
-   │ HTTPS
-   ▼
-Laptop        hook writes gitignored
-              .claude/rules files
-   ▼
-Git           code only`;
+const PROBLEMS = [
+  { emoji: "🔓", title: "They leak", text: "Server names and internal commands, visible to every fork." },
+  { emoji: "🔀", title: "They drift", text: "Copied into 30 repos, slowly stop matching." },
+  { emoji: "🤷", title: "Nobody owns them", text: "Anyone can change a company rule in a PR." },
+  { emoji: "📦", title: "They can't be taken back", text: "Someone who leaves keeps every copy." },
+];
 
+const PARTS = [
+  { emoji: "🖥️", title: "Website", text: "Leads write, review and approve rules." },
+  { emoji: "🗄️", title: "Server", text: "Encrypted versions; decides who gets what." },
+  { emoji: "⌨️", title: "CLI", text: "Writes the rules on each laptop, out of Git." },
+];
+
+/** Product overview + every feature (this page replaced /features). One line per item. */
 export default function ProductPage() {
   return (
     <div className="container">
       <PageHeader
-        eyebrow="Product overview"
+        eyebrow="Product"
         title={
           <>
             AI rules belong to your team, <Mark padded>not to Git.</Mark>
           </>
         }
-        lead="axiomic gives AI coding rules a proper home: owned, checked, combined per person and delivered to every laptop, without ever entering a repository."
+        lead="One private home for your team's AI rules: owned, checked, combined per person, on every laptop."
       />
-      <Prose>
-        <h2 id="problem">The problem with rule files in Git</h2>
-        <p>
-          Teams now commit instructions for their AI tools, such as <code>CLAUDE.md</code>, next to their code. It works
-          for one repo. Across a team it starts to hurt:
-        </p>
-        <ul>
-          <li>
-            <strong>They leak.</strong> Architecture notes, server names and internal commands are visible to anyone
-            with repo access, including forks.
-          </li>
-          <li>
-            <strong>They drift.</strong> The same team rules get copied into dozens of repos and slowly stop matching.
-          </li>
-          <li>
-            <strong>Nobody owns them.</strong> Anyone can change a company-wide rule in a pull request.
-          </li>
-          <li>
-            <strong>They cannot be taken back.</strong> Someone who leaves keeps every rule in their clone.
-          </li>
-        </ul>
 
-        <h2 id="idea">The idea</h2>
-        <p>
-          Rules live in axiomic, organised in layers with clear owners. When a developer opens Claude Code, axiomic
-          writes that person&apos;s combined rules into the repo as gitignored files. The AI reads them like any other
-          project instructions. Git keeps code only.
-        </p>
-      </Prose>
-      <CodeBlock variant="file" title="How the pieces fit" code={FLOW} />
-      <Prose spaced>
-        <h2 id="pieces">Three parts, one shared brain</h2>
-        <ul>
-          <li>
-            <strong>The website</strong> is where leads write, review and approve rules. <StatusBadge status="in-progress" />
-          </li>
-          <li>
-            <strong>The server</strong> stores every version and decides who gets which rules. <StatusBadge status="in-progress" />
-          </li>
-          <li>
-            <strong>The CLI</strong> writes the rules safely onto each laptop and keeps them out of Git.{" "}
-            <StatusBadge status="local" />
-          </li>
+      <section className={s.block} aria-labelledby="problem">
+        <h2 id="problem" className={s.h2}>Rule files in Git</h2>
+        <ul className={s.grid4}>
+          {PROBLEMS.map((p) => (
+            <li key={p.title} className={s.tile}>
+              <span className={s.emoji} aria-hidden="true">{p.emoji}</span>
+              <b>{p.title}</b>
+              {p.text}
+            </li>
+          ))}
         </ul>
-        <p>
-          The layer merge and the safety check are one shared library used by both the server and the CLI, so they can
-          never disagree about what a developer should see.
-        </p>
+      </section>
 
-        <h2 id="who">Who it is for</h2>
-        <ul>
-          <li>Teams with many repositories that share the same AI rules.</li>
-          <li>Rules that change often and should change everywhere at once.</li>
-          <li>Rules that mention things that should not sit in a public or shared repo.</li>
-          <li>Teams where people and contractors come and go.</li>
+      <section className={s.block} aria-labelledby="parts">
+        <h2 id="parts" className={s.h2}>Three parts, one brain</h2>
+        <ul className={s.grid3}>
+          {PARTS.map((p) => (
+            <li key={p.title} className={s.part}>
+              <span className={s.emoji} aria-hidden="true">{p.emoji}</span>
+              <b>{p.title}</b>
+              {p.text}
+            </li>
+          ))}
         </ul>
+      </section>
 
-        <h2 id="limits">What it does not do</h2>
-        <p>
-          axiomic keeps rules out of Git, not out of the AI. Claude Code still sends them to its model, and they sit as
-          plain files on the developer&apos;s laptop. The <Link href="/security">security page</Link> explains exactly
-          where the limits are.
+      <section className={s.block} aria-labelledby="features">
+        <h2 id="features" className={s.h2}>Everything it does</h2>
+        <div className={s.cats}>
+          {FEATURE_CATEGORIES.map((cat) => (
+            <section key={cat.id} id={cat.id} className={s.cat} aria-label={cat.title}>
+              <h3 className={s.catTitle}>
+                <span aria-hidden="true">{cat.emoji}</span> {cat.title}
+              </h3>
+              <ul className={s.items}>
+                {cat.features.map((f) => {
+                  const ready = f.status === "local";
+                  return (
+                    <li key={f.id} id={f.id} className={ready ? undefined : s.later}>
+                      <span className={s.tick} aria-hidden="true">{ready ? "✓" : "○"}</span>
+                      <span>
+                        <b>{f.name}</b> {f.short} {ready ? null : <StatusBadge status={f.status} />}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ))}
+        </div>
+        <p style={{ marginTop: 16 }}>
+          <Link href="/roadmap">See the roadmap →</Link> · axiomic keeps rules out of Git, not out of the AI:{" "}
+          <Link href="/security">the limits</Link>.
         </p>
+      </section>
 
-        <h2 id="explore">Explore</h2>
-        <ul>
-          <li>
-            <Link href="/features">Features</Link>: every capability and its status
-          </li>
-          <li>
-            <Link href="/roadmap">Roadmap</Link>: what is built and what comes next
-          </li>
-          <li>
-            <Link href="/docs/cli">CLI docs</Link>: the commands
-          </li>
-          <li>
-            <Link href="/faq">FAQ</Link>: common questions, including “we already have CLAUDE.md”
-          </li>
-        </ul>
-      </Prose>
+      <div className={s.cta}>
+        <p>Free during 1.0. Set up in minutes.</p>
+        <ButtonLink href={PRIMARY_CTA.href} size="lg">
+          {PRIMARY_CTA.label}
+        </ButtonLink>
+      </div>
+      <div style={{ height: 96 }} />
     </div>
   );
 }
